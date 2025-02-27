@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|c:\\users\\kvhol\\desktop\\turnosmedicos\\turnosmed\\pages\\reservarturno.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|solutionrelative:pages\\reservarturno.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|c:\\users\\kvhol\\desktop\\turnosmedicos\\turnosmed\\data\\turno.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|solutionrelative:data\\turno.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|c:\\users\\kvhol\\desktop\\turnosmedicos\\turnosmed\\data\\base.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|solutionrelative:data\\base.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|c:\\users\\kvhol\\desktop\\turnosmedicos\\turnosmed\\pages\\reservarturno.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|solutionrelative:pages\\reservarturno.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|c:\\users\\kvhol\\desktop\\turnosmedicos\\turnosmed\\data\\medico.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|solutionrelative:data\\medico.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6B763147-3D7C-434A-B6FB-CFD9ABA560CA}|TurnosMedicos.csproj|c:\\users\\kvhol\\desktop\\turnosmedicos\\turnosmed\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -42,11 +46,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
+              "Title": "Medico.cs",
+              "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Data\\Medico.cs",
+              "RelativeDocumentMoniker": "Data\\Medico.cs",
+              "ToolTip": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Data\\Medico.cs",
+              "RelativeToolTip": "Data\\Medico.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAcAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-27T12:10:44.532Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "NavMenu.razor",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Shared\\NavMenu.razor",
               "RelativeDocumentMoniker": "Shared\\NavMenu.razor",
@@ -54,12 +71,11 @@
               "RelativeToolTip": "Shared\\NavMenu.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-26T22:54:13.666Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-26T22:54:13.666Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Index.razor",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Pages\\Index.razor",
               "RelativeDocumentMoniker": "Pages\\Index.razor",
@@ -67,12 +83,11 @@
               "RelativeToolTip": "Pages\\Index.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-26T22:52:24.033Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-26T22:52:24.033Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Pages\\_Layout.cshtml",
               "RelativeDocumentMoniker": "Pages\\_Layout.cshtml",
@@ -80,12 +95,11 @@
               "RelativeToolTip": "Pages\\_Layout.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-02-26T22:52:20.059Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-26T22:52:20.059Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -93,12 +107,11 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-02-26T22:49:56.122Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-26T22:49:56.122Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -106,44 +119,43 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAABUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-26T22:43:12.738Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-26T22:43:12.738Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Base.cs",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Data\\Base.cs",
               "RelativeDocumentMoniker": "Data\\Base.cs",
               "ToolTip": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Data\\Base.cs",
               "RelativeToolTip": "Data\\Base.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAEcAAAAAAAAAAAA9wF4AAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-26T22:09:50.812Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "ReservarTurno.razor",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Pages\\ReservarTurno.razor",
               "RelativeDocumentMoniker": "Pages\\ReservarTurno.razor",
               "ToolTip": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Pages\\ReservarTurno.razor",
               "RelativeToolTip": "Pages\\ReservarTurno.razor",
-              "ViewState": "AgIAAHIAAAAAAAAAAAAAAIUAAABBAAAAAAAAAA==",
+              "ViewState": "AgIAAIUAAAAAAAAAAAAAAJoAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-02-26T22:06:55.424Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Turno.cs",
               "DocumentMoniker": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Data\\Turno.cs",
               "RelativeDocumentMoniker": "Data\\Turno.cs",
               "ToolTip": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\Data\\Turno.cs",
               "RelativeToolTip": "Data\\Turno.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAARAAAAAAAAAA==",
+              "ViewState": "AgIAADYAAAAAAAAAAAAkwEYAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-02-26T22:00:29.62Z",
               "EditorCaption": ""

@@ -61,7 +61,8 @@
                                 <RadzenLabel Text="Selecciona la fecha del turno" Component="FechasPosibles" />
                             </RadzenColumn>
                             <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateRender=@nuevoTurno.ObtenerFechasDisponibles DateFormat="d/M/yyyy" Name="FechasPosibles" />
+                                <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateFormat="d/M/yyyy" Disabled="true" Name="FechasPosibles" />
+                                <RadzenButton Text="Ver fechas" ButtonStyle="ButtonStyle.Secondary" Click=@MostrarFechasDisponibles />
                             </RadzenColumn>
                         </RadzenRow>
                         <RadzenRow AlignItems="AlignItems.Center">
@@ -96,6 +97,42 @@
 
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
+    async Task MostrarFechasDisponibles()
+    {
+        if(nuevoTurno.Medico!="")
+        {
+            var result = await DialogService.OpenAsync("Elegir una fecha", ds =>
+            @<RadzenStack Gap="1.5rem">
+                <p><b>Fechas disponibles disponibles:</b></p>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenLabel Text="Seleccionar" Component="FechasPosibles" />
+                        <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateRender=@nuevoTurno.DesactivarFechas DateFormat="d/M/yyyy" Name="FechasPosibles" />
+
+                        <RadzenButton Text="Confirmar" Click="() => ds.Close(true)" />
+                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenStack>
+            );
+        }
+        else
+        {
+            var result = await DialogService.OpenAsync("Primero debes elegir un medico.", ds =>
+            @<RadzenStack Gap="1.5rem">
+                <p><b>Elige un medico antes de seleccionar una fecha.</b></p>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenStack>
+            );
+        }
+
+       
+    }
+
     async Task MostrarHorariosDisponibles()
     {
         var result = await DialogService.OpenAsync("Elegir horario", ds =>
@@ -104,13 +141,13 @@
             <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenStack Orientation="Orientation.Horizontal">
                     <RadzenLabel Text="Seleccionar" Component="DropDownBindValue" />
-                    <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno Data=@Turno.ObtenerHorariosDisponibles() Style="width: 30%; max-width: 400px;" Name="DropDownBindValue" />
+                <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno Data=@nuevoTurno.ObtenerHorariosDisponibles() Style="width: 30%; max-width: 400px;" Name="DropDownBindValue" />
                     <RadzenButton Text="Reservar" Click="() => ds.Close(true)"  />
                     <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                 </RadzenStack>                
             </RadzenStack>
         </RadzenStack>
-    );
+    );  
     }
 
     async Task MostrarConfirmacion()

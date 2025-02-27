@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components;
 using Radzen;
 
 class Turno
@@ -18,23 +19,68 @@ class Turno
     public string? Notas {get; set;}
 
 
-    //Aca haria una consulta a la base con las fechas disponibles. Por ahora desactiva el dia anterior y el siguiente a hoy.
-    IEnumerable<DateTime> fechasDisponibles = new DateTime[] { DateTime.Today.AddDays(-1), DateTime.Today.AddDays(1) };
 
-    public void ObtenerFechasDisponibles(DateRenderEventArgs args)
+   
+
+
+    
+    public void DesactivarFechas(DateRenderEventArgs args)
     {
-        var special = fechasDisponibles.Select(d => d.Date).Contains(args.Date.Date);
-        if (special)
-        {
-            args.Attributes.Add("style", "background-color: #ff6d41; border-color: white;");
-        }
+        
+        string query = " SELECT diaTrabajo FROM `turnos-medicos`.medicos where nombreMedico='"+Medico+"';";
+        List<string> diasTrabajo = Base.EjecutarSelect(query);
 
-        args.Disabled = special || args.Disabled || args.Date.DayOfWeek == DayOfWeek.Sunday || args.Date.DayOfWeek == DayOfWeek.Saturday;
+        
+        // Convertimos la lista de días de trabajo a DayOfWeek
+        var diasPermitidos = diasTrabajo.Select(dia =>
+        {
+            return dia switch
+            {
+                "Lunes" => DayOfWeek.Monday,
+                "Martes" => DayOfWeek.Tuesday,
+                "Miercoles" => DayOfWeek.Wednesday,
+                "Jueves" => DayOfWeek.Thursday,
+                "Viernes" => DayOfWeek.Friday,
+                "Sabado" => DayOfWeek.Saturday,
+                "Domingo" => DayOfWeek.Sunday,
+                _ => throw new ArgumentException("Día no válido en diasTrabajo")
+            };
+        }).ToList();
+
+        // Desactivar si no está en los días permitidos
+        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek);
+
+        if (!args.Disabled)
+        {
+            args.Attributes.Add("style", "background-color: #41ff6d; border-color: white;");
+        }
     }
 
-    public static IEnumerable<string> ObtenerHorariosDisponibles()
+
+
+
+
+
+    public IEnumerable<string> ObtenerHorariosDisponibles()
     {
-        IEnumerable<string> horarios = new List<string> { "08:00", "09:00", "10:00", "11:00" };
+        string diaSemana = FechaTurno.ToString("dddd", new System.Globalization.CultureInfo("es-ES"));
+
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos where nombreMedico = '" + Medico + "' and diaTrabajo='"+diaSemana+"';";
+        List<Medico> consultaAMedicos = Base.SelectAMedicos(query);
+
+        string horaDeInicio = consultaAMedicos[0].horaInicioTrabajo;
+        string horaFinal = consultaAMedicos[0].horaFinTrabajo;
+        int duracionTurno = consultaAMedicos[0].duracionTurno;
+
+        DateTime inicio = DateTime.ParseExact(horaDeInicio, "HH:mm", null);
+        DateTime fin = DateTime.ParseExact(horaFinal, "HH:mm", null);
+
+        
+
+        IEnumerable<string> horarios = Enumerable.Range(0, (int)((fin - inicio).TotalMinutes / duracionTurno) + 1)
+                                         .Select(i => inicio.AddMinutes(i * duracionTurno).ToString("HH:mm"));
+
+
 
         return horarios;
     }

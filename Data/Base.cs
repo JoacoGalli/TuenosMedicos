@@ -2,6 +2,8 @@ using MySqlConnector;
 
 class Base
 {
+
+    //este metodo es mejor no usarlo para selects (aunque sirve), porque retorna un INT con un codigo 0-1. Para selects es mejor EjecutarSelect
     public static int ConexionBase(string query)
     {
         // Definir la cadena de conexión
@@ -35,5 +37,73 @@ class Base
         }
         //Si devuelvo 0 es porque no hubo error. Si devuelvo 1 es porque algo fallo.
         return err;
+    }
+
+
+    //este metodo solo devuelve una lista de strings de 1 sola columna.
+    public static List<string> EjecutarSelect(string query)
+    {
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        List<string> resultados = new List<string>();
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        resultados.Add(reader.GetString(0)); // Agrega el primer campo de cada fila a la lista
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error en la base de datos: " + ex.Message);
+            }
+        }
+        return resultados;
+    }
+
+    public static List<Medico> SelectAMedicos(string query)
+    {
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        List<Medico> resultados = new List<Medico>();
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Medico medico = new Medico
+                        {
+                            Id = reader.GetInt32("idMedicos"), 
+                            NombreMedico = reader.GetString("nombreMedico"),
+                            diaTrabajo = reader.GetString("diaTrabajo"),
+                            horaInicioTrabajo = reader.GetString("horaInicioTrabajo"),
+                            horaFinTrabajo = reader.GetString("horaFinTrabajo"),
+                            duracionTurno =  reader.GetInt16("duracionTurno")
+                        };
+
+                        resultados.Add(medico); 
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error en la base de datos: " + ex.Message);
+            }
+        }
+        return resultados;
     }
 }

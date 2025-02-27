@@ -1,7 +1,12 @@
 class Medico
 {
-    public int Id {get; set;}
+    public int Id { get; set; }
     public string NombreMedico {get; set;} ="";
+    public string diaTrabajo { get; set; } = "";
+    public string horaInicioTrabajo { get; set; } = "";
+    public string horaFinTrabajo { get; set; } = "";
+    public int duracionTurno { get; set; }
+
 
 
     public static List<Medico> ObtenerMedicos()
