@@ -5,6 +5,7 @@ class Turno
     public int Id {get; set;} = 0;
 
     public string NombrePaciente {get; set;} ="";
+    public string ApellidoPaciente { get; set; } = "";
     public int Dni {get; set;}
     public string? Cobertura {get; set;}
 

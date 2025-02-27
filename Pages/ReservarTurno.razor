@@ -1,5 +1,7 @@
 ﻿@page "/reservarturno"
 @inject DialogService DialogService
+@inject NavigationManager Navigation
+
 
 <PageTitle>Reservar turno</PageTitle>
 
@@ -18,6 +20,14 @@
                             </RadzenColumn>
                             <RadzenColumn Size="12" SizeMD="8">
                                 <RadzenTextBox @bind-Value="nuevoTurno.NombrePaciente" Style="width: 100%;" Name="NombrePaciente" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Text="Apellido" Component="ApellidoPaciente" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenTextBox @bind-Value="nuevoTurno.ApellidoPaciente" Style="width: 100%;" Name="ApellidoPaciente" />
                             </RadzenColumn>
                         </RadzenRow>
                         <RadzenRow AlignItems="AlignItems.Center">
@@ -74,16 +84,16 @@
         <RadzenButton ButtonType="ButtonType.Submit" Click=@MostrarConfirmacion Size="ButtonSize.Large" Icon="save" Text="Confirmar" />
         <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancelar" Click="@Cancelar" />
     </RadzenStack>
-    </RadzenTemplateForm>
+</RadzenTemplateForm>
 
 
 @code {
-    
-    
+
+
     Turno nuevoTurno = new Turno(){};
 
     List<Cobertura> listaCoberturas = Cobertura.ObtenerCoberturas();
-    
+
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
     async Task MostrarHorariosDisponibles()
@@ -100,30 +110,61 @@
                 </RadzenStack>                
             </RadzenStack>
         </RadzenStack>
-        );
+    );
     }
 
     async Task MostrarConfirmacion()
     {
-        string fechaMostrar =  nuevoTurno.FechaTurno.ToString("dd-MM-yyyy");
-        
-        var result = await DialogService.OpenAsync("Confirmacion de reserva", ds =>
-        @<RadzenStack Gap="1.5rem" >
-            <p><b>Tu turno ha sido confirmado!</b></p>
-            <p>Aqui estan los datos de la reserva:</p>
-            <p><b>Paciente:</b> @nuevoTurno.NombrePaciente</p>
-            <p><b>Medico:</b> @nuevoTurno.Medico</p>
-            <p><b>Fecha:</b> @fechaMostrar</p>
-            <p><b>Hora:</b> @nuevoTurno.HoraTurno</p>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />                    
-                </RadzenStack>                
+        string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");        
+        string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "');";
+        int intentoRegistrarTurno = Base.ConexionBase(query);
+
+        if(intentoRegistrarTurno==0)
+        {
+            var result = await DialogService.OpenAsync("Confirmacion de reserva", ds =>
+            @<RadzenStack Gap="1.5rem">
+                <p><b>Tu turno ha sido confirmado!</b></p>
+                <p>Aqui estan los datos de la reserva:</p>
+                <p><b>Paciente:</b> @nuevoTurno.NombrePaciente</p>
+                <p><b>Medico:</b> @nuevoTurno.Medico</p>
+                <p><b>Fecha:</b> @fechaMostrar</p>
+                <p><b>Hora:</b> @nuevoTurno.HoraTurno</p>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenButton Text="Cerrar" Click=@RedirectToHome />
+                    </RadzenStack>
+                </RadzenStack>
             </RadzenStack>
-        </RadzenStack>);
+    );
+        }
+        else
+        {
+            var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>
+            @<RadzenStack Gap="1.5rem">
+                <p><b>Tu turno no ha sido confirmado.</b></p>
+                <p>Intentalo nuevamente.</p>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenStack>
+            );
+        }
+
+
+
+
+
+
+
+        
     }
     
-
+    void RedirectToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
     
 
     void Submit(Turno arg)

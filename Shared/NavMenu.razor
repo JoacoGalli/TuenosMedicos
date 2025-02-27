@@ -8,12 +8,13 @@
                 <AuthorizeView>
                     <Authorized>
                         <li><a href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>
-                        <li><a href="/reservarturno">Reservar turno</a></li>
+                        
                         <form method="post" action="Identity/Account/LogOut">
                         <li><button type="submit" class="nav-link btn btn-link"><a>Cerrar sesion</a></button></li>
                         </form>
                     </Authorized>
                     <NotAuthorized>
+                        <li><a href="/reservarturno">Reservar turno</a></li>
                         <li><a href="Identity/Account/Register">Registrarse</a></li>
                         <li><a href="Identity/Account/Login">Iniciar sesion</a></li>
                     </NotAuthorized>

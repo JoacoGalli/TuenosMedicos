@@ -2,11 +2,11 @@ using MySqlConnector;
 
 class Base
 {
-    public static void ConexionBase(string query)
+    public static int ConexionBase(string query)
     {
         // Definir la cadena de conexión
-        string connectionString = "Server=localhost;Database=medicshifts;User ID=root;Password=7240;";
-
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        int err = 0;
         // Crear una conexión
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
@@ -30,34 +30,10 @@ class Base
             catch (Exception ex)
             {
                 Console.WriteLine("Error proveniente de la base: " + ex.Message);
+                err = 1;
             }
         }
-    }
-
-     public static bool VerificarCredencialesUsuario(string username, string password)
-    {
-        string connectionString = "Server=localhost;Database=medicshifts;User ID=root;Password=7240;";
-
-        using (var connection = new MySqlConnection(connectionString))
-        {
-            try
-            {
-                connection.Open();
-                string query = "SELECT COUNT(*) FROM usuarios WHERE NombreUsuario = @username AND ContraseñaUsuario = @password";
-                using (var cmd = new MySqlCommand(query, connection))
-                {
-                    cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", password);
-
-                    var result = Convert.ToInt32(cmd.ExecuteScalar());
-                    return result > 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error al conectar: " + ex.Message);
-                return false;
-            }
-        }
+        //Si devuelvo 0 es porque no hubo error. Si devuelvo 1 es porque algo fallo.
+        return err;
     }
 }
