@@ -16,9 +16,9 @@ body[b-76w9ubmxfj] {
     width: 100%;
     height: 65px;
     position: fixed;
+    z-index: 9999;
     line-height: 65px;
     text-align: center;
-    
 }
 
     .nav div.logo[b-76w9ubmxfj] {
@@ -65,10 +65,7 @@ body[b-76w9ubmxfj] {
                     line-height: 65px;
                     font-size: 1.4rem;
                 }
-                .nav div.main_list ul li button[b-76w9ubmxfj] {
-                    position: relative;
-                    top: -9px;
-                }
+                
 
                     .nav div.main_list ul li a:hover[b-76w9ubmxfj] {
                         color: #3366cc;
@@ -128,11 +125,19 @@ body[b-76w9ubmxfj] {
 
         .nav div.main_list ul li[b-76w9ubmxfj] {
             width: 100%;
-            text-align: right;
+            text-align: left;
+            padding:5px;
         }
 
+            .nav div.main_list ul li button[b-76w9ubmxfj] {
+                width: 100%;
+                text-align: left;
+                font-size:100px;
+                
+                padding:0;
+            }
             .nav div.main_list ul li a[b-76w9ubmxfj] {
-                text-align: center;
+                text-align: right;
                 width: 100%;
                 font-size: 1.4rem;
                 padding: 20px;

@@ -7,16 +7,16 @@ class Turno
 
     public string NombrePaciente {get; set;} ="";
     public string ApellidoPaciente { get; set; } = "";
-    public int Dni {get; set;}
+    public int? Dni {get; set;}
     public string? Cobertura {get; set;}
 
-    public string Medico {get; set;} ="";
+    public string? Medico {get; set;} ="";
 
     public DateTime FechaTurno {get; set;}
 
     public string HoraTurno {get; set;} ="";
 
-    public string? Notas {get; set;}
+    public string? Notas { get; set; } = "";
 
 
 
@@ -26,7 +26,7 @@ class Turno
     
     public void DesactivarFechas(DateRenderEventArgs args)
     {
-        
+        //Determino que dias trabaja el medico
         string query = " SELECT diaTrabajo FROM `turnos-medicos`.medicos where nombreMedico='"+Medico+"';";
         List<string> diasTrabajo = Base.EjecutarSelect(query);
 
@@ -47,7 +47,7 @@ class Turno
             };
         }).ToList();
 
-        // Desactivar si no está en los días permitidos
+        // Desactivo los dias que no trabaja.
         args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek);
 
         if (!args.Disabled)
@@ -63,6 +63,8 @@ class Turno
 
     public IEnumerable<string> ObtenerHorariosDisponibles()
     {
+       
+        //Traigo los horarios de trabajo del medico (inicio a fin de la jornada)
         string diaSemana = FechaTurno.ToString("dddd", new System.Globalization.CultureInfo("es-ES"));
 
         string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos where nombreMedico = '" + Medico + "' and diaTrabajo='"+diaSemana+"';";
@@ -76,10 +78,28 @@ class Turno
         DateTime fin = DateTime.ParseExact(horaFinal, "HH:mm", null);
 
         
-
+        //En este punto, horarios tiene todas las horas entre inicio y fin, sin considerar los turnos ya reservados.
         IEnumerable<string> horarios = Enumerable.Range(0, (int)((fin - inicio).TotalMinutes / duracionTurno) + 1)
-                                         .Select(i => inicio.AddMinutes(i * duracionTurno).ToString("HH:mm"));
+                                        .Select(i => inicio.AddMinutes(i * duracionTurno).ToString("HH:mm"));
 
+
+
+        //aca consulto la tabla turno para ver si el medico en X dia tiene turnos ocupados.
+        string fechaMostrar = FechaTurno.ToString("yyyy-MM-dd");
+        string queryTurnos = "SELECT * FROM `turnos-medicos`.turnos where medico = '"+ Medico + "' and fechaTurno='"+ fechaMostrar + "';";
+        List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos);
+
+
+
+        //Si encuentro turnos reservados, los quito de horarios para que no puedan ser seleccionados.
+        if (turnosReservados.Count>0)
+        {
+            List<string> horasOcupadas = turnosReservados
+                                                        .Select(t => DateTime.ParseExact(t.HoraTurno, "HH:mm", null).ToString("HH:mm"))
+                                                        .ToList();
+
+            horarios = horarios.Except(horasOcupadas);
+        }
 
 
         return horarios;

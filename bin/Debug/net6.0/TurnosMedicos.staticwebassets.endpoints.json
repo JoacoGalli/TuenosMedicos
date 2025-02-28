@@ -2223,51 +2223,6 @@
       ]
     },
     {
-      "Route": "TurnosMedicos.9m03333w09.styles.css",
-      "AssetFile": "TurnosMedicos.styles.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "9872"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"4SQ4Si22ucAcC4pGh4eSNZG0okQaLyv071pZQRUwPmQ=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Wed, 26 Feb 2025 14:09:57 GMT"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "9m03333w09"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-4SQ4Si22ucAcC4pGh4eSNZG0okQaLyv071pZQRUwPmQ="
-        },
-        {
-          "Name": "label",
-          "Value": "TurnosMedicos.styles.css"
-        }
-      ]
-    },
-    {
       "Route": "TurnosMedicos.styles.css",
       "AssetFile": "TurnosMedicos.styles.css",
       "Selectors": [],
@@ -2282,7 +2237,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "9872"
+          "Value": "9992"
         },
         {
           "Name": "Content-Type",
@@ -2290,17 +2245,62 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"4SQ4Si22ucAcC4pGh4eSNZG0okQaLyv071pZQRUwPmQ=\""
+          "Value": "\"aEbe5FoIfkIVF5xLOyzYSkzQOzBnsVne6n3KwxLqup0=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 26 Feb 2025 14:09:57 GMT"
+          "Value": "Fri, 28 Feb 2025 14:25:29 GMT"
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-4SQ4Si22ucAcC4pGh4eSNZG0okQaLyv071pZQRUwPmQ="
+          "Value": "sha256-aEbe5FoIfkIVF5xLOyzYSkzQOzBnsVne6n3KwxLqup0="
+        }
+      ]
+    },
+    {
+      "Route": "TurnosMedicos.wyczyynafn.styles.css",
+      "AssetFile": "TurnosMedicos.styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "9992"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"aEbe5FoIfkIVF5xLOyzYSkzQOzBnsVne6n3KwxLqup0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 28 Feb 2025 14:25:29 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "wyczyynafn"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-aEbe5FoIfkIVF5xLOyzYSkzQOzBnsVne6n3KwxLqup0="
+        },
+        {
+          "Name": "label",
+          "Value": "TurnosMedicos.styles.css"
         }
       ]
     },
@@ -6159,51 +6159,6 @@
       ]
     },
     {
-      "Route": "css/style.9j0ep7bk5o.css",
-      "AssetFile": "css/style.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "3083"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"Nd9svE+5+mEjkH0JUsSn5ZEK4fGMNMyP2WnB4wPj0aw=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sun, 16 Feb 2025 22:37:40 GMT"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "9j0ep7bk5o"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-Nd9svE+5+mEjkH0JUsSn5ZEK4fGMNMyP2WnB4wPj0aw="
-        },
-        {
-          "Name": "label",
-          "Value": "css/style.css"
-        }
-      ]
-    },
-    {
       "Route": "css/style.css",
       "AssetFile": "css/style.css",
       "Selectors": [],
@@ -6218,7 +6173,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "3083"
+          "Value": "3077"
         },
         {
           "Name": "Content-Type",
@@ -6226,17 +6181,62 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"Nd9svE+5+mEjkH0JUsSn5ZEK4fGMNMyP2WnB4wPj0aw=\""
+          "Value": "\"MhqM0Ijh29/OxDmZcKu1+BK4vmu80DfaU4TAnnT1SAw=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sun, 16 Feb 2025 22:37:40 GMT"
+          "Value": "Fri, 28 Feb 2025 13:49:21 GMT"
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-Nd9svE+5+mEjkH0JUsSn5ZEK4fGMNMyP2WnB4wPj0aw="
+          "Value": "sha256-MhqM0Ijh29/OxDmZcKu1+BK4vmu80DfaU4TAnnT1SAw="
+        }
+      ]
+    },
+    {
+      "Route": "css/style.qpvp51vbrj.css",
+      "AssetFile": "css/style.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "3077"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"MhqM0Ijh29/OxDmZcKu1+BK4vmu80DfaU4TAnnT1SAw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 28 Feb 2025 13:49:21 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "qpvp51vbrj"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-MhqM0Ijh29/OxDmZcKu1+BK4vmu80DfaU4TAnnT1SAw="
+        },
+        {
+          "Name": "label",
+          "Value": "css/style.css"
         }
       ]
     },

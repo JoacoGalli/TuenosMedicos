@@ -1,4 +1,5 @@
 using MySqlConnector;
+using System.Collections.Generic;
 
 class Base
 {
@@ -96,6 +97,47 @@ class Base
                         };
 
                         resultados.Add(medico); 
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error en la base de datos: " + ex.Message);
+            }
+        }
+        return resultados;
+    }
+
+    public static List<Turno> SelectATurnos(string query)
+    {
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        List<Turno> resultados = new List<Turno> ();
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Turno turno = new Turno
+                        {
+                            Id = reader.GetInt32("idturno"),
+                            NombrePaciente = reader.GetString("nombrePaciente"),
+                            ApellidoPaciente = reader.GetString("apellidoPaciente"),
+                            Dni = reader.GetInt32("dni"),
+                            Cobertura = reader.GetString("cobertura"),
+                            Medico = reader.GetString("medico"),
+                            FechaTurno = reader.GetDateTime("fechaTurno"),
+                            HoraTurno = reader.GetString("horaTurno"),
+                            Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? "" : reader.GetString("notas") // Maneja valores nulos
+                        };
+
+                        resultados.Add(turno);
                     }
                 }
             }
