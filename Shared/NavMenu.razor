@@ -8,6 +8,8 @@
                 <AuthorizeView>
                     <Authorized>
                         <li><a href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>
+
+                        <li><a href="/editarmedico">Medicos</a></li>
                         
                         <form method="post" action="Identity/Account/LogOut">
                          <br />
