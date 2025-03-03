@@ -48,7 +48,7 @@ class Turno
         }).ToList();
 
         // Desactivo los dias que no trabaja.
-        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek);
+        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) || args.Date.Date < DateTime.Today;
 
         if (!args.Disabled)
         {

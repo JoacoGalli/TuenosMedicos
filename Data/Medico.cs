@@ -13,25 +13,14 @@ class Medico
     {
         List<Medico> medicos = new List<Medico>();
 
-        
-        //aca haria una consulta a la base y añadiria los objetos a la lista 'medicos' creada arriba.
-        medicos.Add(new Medico()
-            {
-                Id=1,
-                NombreMedico="Dr.Gonzalez"
-            });
 
-        medicos.Add(new Medico()
-            {
-                Id=2,
-                NombreMedico="Dr.Perez"
-            });
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos;";
+        medicos = Base.SelectAMedicos(query);
 
-        medicos.Add(new Medico()
-            {
-                Id=3,
-                NombreMedico="Dra.Ravettino"
-            });
+        medicos = medicos   .Select(m => m.NombreMedico) // Extrae solo los nombres
+                            .Distinct() // Elimina duplicados
+                            .Select(nombre => new Medico { NombreMedico = nombre }) // Crea nuevos objetos Medico con nombres únicos
+                            .ToList();
 
         return medicos;
     }

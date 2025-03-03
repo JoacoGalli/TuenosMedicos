@@ -5,82 +5,70 @@
 
 <PageTitle>Edicion de medicos</PageTitle>
 
-<h2>Lista de medicos</h2>
+<h2>Lista de médicos</h2>
 
 
-<RadzenRow class="" Gap="1rem"> 
+<RadzenRow class="rz-mb-3" Gap="1rem" Style="flex-wrap: wrap;">
+    <RadzenColumn Size="12" SizeMd="4" class="rz-p-2 rz-p-md-4">
+        <RadzenStack Gap="0.5rem">
+            <RadzenListBox @bind-Value=@medicoSeleccionado Data=@medicos TextProperty="NombreMedico" ValueProperty="NombreMedico"
+                           Style="width: 100%; max-width: 400px; height:200px"
+                           InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})" />
+            <RadzenButton Click=@AgregarMedico Icon="add_circle" Text="Nuevo médico" ButtonStyle="ButtonStyle.Primary" Width="100%" />
+        </RadzenStack>
+    </RadzenColumn>
 
-
-    <RadzenColumn  Size="4" class="rz-p-2 rz-p-md-4">
-        <div class="">
-            <RadzenListBox @bind-Value=@medicoSeleccionado Data=@medicos TextProperty="NombreMedico" ValueProperty="NombreMedico" Style="width: 100%; max-width: 400px; height:200px" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})" />            
-            <RadzenButton Click=@AgregarMedico Text="" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" Width="30px" />
-        </div>
-
-    </RadzenColumn> 
-
-
-    <RadzenColumn Size="8" class="r rz-p-2 rz-p-md-8">
+    <RadzenColumn Size="12" SizeMd="8" class="rz-p-2 rz-p-md-8">
         <RadzenStack Gap="1rem">
             <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true"
-            Data="@diasYhorarios" TItem="Medico" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" ColumnWidth="200px">
-                <HeaderTemplate>
-
-                </HeaderTemplate>
+                            Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 800px;">
                 <Columns>
-                    <RadzenDataGridColumn Visible="false" Property="Id" Title="ID">
+                    <RadzenDataGridColumn Property="NombreMedico" Title="Médico" Width="200px">
                         <EditTemplate Context="med">
-                            <RadzenDataGridColumn Property="Id" Title="ID"  Frozen="true" />
+                            <RadzenTextBox @bind-Value="med.NombreMedico" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="NombreMedico" Title="Medico">
+                    <RadzenDataGridColumn Property="diaTrabajo" Title="Día" Width="110px">
                         <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.NombreMedico"  />
+                            <RadzenTextBox @bind-Value="med.diaTrabajo" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="diaTrabajo" Width="130px" Title="Dia">
+                    <RadzenDataGridColumn Property="horaInicioTrabajo" Title="Inicio" Width="110px">
                         <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.diaTrabajo"  />
+                            <RadzenTextBox @bind-Value="med.horaInicioTrabajo" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="horaInicioTrabajo" Width="110px"  Title="Inicio">
+                    <RadzenDataGridColumn Property="horaFinTrabajo" Title="Fin" Width="110px">
                         <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.horaInicioTrabajo"  />
+                            <RadzenTextBox @bind-Value="med.horaFinTrabajo" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="horaFinTrabajo" Width="110px" Title="Fin">
+                    <RadzenDataGridColumn Property="duracionTurno" Title="Duración" Width="100px">
                         <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.horaFinTrabajo"  />
+                            <RadzenNumeric TValue="int" @bind-Value="med.duracionTurno" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="duracionTurno" Width="130px" Title="Duracion">
-                        <EditTemplate Context="med">
-                            <RadzenDataGridColumn Property="duracionTurno" Title="Duracion" Frozen="true" />
-                        </EditTemplate>
-                    </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn Context="med" Filterable="false" Sortable="false" TextAlign="TextAlign.Right">
+                    <RadzenDataGridColumn Context="med" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="80px">
                         <Template Context="med">
-                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Click="@(args => EditRow(med))" />
                             <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Click="@(args => DeleteRow(med))" />
                         </Template>
-                        <EditTemplate Context="med">
-                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Click="@((args) => SaveRow(med))" />
-                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Click="@((args) => CancelEdit(med))" />
-                        </EditTemplate>
                     </RadzenDataGridColumn>
                 </Columns>
             </RadzenDataGrid>
-            <RadzenButton Click=@ReloadGrid Text="Ver horarios" Icon="add_circle" ButtonStyle="ButtonStyle.Info" Width="30px" />
-            <RadzenButton Click=@InsertRow Text="Agregar nuevo horario" Icon="add_circle" ButtonStyle="ButtonStyle.Primary" Width="30px" />
+            <RadzenStack  Gap="1rem" JustifyContent="JustifyContent.Center">
+                <RadzenButton Click=@ReloadGrid Text="Ver horarios" Icon="visibility" ButtonStyle="ButtonStyle.Info" />
+                <RadzenButton Click=@InsertRow Text="Agregar nuevo horario" Icon="add" ButtonStyle="ButtonStyle.Primary" />
+            </RadzenStack>
         </RadzenStack>
     </RadzenColumn>
 </RadzenRow>
+
+
 
 @code
 {
@@ -101,13 +89,10 @@
     DateTime horaFin = DateTime.Today.AddHours(23);
 
 
-
-
     protected override async Task OnInitializedAsync()
     {
         string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos;";
         listaMedicos = Base.SelectAMedicos(query);
-
 
         medicos = listaMedicos
                             .Select(m => m.NombreMedico) // Extrae solo los nombres
@@ -115,29 +100,13 @@
                             .Select(nombre => new Medico { NombreMedico = nombre }) // Crea nuevos objetos Medico con nombres únicos
                             .ToList();
     }
-
-    async Task EditRow(Medico med)
-    {
-        if (ordersGrid == null) return;
-        await ordersGrid.EditRow(med);
-    }
-
-    async Task SaveRow(Medico med)
-    {
-        if (ordersGrid == null) return;
-        await ordersGrid.UpdateRow(med);
-    }
-
-    void CancelEdit(Medico med)
-    {
-        ordersGrid.CancelEditRow(med);
-    }
+   
 
     async Task DeleteRow(Medico med)
     {
-        var result = await DialogService.OpenAsync("Atencion", ds =>
+        var result = await DialogService.OpenAsync("Atención", ds =>
         @<RadzenStack Gap="1.5rem">
-            <p>Esta a punto de borrar el horario de : <b>@med.NombreMedico </b></p>
+            <p>Está a punto de borrar el horario de : <b>@med.NombreMedico </b></p>
             <p>Dia:  <b>@med.diaTrabajo </b></p>
             <p>Hora inicio:  <b>@med.horaInicioTrabajo </b></p>
             <p>Hora fin:  <b>@med.horaFinTrabajo </b></p>
@@ -156,107 +125,100 @@
 
     async Task AgregarMedico()
     {
-        List<String> dias = new List<string>() { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo" };
+        List<string> dias = new List<string>() { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo" };
         IEnumerable<string> listaDias = dias;
 
-        var result = await DialogService.OpenAsync("Nuevo medico", ds =>
-        @<RadzenStack Gap="1.5rem">
-            <p>Agregar un nuevo medico</p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                    <RadzenStack Orientation="Orientation.Horizontal">
+        var result = await DialogService.OpenAsync("Nuevo médico", ds =>
+    @<RadzenStack Gap="1.5rem" Style="padding: 1.5rem; max-width: 600px;">
+        <p style="font-size: 1.2rem; font-weight: bold;">Agregar un nuevo médico</p>
 
-                <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenLabel Text="Nombre del medico" Component="nombreMedico" />
-                    <RadzenTextBox @bind-Value=medicoSeleccionado Style="width: 100%;" Name="nombreMedico" />
-                </RadzenRow>
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Nombre del médico" Style="width: 40%; font-weight: bold;" />
+                <RadzenTextBox @bind-Value=medicoSeleccionado Style="width: 60%;" />
+            </RadzenRow>
 
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenLabel Text="Dia" Component="Dias" />
-                        <RadzenDropDown @bind-Value="nuevoHorarioMedico.diaTrabajo" Placeholder="Seleccionar un dia" Data="@listaDias" Style="width: 100%;" Name="Dias">
-                            <RadzenRequiredValidator Component="Dias" Text="Elige un dia" />
-                        </RadzenDropDown>
-                    </RadzenRow>
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenLabel Text="Hora inicio:" Component="horaInicio" />
-                    <RadzenDatePicker @bind-Value=@horaIni ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Name="horaInicio" />
-                    </RadzenRow>
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenLabel Text="Hora fin:" Component="horaFin" />
-                    <RadzenDatePicker @bind-Value=@horaFin ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Name="horaFin" />
-                    </RadzenRow>
-                    <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenLabel Text="Duracion del turno:" Component="duracion" />
-                    <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@nuevoHorarioMedico.duracionTurno Placeholder="Duracion del turno" NullValue="null" Name="duracion" />
-                    <br />
-                    </RadzenRow>
-                        <RadzenButton Text="Confirmar" Click=InsertABase />
-                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                    </RadzenStack>
-                </RadzenStack>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Día de trabajo" Style="width: 40%; font-weight: bold;" />
+                <RadzenDropDown @bind-Value="nuevoHorarioMedico.diaTrabajo" Placeholder="Seleccionar un día" Data="@listaDias" Style="width: 60%;">
+                    <RadzenRequiredValidator Text="Elige un día" />
+                </RadzenDropDown>
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora inicio" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaIni ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora fin" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaFin ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Duración del turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@nuevoHorarioMedico.duracionTurno Placeholder="Duración" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+                <RadzenButton Text="Confirmar" Click=InsertABase ButtonStyle="ButtonStyle.Primary" />
+                <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             </RadzenStack>
-            );
+        </RadzenStack>
+    </RadzenStack>
+        );
     }
+
 
 
     async Task InsertRow()
     {
-        if (medicoSeleccionado!="") 
-        { 
-            List<String> dias = new List<string>() { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo" };
+        if (!string.IsNullOrEmpty(medicoSeleccionado))
+        {
+            List<string> dias = new List<string>() { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo" };
             IEnumerable<string> listaDias = dias;
 
             var result = await DialogService.OpenAsync("Nuevo horario", ds =>
-            @<RadzenStack Gap="1.5rem">
-            <p>Crear nuevo horario para: <b>@medicoSeleccionado </b></p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                    <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenLabel Text="Dia" Component="Dias" />
-                        <RadzenDropDown @bind-Value="nuevoHorarioMedico.diaTrabajo" Placeholder="Seleccionar un dia" Data="@listaDias" Style="width: 100%;" Name="Dias">
-                            <RadzenRequiredValidator Component="Dias" Text="Elige un dia" />
-                        </RadzenDropDown>
-                    </RadzenRow>
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenLabel Text="Hora inicio:" Component="horaInicio" />
-                    <RadzenDatePicker @bind-Value=@horaIni ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Name="horaInicio" />
-                    </RadzenRow>
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenLabel Text="Hora fin:" Component="horaFin" />
-                    <RadzenDatePicker @bind-Value=@horaFin ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Name="horaFin" />
-                    </RadzenRow>
-                    <RadzenRow AlignItems="AlignItems.Center">
-                    <RadzenLabel Text="Duracion del turno:" Component="duracion" />
-                    <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@nuevoHorarioMedico.duracionTurno Placeholder="Duracion del turno" NullValue="null" Name="duracion" />
-                    <br />
-                    </RadzenRow>
-                        <RadzenButton Text="Confirmar" Click=InsertABase />
-                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                    </RadzenStack>
-                </RadzenStack>
+    @<RadzenStack Gap="1.5rem" Style="padding: 1.5rem; max-width: 600px;">
+        <p style="font-size: 1.2rem; font-weight: bold;">Crear nuevo horario para: <b>@medicoSeleccionado</b></p>
+
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Día de trabajo" Style="width: 40%; font-weight: bold;" />
+                <RadzenDropDown @bind-Value="nuevoHorarioMedico.diaTrabajo" Placeholder="Seleccionar un día" Data="@listaDias" Style="width: 60%;">
+                    <RadzenRequiredValidator Text="Elige un día" />
+                </RadzenDropDown>
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora inicio" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaIni ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora fin" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaFin ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Duración del turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@nuevoHorarioMedico.duracionTurno Placeholder="Duración" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+                <RadzenButton Text="Confirmar" Click=InsertABase ButtonStyle="ButtonStyle.Primary" />
+                <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             </RadzenStack>
-    );
+        </RadzenStack>
+    </RadzenStack>
+        );
         }
         else
         {
-            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Atencion", Detail = "Selecciona un medico" });
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Atención", Detail = "Selecciona un médico" });
         }
-
-
-
     }
 
-    void OnUpdateRow(Medico med)
-    {
-        listaHorarios[listaHorarios.FindIndex(m => m.Id == med.Id)] = med;
-        diasYhorarios = new List<Medico>(listaHorarios);
-    }
-
-    void OnCreateRow(Medico med)
-    {
-        med.Id = listaHorarios.Count + 1;
-        listaHorarios.Add(med);
-        diasYhorarios = new List<Medico>(listaHorarios);
-    }
 
     async Task ReloadGrid()
     {

@@ -1,0 +1,24 @@
+﻿@page "/listarturnos"
+@inject DialogService DialogService
+@inject NavigationManager Navigation
+
+
+<PageTitle>Listado de turnos reservados</PageTitle>
+
+<h2>Listado de turnos reservados</h2>
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
+    <RadzenLabel Text="Seleccionar médico" Component="DropDownBindValue" />
+    <RadzenDropDown @bind-Value="medicoSeleccionado" Placeholder="Seleccionar" Data="@listaMedicos" Style="width: 30%;" TextProperty="NombreMedico" ValueProperty="NombreMedico" Name="Medico">
+        <RadzenRequiredValidator Component="Medico" Text="Debes seleccionar un medico" />
+    </RadzenDropDown>
+    <RadzenButton  Text="Ver turnos" ButtonStyle="ButtonStyle.Base" />
+</RadzenStack>
+
+@code
+{
+    string medicoSeleccionado;
+    List<Medico> listaMedicos = Medico.ObtenerMedicos();
+    Turno turno = new Turno() { };
+}
+
