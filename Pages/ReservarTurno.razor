@@ -178,10 +178,11 @@
                         <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                     </RadzenStack>
                 </RadzenStack>
-            </RadzenStack>);
+            </RadzenStack>
+    );
         }
 
-   
+
     }
 
     async Task MostrarConfirmacion()
@@ -192,6 +193,8 @@
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
             string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`,`notas`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "','"+nuevoTurno.Notas+"');";
             int intentoRegistrarTurno = Base.ConexionBase(query);
+
+
 
             if (intentoRegistrarTurno == 0)
             {
@@ -208,9 +211,14 @@
                         <RadzenButton Text="Cerrar" Click=@RedirectToHome />
                     </RadzenStack>
                 </RadzenStack>
-    </RadzenStack>);
-       
-        }
+            </RadzenStack>);
+            
+                EmailService nuevoEmail = new EmailService();
+                string cuerpoEmail = "Paciente: " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + " Fecha: " + nuevoTurno.FechaTurno.ToString("dd/MM/yyyy") + " Hora: " + nuevoTurno.HoraTurno;
+
+                await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
+
+            }
         else
         {
             var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>

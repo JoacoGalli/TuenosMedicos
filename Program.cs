@@ -23,6 +23,9 @@ builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuth
 
 builder.Services.AddRadzenComponents();
 
+builder.Services.AddSingleton<EmailService>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
