@@ -1,4 +1,4 @@
-class Medico
+public class Medico
 {
     public int Id { get; set; }
     public string NombreMedico {get; set;} ="";

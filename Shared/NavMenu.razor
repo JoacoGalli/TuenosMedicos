@@ -9,18 +9,19 @@
                     <Authorized>
                         <li><a href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>
 
-                        <li><a href="/editarmedico">Medicos</a></li>
+                        <li><a href="/editarmedico">Médicos</a></li>
                         
                         <li><a href="/listarturnos">Turnos</a></li>
+                        <li><a href="/reservarturno">Reservar turno</a></li>
                         <form method="post" action="Identity/Account/LogOut">
                          <br />
-                        <li><button type="submit" style="margin-top: -75px;" class="nav-link btn btn-link"><a>Cerrar sesion</a></button></li>
+                        <li><button type="submit" style="margin-top: -75px;" class="nav-link btn btn-link"><a>Cerrar sesión</a></button></li>
                         </form>
                     </Authorized>
                     <NotAuthorized>
                         <li><a href="/reservarturno">Reservar turno</a></li>
                         <li><a href="Identity/Account/Register">Registrarse</a></li>
-                        <li><a href="Identity/Account/Login">Iniciar sesion</a></li>
+                        <li><a href="Identity/Account/Login">Iniciar sesión</a></li>
                     </NotAuthorized>
                 </AuthorizeView>
             </ul>

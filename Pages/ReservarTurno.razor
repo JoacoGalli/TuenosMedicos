@@ -66,8 +66,8 @@
                                 <RadzenLabel Text="Selecciona la fecha del turno" Component="FechasPosibles" />
                             </RadzenColumn>
                             <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateFormat="d/M/yyyy" Disabled="true" Name="FechasPosibles" />
-                                <RadzenButton Text="Ver fechas" ButtonStyle="ButtonStyle.Secondary" Click=@MostrarFechasDisponibles />
+                                <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateFormat="d/M/yyyy" Disabled="true" Style="width:40%;" Name="FechasPosibles" />
+                                <RadzenButton Text="Ver fechas" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Click=@MostrarFechasDisponibles />
                                 <RadzenRequiredValidator Component="FechasPosibles" Text="Debes seleccionar una fecha" />
                             </RadzenColumn>
                         </RadzenRow>
@@ -76,10 +76,18 @@
                                 <RadzenLabel Text="Hora:" Component="Horarios" />
                             </RadzenColumn>
                             <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenTextBox @bind-Value=@nuevoTurno.HoraTurno Disabled="true" aria-label="Disabled TextBox" Name="Horarios" />
-                                <RadzenButton Text="Ver horarios" ButtonStyle="ButtonStyle.Secondary" Click=@MostrarHorariosDisponibles />
+                                <RadzenTextBox @bind-Value=@nuevoTurno.HoraTurno Disabled="true" aria-label="Disabled TextBox" Style="width:40%;" Name="Horarios" />
+                                <RadzenButton Text="Ver horarios" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Click=@MostrarHorariosDisponibles />
                                 <RadzenRequiredValidator Component="Horarios" Text="Debes seleccionar un horario" />
+                            </RadzenColumn>
+                        </RadzenRow>
 
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Text="Notas" Component="Notas" />
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenTextBox @bind-Value=@nuevoTurno.Notas MaxLength="500" Style="width: 100%; height: 100px;" />
                             </RadzenColumn>
                         </RadzenRow>
 
@@ -182,7 +190,7 @@
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "');";
+            string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`,`notas`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "','"+nuevoTurno.Notas+"');";
             int intentoRegistrarTurno = Base.ConexionBase(query);
 
             if (intentoRegistrarTurno == 0)
@@ -260,6 +268,6 @@
 
     void Cancelar()
     {
-             
+        Navigation.NavigateTo("/");
     }
 }
