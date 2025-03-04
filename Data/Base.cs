@@ -8,7 +8,7 @@ class Base
     public static int ConexionBase(string query)
     {
         // Definir la cadena de conexión
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
         int err = 0;
         // Crear una conexión
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -44,7 +44,7 @@ class Base
     //este metodo solo devuelve una lista de strings de 1 sola columna.
     public static List<string> EjecutarSelect(string query)
     {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
         List<string> resultados = new List<string>();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -72,7 +72,7 @@ class Base
 
     public static List<Medico> SelectAMedicos(string query)
     {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
         List<Medico> resultados = new List<Medico>();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -110,7 +110,7 @@ class Base
 
     public static List<Turno> SelectATurnos(string query)
     {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=Quelocura3!;";
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
         List<Turno> resultados = new List<Turno> ();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
