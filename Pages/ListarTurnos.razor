@@ -85,9 +85,14 @@
                         }
                     </Template>
                 </RadzenDataGridColumn>
+                
 
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="90px">
                     <Template Context="shift">
+                        <RadzenButton Icon="build"
+                                      ButtonStyle="ButtonStyle.Success"
+                                      Size="ButtonSize.Small"
+                                      Click="@(args => EditarTurno(shift.Id))" />
                         <RadzenButton Icon="delete"
                                       ButtonStyle="ButtonStyle.Danger"
                                       Size="ButtonSize.Small"
@@ -141,7 +146,7 @@
 
     void DeleteABase(int idABorrar)
     {
-        string query = "DELETE FROM `turnos-medicos`.`turnos` WHERE idTurno=" + idABorrar + ";"; //DELETE FROM  WHERE idTurno=27;
+        string query = "DELETE FROM `turnos-medicos`.`turnos` WHERE idTurno=" + idABorrar + ";"; 
         int borrarFila = Base.ConexionBase(query);
         if (borrarFila == 0)
         {
@@ -189,9 +194,10 @@
 
     }
 
-    async Task InsertRow()
+    
+    private void EditarTurno(int id)
     {
-       
+        Navigation.NavigateTo($"/editarturno/{id}");
     }
 }
 
