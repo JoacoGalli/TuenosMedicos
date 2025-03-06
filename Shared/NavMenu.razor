@@ -1,64 +1,31 @@
-﻿<nav class="nav">
-    <div class="container">
-        <div class="logo">
-            <a href="/  ">MedicShifts</a>
-        </div>
-        <div id="mainListDiv" class="main_list">
-            <ul class="navlinks">
-                <AuthorizeView>
-                    <Authorized>
-                        <li><a href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>
+﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand fs-4"  href="#">MedicShifts</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+            <AuthorizeView>
+                <Authorized>
+                    <li class="nav-item" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link text-white fs-4" href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>
 
-                        <li><a href="/editarmedico">Médicos</a></li>
-                        
-                        <li><a href="/listarturnos">Turnos</a></li>
-                        <li><a href="/reservarturno">Reservar turno</a></li>
-                        <form method="post" action="Identity/Account/LogOut">
-                         <br />
-                        <li><button type="submit" style="margin-top: -75px;" class="nav-link btn btn-link"><a>Cerrar sesión</a></button></li>
-                        </form>
-                    </Authorized>
-                    <NotAuthorized>
-                        <li><a href="/reservarturno">Reservar turno</a></li>
-                        <li><a href="Identity/Account/Register">Registrarse</a></li>
-                        <li><a href="Identity/Account/Login">Iniciar sesión</a></li>
-                    </NotAuthorized>
-                </AuthorizeView>
-            </ul>
-        </div>
-        <span class="navTrigger">
-            <i></i>
-            <i></i>
-            <i></i>
-        </span>
+                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/editarmedico">Médicos</a></li>
+
+                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/listarturnos">Turnos</a></li>
+                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Reservar turno</a></li>
+                    <li class="nav-item">
+                    <form method="post" action="Identity/Account/LogOut">
+
+                            <button class="btn btn-sm  fs-4" type="submit"><a class="badge badge-light">Cerrar sesión</a></button>
+                    </form>
+                    </li>
+                </Authorized>
+                <NotAuthorized>
+                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Reservar turno</a></li>
+                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="Identity/Account/Register">Registrarse</a></li>
+                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="Identity/Account/Login">Iniciar sesión</a></li>
+                </NotAuthorized>
+            </AuthorizeView>
+        </ul>
     </div>
 </nav>
-
-<!-- no borrar esta seccion, la uso para el fondo de la navbar-->
-<section class="fondoNavBar">
-</section>
-
-<!-- Animacion negra-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="js/scripts.js"></script>
-<script>
-    $(window).scroll(function() {
-        if ($(document).scrollTop() > 50) {
-            $('.nav').addClass('affix');
-            console.log("OK");
-        } else {
-            $('.nav').removeClass('affix');
-        }
-    });
-</script>
-
-<!-- Funcion para abrir y cerrar el menu chiquito-->
-<script>
-        $('.navTrigger').click(function () {
-        $(this).toggleClass('active');
-        console.log("Clicked menu");
-        $("#mainListDiv").toggleClass("show_list");
-        $("#mainListDiv").fadeIn();
-
-    });
-</script>
