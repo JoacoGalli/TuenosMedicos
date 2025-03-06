@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "mligYWBBY+oUNo8yp/1j7cIc8KvhBmpzciwV5L3Yvgk=",
+  "Hash": "YskG5VUee5DOcAzUbmuO/4QyLG4fb/7nf0utRFnaJ40=",
   "Source": "TurnosMedicos",
   "BasePath": "_content/TurnosMedicos",
   "Mode": "Default",
@@ -6247,7 +6247,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 11:17:30 GMT"
+          "Value": "Thu, 06 Mar 2025 14:04:48 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -6284,7 +6284,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 11:17:30 GMT"
+          "Value": "Thu, 06 Mar 2025 14:04:48 GMT"
         },
         {
           "Name": "Cache-Control",

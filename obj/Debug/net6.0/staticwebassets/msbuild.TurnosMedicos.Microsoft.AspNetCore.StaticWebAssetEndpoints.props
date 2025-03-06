@@ -148,13 +148,13 @@
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\style.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3097"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 11:17:30 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3097"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 14:04:48 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/TurnosMedicos/css/style.yc58b8o4eq.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\style.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"yc58b8o4eq"},{"Name":"integrity","Value":"sha256-IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs="},{"Name":"label","Value":"_content/TurnosMedicos/css/style.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3097"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 11:17:30 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3097"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 14:04:48 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/TurnosMedicos/favicon.61n19gt1b8.ico">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\favicon.ico'))</AssetFile>

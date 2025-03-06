@@ -17,7 +17,8 @@
     <RadzenButton Click=@ReloadGrid Text="Ver turnos" Icon="visibility" ButtonStyle="ButtonStyle.Base" />
 </RadzenStack>
 
-<RadzenColumn Size="12" SizeMd="8" class="rz-p-2 rz-p-md-8" Style="margin-bottom: 4rem;">
+
+<RadzenColumn Size="12" class="rz-p-2" Style="width: 100%; margin-bottom: 4rem;">
     <RadzenStack Gap="1.5rem">
         <RadzenDataGrid @ref="turnosGrid"
                         AllowFiltering="true"
@@ -29,59 +30,59 @@
                         Data="@turnos"
                         TItem="Turno"
                         ColumnWidth="200px"
-                        Style="width: 100%; max-width: 1600px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                        Style="width: 100%; max-width: 100%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
             <Columns>
-                <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="200px">
+                <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="120px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.NombrePaciente" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="ApellidoPaciente" Title="Apellido" Width="150px">
+                <RadzenDataGridColumn Property="ApellidoPaciente" Title="Apellido" Width="120px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.ApellidoPaciente" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Dni" Title="DNI" Width="120px">
+                <RadzenDataGridColumn Property="Dni" Title="DNI" Width="100px">
                     <EditTemplate Context="shift">
                         <RadzenNumeric TValue="int?" @bind-Value="shift.Dni" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Cobertura" Title="Cobertura" Width="150px">
+                <RadzenDataGridColumn Property="Cobertura" Title="Cobertura" Width="120px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.Cobertura" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Medico" Title="Médico" Width="150px">
+                <RadzenDataGridColumn Property="Medico" Title="Médico" Width="120px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.Medico" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="130px">
+                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="100px">
                     <Template Context="shift">
                         @shift.FechaTurno.ToString("dd/MM/yyyy")
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="130px">
+                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="70px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.HoraTurno" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" TextAlign="TextAlign.Left" Width="90px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas"  Width="60px">
                     <Template Context="shift">
                         @if (!string.IsNullOrEmpty(shift.Notas))
                         {
                             <RadzenButton Click=@(args => VerNotas(shift.Notas))
-                                          Text="Ver"
-                                          Size="ButtonSize.Small"
-                                          ButtonStyle="ButtonStyle.Info"
-                                           />
+                                            Text="Ver"
+                                            Size="ButtonSize.Small"
+                                            ButtonStyle="ButtonStyle.Info"
+                                            />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -90,19 +91,20 @@
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="90px">
                     <Template Context="shift">
                         <RadzenButton Icon="build"
-                                      ButtonStyle="ButtonStyle.Success"
-                                      Size="ButtonSize.Small"
-                                      Click="@(args => EditarTurno(shift.Id))" />
+                                        ButtonStyle="ButtonStyle.Success"
+                                        Size="ButtonSize.Small"
+                                        Click="@(args => EditarTurno(shift.Id))" />
                         <RadzenButton Icon="delete"
-                                      ButtonStyle="ButtonStyle.Danger"
-                                      Size="ButtonSize.Small"
-                                      Click="@(args => DeleteRow(shift))" />
+                                        ButtonStyle="ButtonStyle.Danger"
+                                        Size="ButtonSize.Small"
+                                        Click="@(args => DeleteRow(shift))" />
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>
         </RadzenDataGrid>
     </RadzenStack>
 </RadzenColumn>
+
 
 
 @code
