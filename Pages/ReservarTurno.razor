@@ -119,12 +119,14 @@
         {
             var result = await DialogService.OpenAsync("Elegir una fecha", ds =>
             @<RadzenStack Gap="1.5rem">
-                <p><b>Fechas disponibles disponibles:</b></p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                    <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenLabel Text="Seleccionar" Component="FechasPosibles" />
-                        <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateRender=@nuevoTurno.DesactivarFechas DateFormat="d/M/yyyy" Name="FechasPosibles" />
-
+                <p><b>Fechas disponibles:</b></p>
+                <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem" >
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+                            <RadzenLabel Text="Seleccionar" Component="FechasPosibles" />
+                            <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateRender=@nuevoTurno.DesactivarFechas DateFormat="d/M/yyyy" Name="FechasPosibles" />
+                    </RadzenStack>
+                <br />
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
                         <RadzenButton Text="Confirmar" Click="() => ds.Close(true)" />
                         <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                     </RadzenStack>
@@ -157,10 +159,13 @@
             var result = await DialogService.OpenAsync("Elegir horario", ds =>
             @<RadzenStack Gap="1.5rem">
                 <p><b>Horarios disponibles:</b></p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                    <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
                         <RadzenLabel Text="Seleccionar" Component="DropDownBindValue" />
                         <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno Data=@nuevoTurno.ObtenerHorariosDisponibles() Style="width: 30%; max-width: 400px;" Name="DropDownBindValue" />
+                    </RadzenStack>
+                    <br />
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
                         <RadzenButton Text="Reservar" Click="() => ds.Close(true)" />
                         <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                     </RadzenStack>
