@@ -9,7 +9,19 @@
                 <Authorized>
                     <li class="nav-item" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link text-white fs-4" href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>
 
-                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/editarmedico">Médicos</a></li>
+                    
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white fs-4" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Médicos
+                        </a>
+                        <div id="navbarMedicos" class="dropdown-menu navbar-dark bg-dark" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item text-white fs-5" style="" href="/editarmedico">Horarios</a>
+                            <a class="dropdown-item text-white fs-5" href="/bloquearfechasmedico">Bloquear fechas</a>
+                        </div>
+                    </li>
+
+
 
                     <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/listarturnos">Turnos</a></li>
                     <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Reservar turno</a></li>

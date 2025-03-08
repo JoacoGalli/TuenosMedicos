@@ -8,3 +8,9 @@ body {
     font-size: 10px;
 }
 
+#navbarMedicos a:hover {
+    background-color:dodgerblue;
+    color: white !important;
+  
+}
+

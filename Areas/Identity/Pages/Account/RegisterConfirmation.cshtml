@@ -1,22 +1,39 @@
 ﻿@page
 @model RegisterConfirmationModel
 @{
-    ViewData["Title"] = "Confirmacion de registro";
+    ViewData["Title"] = "Confirmación de registro";
 }
 
 <h1>@ViewData["Title"]</h1>
 @{
     if (@Model.DisplayConfirmAccountLink)
     {
-<p>
-    Aca tenemos link de confirmacion para enviar por email: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Confirmar email</a>
-</p>
+        <p>
+            @EnviarEmailConfirmacion();
+        </p>
     }
     else
     {
-<p>
-       Revisa tu email para confirmar la cuenta
-</p>
+        <p>
+            Revisa tu email para confirmar la cuenta
+        </p>
     }
 }
 
+
+@functions{
+    public string EnviarEmailConfirmacion()
+    {
+        EmailService nuevoEmail = new EmailService();
+        string cuerpoEmail = "Hemos registrado correctamente tu email.<br><br> Para confirmarlo, haz click en el siguiente link:<br><br> " + Model.EmailConfirmationUrl + "<br><br> Muchas gracias. <br><br><br> Consultorio médico";
+
+        //nuevoEmail.EnviarCorreoAsync(Model.Email, "Confirmación de email", cuerpoEmail);
+        nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de email - Consultorio médico", cuerpoEmail);
+
+        string mensajeAmostrar = "Se ha enviado un email de confirmación a " + Model.Email;
+
+        return mensajeAmostrar;
+    }
+
+
+}

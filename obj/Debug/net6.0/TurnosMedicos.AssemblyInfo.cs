@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TurnosMedicos")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+013dcea7027bb473ee49c3396562d64d95d3d285")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3f976b1b34dccbc07f5c0f1f0cec10ab4820e417")]
 [assembly: System.Reflection.AssemblyProductAttribute("TurnosMedicos")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TurnosMedicos")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

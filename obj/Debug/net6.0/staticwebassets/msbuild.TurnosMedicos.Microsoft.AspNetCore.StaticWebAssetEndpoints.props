@@ -147,14 +147,14 @@
     <StaticWebAssetEndpoint Include="_content/TurnosMedicos/css/style.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\style.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3097"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 14:04:48 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"3072"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM=\u0022"},{"Name":"Last-Modified","Value":"Sat, 08 Mar 2025 10:44:50 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/TurnosMedicos/css/style.yc58b8o4eq.css">
+    <StaticWebAssetEndpoint Include="_content/TurnosMedicos/css/style.hzg5c7o86t.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\style.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"yc58b8o4eq"},{"Name":"integrity","Value":"sha256-IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs="},{"Name":"label","Value":"_content/TurnosMedicos/css/style.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3097"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022IlhNZIdQSH5FAMC348MmRkNBEBR\u002BamYUvQ6OwPUHwJs=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 14:04:48 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"hzg5c7o86t"},{"Name":"integrity","Value":"sha256-w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM="},{"Name":"label","Value":"_content/TurnosMedicos/css/style.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"3072"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM=\u0022"},{"Name":"Last-Modified","Value":"Sat, 08 Mar 2025 10:44:50 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/TurnosMedicos/favicon.61n19gt1b8.ico">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\favicon.ico'))</AssetFile>
@@ -180,17 +180,17 @@
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"waopcgo0wl"},{"Name":"integrity","Value":"sha256-uGyyVvCIAouo8PdIrYIqkAndal9UMjN6Y0ua2gsheGI="},{"Name":"label","Value":"_content/TurnosMedicos/images/hush-naidoo-jade-photography-yo01Z-9HQAw-unsplash.jpg"}]]]></EndpointProperties>
       <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"445493"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\u0022uGyyVvCIAouo8PdIrYIqkAndal9UMjN6Y0ua2gsheGI=\u0022"},{"Name":"Last-Modified","Value":"Sun, 16 Feb 2025 21:20:14 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/TurnosMedicos/TurnosMedicos.bundle.scp.css">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.t04qxupvyb.bundle.scp.css'))</AssetFile>
+    <StaticWebAssetEndpoint Include="_content/TurnosMedicos/TurnosMedicos.0hd1795qa1.bundle.scp.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.0hd1795qa1.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-3d\u002B/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1800"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00223d\u002B/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 11:57:56 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"0hd1795qa1"},{"Name":"integrity","Value":"sha256-dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14="},{"Name":"label","Value":"_content/TurnosMedicos/TurnosMedicos.bundle.scp.css"}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1913"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=\u0022"},{"Name":"Last-Modified","Value":"Sat, 08 Mar 2025 11:15:44 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
-    <StaticWebAssetEndpoint Include="_content/TurnosMedicos/TurnosMedicos.t04qxupvyb.bundle.scp.css">
-      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.t04qxupvyb.bundle.scp.css'))</AssetFile>
+    <StaticWebAssetEndpoint Include="_content/TurnosMedicos/TurnosMedicos.bundle.scp.css">
+      <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.0hd1795qa1.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
-      <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"t04qxupvyb"},{"Name":"integrity","Value":"sha256-3d\u002B/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ="},{"Name":"label","Value":"_content/TurnosMedicos/TurnosMedicos.bundle.scp.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1800"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u00223d\u002B/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=\u0022"},{"Name":"Last-Modified","Value":"Thu, 06 Mar 2025 11:57:56 GMT"}]]]></ResponseHeaders>
+      <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14="}]]]></EndpointProperties>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1913"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=\u0022"},{"Name":"Last-Modified","Value":"Sat, 08 Mar 2025 11:15:44 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
   </ItemGroup>
 </Project>

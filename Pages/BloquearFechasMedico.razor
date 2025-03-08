@@ -1,0 +1,214 @@
+﻿@page "/bloquearfechasmedico"
+@using Microsoft.EntityFrameworkCore
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<PageTitle>Bloquear fechas</PageTitle>
+
+<h2>Bloquear fechas</h2>
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
+    <RadzenLabel Text="Seleccionar médico" Component="DropDownBindValue" />
+    <RadzenDropDown @bind-Value="medicoSeleccionado" Placeholder="Seleccionar" Data="@listaMedicos" Style="width: 30%;" TextProperty="NombreMedico" ValueProperty="NombreMedico" Name="Medico">
+        <RadzenRequiredValidator Component="Medico" Text="Debes seleccionar un médico" />
+    </RadzenDropDown>
+    <RadzenButton Text="Ver" Click=RecargarCalendario Icon="visibility" ButtonStyle="ButtonStyle.Base" />
+</RadzenStack>
+
+
+<RadzenScheduler @ref=@calendario SlotRender=@OnSlotRender style="height: 768px;" TItem="MedicoFechaBloqueada" Data=@bloqueadas StartProperty="FechaBloqueada" EndProperty="FechaBloqueada" ShowHeader=true
+TextProperty="Motivo" SelectedIndex="2"
+SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
+    <RadzenDayView />
+    <RadzenWeekView />
+    <RadzenMonthView />
+</RadzenScheduler>
+
+<br />
+
+
+
+
+
+
+@code
+{
+    string medicoSeleccionado = "";
+    List<Medico> listaMedicos = Medico.ObtenerMedicos();
+
+    RadzenScheduler<MedicoFechaBloqueada> calendario;
+
+
+    IList<MedicoFechaBloqueada> bloqueadas = new List<MedicoFechaBloqueada>{};
+
+    DateTime fechaABloquarDesde;
+    DateTime fechaABloquarHasta;
+    string motivoABloquear;
+
+
+    void RecargarCalendario()
+    {
+        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico`='" + medicoSeleccionado + "';";
+        bloqueadas = Base.SelectAMedicosFechasBloqueadas(query2);
+    }
+
+    // Pinta el dia de hoy en el calendario mensual.
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background: var(--rz-scheduler-highlight-background-color, rgba(255,220,40,.2));";
+        }
+
+    }
+
+
+    //Este crea el dialogo cuando apreto en una fecha vacia
+    async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
+    {
+        fechaABloquarDesde = args.Start;
+        fechaABloquarHasta = args.Start;
+        motivoABloquear = "";
+
+        if (args.View.Text != "Year" && medicoSeleccionado!="")
+        {
+            var result = await DialogService.OpenAsync("Bloquear fecha", ds =>
+            @<RadzenStack Gap="1.5rem">
+            <p>Estas bloqueando las fechas para: <b>@medicoSeleccionado</b></p>
+                <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                        <RadzenLabel Text="Motivo" Style="width: 4rem;" />
+                <RadzenTextBox @bind-Value="@motivoABloquear" Name="Motivo" Style="width: 12rem;" />
+                <RadzenRequiredValidator Component="motivoABloquear" Text="El motivo es necesario" />
+                    </RadzenStack>
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                        <RadzenLabel Text="Desde" Style="width: 4rem;" />
+                <RadzenDatePicker @bind-Value="@fechaABloquarDesde" Name="Desde" DateFormat="d/M/yyyy" ShowTime="false" Style="width: 12rem;" />
+                    <RadzenRequiredValidator Component="Desde" Text="Especifica una fecha" />
+                    </RadzenStack>
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                <RadzenLabel Text="Hasta" Style="width: 4rem;" />
+                <RadzenDatePicker Name="Hasta" @bind-Value="@fechaABloquarHasta" DateFormat="d/M/yyyy" ShowTime="false" Style="width: 12rem;" />
+                <RadzenRequiredValidator Component="Hasta" Text="Especifica una fecha" />
+                    </RadzenStack>
+                    <br />
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                        <RadzenButton Text="Confirmar" Click=InsertarFechasABase />
+                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenStack>
+    );
+            await calendario.Reload();
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Atención", Detail = "Elige un médico primero" });
+        }
+    }
+
+    void InsertarFechasABase()
+    {
+        if (!string.IsNullOrWhiteSpace(motivoABloquear) && fechaABloquarHasta != DateTime.MinValue )
+        {
+            List<MedicoFechaBloqueada> fechasABloquear = new List<MedicoFechaBloqueada>();
+
+            //Por cada dia entre Desde y Hasta, voy a crear un nuevo elemento y agregarlo a la lista.
+            for (DateTime fecha = fechaABloquarDesde; fecha <= fechaABloquarHasta; fecha = fecha.AddDays(1))
+            {
+                fechasABloquear.Add(new MedicoFechaBloqueada
+                    {
+                        NombreMedico = medicoSeleccionado,
+                        FechaBloqueada = fecha,
+                        Motivo = motivoABloquear
+                    });
+            }
+
+            foreach (var item in fechasABloquear)
+            {
+                string query = "INSERT INTO `turnos-medicos`.`medicos_fechas_bloqueadas` (`nombreMedico`,`fechaBloqueada`,`motivo`) VALUES ('" + item.NombreMedico + "','" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "','" + item.Motivo + "');";
+                int intentoBloqueoFechas = Base.ConexionBase(query);
+
+            }
+
+
+            RecargarCalendario();
+            DialogService.Close(); // Cierra el diálogo
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Atención", Detail = "Debes completar todos los campos" });
+        }
+
+
+
+    }
+
+
+
+
+
+    //Este es para editar una fecha ya bloqueada
+    async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<MedicoFechaBloqueada> args)
+    {
+
+
+        var result = await DialogService.OpenAsync("Eliminar bloqueo", ds =>
+        @<RadzenStack Gap="1.5rem">
+            <p>¿Deseas eliminar el bloqueo de fechas de <b>@medicoSeleccionado</b>?</p>
+            <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                    <RadzenLabel Text="Motivo" Style="width: 4rem;" />
+                <RadzenTextBox @bind-Value="@args.Data.Motivo" Disabled="true" Name="Motivo" Style="width: 12rem;" />                   
+                </RadzenStack>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                    <RadzenLabel Text="Desde" Style="width: 4rem;" />
+                <RadzenDatePicker @bind-Value="@args.Start" Disabled="true" Name="Desde" DateFormat="d/M/yyyy" ShowTime="false" Style="width: 12rem;" />                   
+                </RadzenStack>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                    <RadzenLabel Text="Hasta" Style="width: 4rem;" />
+                <RadzenDatePicker Name="Hasta" @bind-Value="@args.Start" Disabled="true" DateFormat="d/M/yyyy" ShowTime="false" Style="width: 12rem;" />                    
+                </RadzenStack>
+                <br />
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                <RadzenButton Text="Eliminar" Click="() => EliminarFechasEnBase(args.Data.Motivo,args.Start)" />
+                    <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenStack>
+    );
+
+        await calendario.Reload();
+    }
+
+
+    void EliminarFechasEnBase(string motivo, DateTime fechaABorrar)
+    {
+        Console.WriteLine(motivo + "- "+ fechaABorrar + "- "+ medicoSeleccionado);
+        string query = "DELETE FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico` = '" + medicoSeleccionado + "' AND `fechaBloqueada`='" + fechaABorrar.ToString("yyyy-MM-dd") + "' AND `motivo`='"+motivo+"';";
+        int intentoBloqueoFechas = Base.ConexionBase(query);
+        if(intentoBloqueoFechas==0)
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Atención", Detail = "Bloqueo eliminado." });
+        }
+
+        RecargarCalendario();
+        DialogService.Close(); // Cierra el diálogo
+    }
+
+
+
+    //Este es para pintar una fecha por algo en especifico.
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<MedicoFechaBloqueada> args)
+    {
+        // Never call StateHasChanged in AppointmentRender - would lead to infinite loop
+        
+      
+        // if (args.Data.Text == "Birthday")
+        // {
+        //     args.Attributes["style"] = "background: red";
+        // }
+    }
+
+}

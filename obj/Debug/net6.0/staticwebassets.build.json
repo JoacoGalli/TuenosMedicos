@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "YskG5VUee5DOcAzUbmuO/4QyLG4fb/7nf0utRFnaJ40=",
+  "Hash": "kuA62ilcoLvpPIh2RsJV1mlMLoj3pEY2X+oIeihF18E=",
   "Source": "TurnosMedicos",
   "BasePath": "_content/TurnosMedicos",
   "Mode": "Default",
@@ -2026,8 +2026,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "ScopedCss",
       "AssetTraitValue": "ApplicationBundle",
-      "Fingerprint": "t04qxupvyb",
-      "Integrity": "3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=",
+      "Fingerprint": "0hd1795qa1",
+      "Integrity": "dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\obj\\Debug\\net6.0\\scopedcss\\bundle\\TurnosMedicos.styles.css"
@@ -2047,8 +2047,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "ScopedCss",
       "AssetTraitValue": "ProjectBundle",
-      "Fingerprint": "t04qxupvyb",
-      "Integrity": "3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=",
+      "Fingerprint": "0hd1795qa1",
+      "Integrity": "dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\TurnosMedicos.bundle.scp.css"
@@ -2320,8 +2320,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "yc58b8o4eq",
-      "Integrity": "IlhNZIdQSH5FAMC348MmRkNBEBR+amYUvQ6OwPUHwJs=",
+      "Fingerprint": "hzg5c7o86t",
+      "Integrity": "w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\style.css"
@@ -6235,7 +6235,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "3097"
+          "Value": "3072"
         },
         {
           "Name": "Content-Type",
@@ -6243,11 +6243,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"IlhNZIdQSH5FAMC348MmRkNBEBR+amYUvQ6OwPUHwJs=\""
+          "Value": "\"w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 14:04:48 GMT"
+          "Value": "Sat, 08 Mar 2025 10:44:50 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -6257,12 +6257,12 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-IlhNZIdQSH5FAMC348MmRkNBEBR+amYUvQ6OwPUHwJs="
+          "Value": "sha256-w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM="
         }
       ]
     },
     {
-      "Route": "css/style.yc58b8o4eq.css",
+      "Route": "css/style.hzg5c7o86t.css",
       "AssetFile": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\wwwroot\\css\\style.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -6272,7 +6272,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "3097"
+          "Value": "3072"
         },
         {
           "Name": "Content-Type",
@@ -6280,11 +6280,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"IlhNZIdQSH5FAMC348MmRkNBEBR+amYUvQ6OwPUHwJs=\""
+          "Value": "\"w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 14:04:48 GMT"
+          "Value": "Sat, 08 Mar 2025 10:44:50 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -6294,7 +6294,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "yc58b8o4eq"
+          "Value": "hzg5c7o86t"
         },
         {
           "Name": "label",
@@ -6302,7 +6302,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-IlhNZIdQSH5FAMC348MmRkNBEBR+amYUvQ6OwPUHwJs="
+          "Value": "sha256-w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM="
         }
       ]
     },
@@ -8691,6 +8691,96 @@
       ]
     },
     {
+      "Route": "TurnosMedicos.0hd1795qa1.bundle.scp.css",
+      "AssetFile": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\TurnosMedicos.bundle.scp.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1913"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 08 Mar 2025 11:15:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "0hd1795qa1"
+        },
+        {
+          "Name": "label",
+          "Value": "TurnosMedicos.bundle.scp.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14="
+        }
+      ]
+    },
+    {
+      "Route": "TurnosMedicos.0hd1795qa1.styles.css",
+      "AssetFile": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\obj\\Debug\\net6.0\\scopedcss\\bundle\\TurnosMedicos.styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1913"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 08 Mar 2025 11:15:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "0hd1795qa1"
+        },
+        {
+          "Name": "label",
+          "Value": "TurnosMedicos.styles.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14="
+        }
+      ]
+    },
+    {
       "Route": "TurnosMedicos.bundle.scp.css",
       "AssetFile": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\TurnosMedicos.bundle.scp.css",
       "Selectors": [],
@@ -8701,7 +8791,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1800"
+          "Value": "1913"
         },
         {
           "Name": "Content-Type",
@@ -8709,11 +8799,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=\""
+          "Value": "\"dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 11:57:56 GMT"
+          "Value": "Sat, 08 Mar 2025 11:15:44 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -8723,7 +8813,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ="
+          "Value": "sha256-dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14="
         }
       ]
     },
@@ -8738,7 +8828,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1800"
+          "Value": "1913"
         },
         {
           "Name": "Content-Type",
@@ -8746,11 +8836,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=\""
+          "Value": "\"dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 11:57:56 GMT"
+          "Value": "Sat, 08 Mar 2025 11:15:44 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -8760,97 +8850,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ="
-        }
-      ]
-    },
-    {
-      "Route": "TurnosMedicos.t04qxupvyb.bundle.scp.css",
-      "AssetFile": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\TurnosMedicos.bundle.scp.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "1800"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 11:57:56 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "t04qxupvyb"
-        },
-        {
-          "Name": "label",
-          "Value": "TurnosMedicos.bundle.scp.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ="
-        }
-      ]
-    },
-    {
-      "Route": "TurnosMedicos.t04qxupvyb.styles.css",
-      "AssetFile": "C:\\Users\\kvhol\\Desktop\\turnosMedicos\\turnosmed\\obj\\Debug\\net6.0\\scopedcss\\bundle\\TurnosMedicos.styles.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "1800"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Thu, 06 Mar 2025 11:57:56 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "t04qxupvyb"
-        },
-        {
-          "Name": "label",
-          "Value": "TurnosMedicos.styles.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ="
+          "Value": "sha256-dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14="
         }
       ]
     }

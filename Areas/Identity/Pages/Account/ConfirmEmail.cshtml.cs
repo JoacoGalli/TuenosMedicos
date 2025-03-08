@@ -44,7 +44,7 @@ namespace TurnosMedicos.Areas.Identity.Pages.Account
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            StatusMessage = result.Succeeded ? "Email confirmado" : "Error confirmando el email.";
+            StatusMessage = result.Succeeded ? "Tu correo ha sido confirmado con éxito. Ahora puedes iniciar sesíon" : "Error confirmando el email.";
             return Page();
         }
     }

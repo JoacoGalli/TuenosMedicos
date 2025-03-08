@@ -228,8 +228,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>yc58b8o4eq</Fingerprint>
-      <Integrity>IlhNZIdQSH5FAMC348MmRkNBEBR+amYUvQ6OwPUHwJs=</Integrity>
+      <Fingerprint>hzg5c7o86t</Fingerprint>
+      <Integrity>w5Io2BvPFdquYpLG154xLyTODwYjNg4VdKlghy4HulM=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\style.css'))</OriginalItemSpec>
@@ -270,23 +270,23 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\hush-naidoo-jade-photography-yo01Z-9HQAw-unsplash.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
-    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.t04qxupvyb.bundle.scp.css'))">
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.0hd1795qa1.bundle.scp.css'))">
       <SourceType>Package</SourceType>
       <SourceId>TurnosMedicos</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
       <BasePath>_content/TurnosMedicos</BasePath>
-      <RelativePath>TurnosMedicos.t04qxupvyb.bundle.scp.css</RelativePath>
+      <RelativePath>TurnosMedicos.0hd1795qa1.bundle.scp.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>Reference</AssetMode>
       <AssetRole>Primary</AssetRole>
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ProjectBundle</AssetTraitValue>
-      <Fingerprint>t04qxupvyb</Fingerprint>
-      <Integrity>3d+/SRCNjj9CEYoMYZoo3nFi1eAGxdYMi1/ESg1ccSQ=</Integrity>
+      <Fingerprint>0hd1795qa1</Fingerprint>
+      <Integrity>dPVPRiRLZbpJcWajJ1Zm/uTaZMk7cNUONcKvTpvQT14=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.t04qxupvyb.bundle.scp.css'))</OriginalItemSpec>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\TurnosMedicos.0hd1795qa1.bundle.scp.css'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>
