@@ -1,13 +1,15 @@
 /* Aca puedo agregar el css necesario para el documento */
-body{
+html, body {
     background-image: url('https://www.revistapresencia.net/wp-content/uploads/2020/11/FONDO-PAGINA-WEB.png');
-    background-size: cover; 
-    background-position: center;     
-    background-repeat:repeat-y;
-    height: 100vh;                   
-    margin: 0;   
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat-y;
+    height: 100vh;
+    margin: 0;
     min-height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
-    margin: 0; /* Elimina márgenes predeterminados */
+
+    display: flex;
+    flex-direction: column;
 }
 
 h1:focus {

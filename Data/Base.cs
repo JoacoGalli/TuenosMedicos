@@ -148,4 +148,40 @@ class Base
         }
         return resultados;
     }
+
+    public static List<MedicoFechaBloqueada> SelectAMedicosFechasBloqueadas(string query)
+    {
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
+        List<MedicoFechaBloqueada> resultados = new List<MedicoFechaBloqueada>();
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        MedicoFechaBloqueada nuevaFecha = new MedicoFechaBloqueada
+                        {
+                            
+                            NombreMedico = reader.GetString("nombreMedico"),
+                            FechaBloqueada = reader.GetDateTime("fechaBloqueada"),
+                            Motivo = reader.IsDBNull(reader.GetOrdinal("motivo")) ? "" : reader.GetString("motivo") // Maneja valores nulos
+                        };
+
+                        resultados.Add(nuevaFecha);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error en la base de datos: " + ex.Message);
+            }
+        }
+        return resultados;
+    }
 }

@@ -15,8 +15,23 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString,new MySqlServerVersion(new Version(8,0,41))));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+      .AddErrorDescriber<ErroresRegistroEnEspañol>();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Configuración de contraseñas
+    options.Password.RequireUppercase = false;       // No requiere mayúsculas
+    options.Password.RequireNonAlphanumeric = false; // No requiere caracteres especiales
+    options.Password.RequiredLength = 6;             // (Opcional) Mínimo de caracteres
+    options.Password.RequireDigit = true;            // (Opcional) Mantiene el requerimiento de números
+    
+});
+
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();

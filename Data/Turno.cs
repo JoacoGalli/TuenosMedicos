@@ -47,8 +47,22 @@ class Turno
             };
         }).ToList();
 
+
+        //Verifico que fechas fueron bloqueadas por el admin
+        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico`='" + Medico+"';";
+        
+        List<DateTime> fechaDes = new List<DateTime>();
+        
+        List<MedicoFechaBloqueada> fechasBloq = Base.SelectAMedicosFechasBloqueadas(query2);
+        foreach (var fecha in fechasBloq)
+        {
+            fechaDes.Add(fecha.FechaBloqueada);   
+        }
+
         // Desactivo los dias que no trabaja.
-        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) || args.Date.Date < DateTime.Today;
+        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) || args.Date.Date < DateTime.Today || fechaDes.Contains(args.Date.Date);
+
+
 
         if (!args.Disabled)
         {

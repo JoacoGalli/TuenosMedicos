@@ -23,25 +23,25 @@
             <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true"
                             Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 800px;">
                 <Columns>
-                    <RadzenDataGridColumn Property="NombreMedico" Title="Médico" Width="200px">
+                    <RadzenDataGridColumn Property="NombreMedico" Title="Médico" Width="130px">
                         <EditTemplate Context="med">
                             <RadzenTextBox @bind-Value="med.NombreMedico" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="diaTrabajo" Title="Día" Width="110px">
+                    <RadzenDataGridColumn Property="diaTrabajo" Title="Día" Width="90px">
                         <EditTemplate Context="med">
                             <RadzenTextBox @bind-Value="med.diaTrabajo" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="horaInicioTrabajo" Title="Inicio" Width="110px">
+                    <RadzenDataGridColumn Property="horaInicioTrabajo" Title="Inicio" Width="60px">
                         <EditTemplate Context="med">
                             <RadzenTextBox @bind-Value="med.horaInicioTrabajo" Style="width: 100%;" />
                         </EditTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="horaFinTrabajo" Title="Fin" Width="110px">
+                    <RadzenDataGridColumn Property="horaFinTrabajo" Title="Fin" Width="60px">
                         <EditTemplate Context="med">
                             <RadzenTextBox @bind-Value="med.horaFinTrabajo" Style="width: 100%;" />
                         </EditTemplate>

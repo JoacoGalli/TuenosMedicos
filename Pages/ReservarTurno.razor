@@ -138,7 +138,7 @@
         {
             var result = await DialogService.OpenAsync("Primero debes elegir un medico.", ds =>
             @<RadzenStack Gap="1.5rem">
-                <p><b>Elige un medico antes de seleccionar una fecha.</b></p>
+                <p><b>Elige un médico antes de seleccionar una fecha.</b></p>
                 <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
                     <RadzenStack Orientation="Orientation.Horizontal">
                         <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
@@ -208,7 +208,7 @@
                 <p><b>¡Tu turno ha sido confirmado!</b></p>
                 <p>Aquí están los datos de la reserva:</p>
                 <p><b>Paciente:</b> @nuevoTurno.NombrePaciente</p>
-                <p><b>Medico:</b> @nuevoTurno.Medico</p>
+                <p><b>Médico:</b> @nuevoTurno.Medico</p>
                 <p><b>Fecha:</b> @fechaMostrar</p>
                 <p><b>Hora:</b> @nuevoTurno.HoraTurno</p>
                 <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
@@ -219,7 +219,7 @@
             </RadzenStack>);
             
                 EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "Paciente: " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + " Fecha: " + nuevoTurno.FechaTurno.ToString("dd/MM/yyyy") + " Hora: " + nuevoTurno.HoraTurno;
+                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
 
                 await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
 
@@ -243,7 +243,7 @@
         {
             var err = await DialogService.OpenAsync("Ha habido un error", ds =>
             @<RadzenStack Gap="1.5rem">
-                <p><b>Verifica que todos los campos esten completos.</b></p>
+                <p><b>Verifica que todos los campos estén completos.</b></p>
                 <p>Intentalo nuevamente.</p>
                 <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
                     <RadzenStack Orientation="Orientation.Horizontal">
