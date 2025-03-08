@@ -1,0 +1,32 @@
+# Ignorar archivos de Visual Studio
+.vs/
+
+# Ignorar archivos de compilación
+bin/
+obj/
+
+# Ignorar archivos de usuario y configuración de Visual Studio
+*.user
+*.suo
+*.cache
+*.csproj.user
+*.vscode/
+
+# Ignorar archivos de depuración y configuración generados
+*.log
+*.tmp
+*.bak
+
+# Ignorar archivos de NuGet
+*.nupkg
+packages/
+project.lock.json
+
+# Ignorar archivos de publicación
+publish/
+wwwroot/
+
+# Ignorar configuraciones locales de entorno
+appsettings.Development.json
+secrets.json
+
