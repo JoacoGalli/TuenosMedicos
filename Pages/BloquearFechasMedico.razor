@@ -16,23 +16,17 @@
 </RadzenStack>
 
 
-<RadzenScheduler @ref=@calendario SlotRender=@OnSlotRender style="height: 768px;" TItem="MedicoFechaBloqueada" Data=@bloqueadas StartProperty="FechaBloqueada" EndProperty="FechaBloqueada" ShowHeader=true
-TextProperty="Motivo" SelectedIndex="2"
-SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
-    <RadzenDayView />
-    <RadzenWeekView />
+<RadzenScheduler  @ref=@calendario SlotRender=@OnSlotRender style="height: 768px;" TItem="MedicoFechaBloqueada" Data=@bloqueadas StartProperty="FechaBloqueada" EndProperty="FechaBloqueada" ShowHeader=true
+TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
     <RadzenMonthView />
 </RadzenScheduler>
 
 <br />
 
 
-
-
-
-
 @code
 {
+
     string medicoSeleccionado = "";
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
@@ -127,8 +121,30 @@ SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRende
 
             foreach (var item in fechasABloquear)
             {
+                //Inserto las fechas bloqueadas en la base
                 string query = "INSERT INTO `turnos-medicos`.`medicos_fechas_bloqueadas` (`nombreMedico`,`fechaBloqueada`,`motivo`) VALUES ('" + item.NombreMedico + "','" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "','" + item.Motivo + "');";
                 int intentoBloqueoFechas = Base.ConexionBase(query);
+
+                //Pregunto si hay turnos en ese dia
+                string query2 = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,telefono,domicilio,email FROM `turnos-medicos`.`turnos` WHERE medico='" + medicoSeleccionado + "' AND fechaTurno='" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "';";
+                List<Turno> turnosACancelar = Base.SelectATurnos(query2);
+
+                //Si hay turnos, aviso a cada uno por email que se canceló.
+                foreach (Turno turno in turnosACancelar)
+                {
+                    if(!string.IsNullOrEmpty(turno.Email))
+                    {
+                        EmailService nuevoEmail = new EmailService();
+                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
+                    
+                        //nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
+                        nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
+                        
+                        //Actualizo el estado del turno en la base.
+                        string query3 = "UPDATE `turnos-medicos`.turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas' WHERE medico='"+turno.Medico+"' AND fechaTurno='"+turno.FechaTurno.ToString("yyyy-MM-dd")+"';";
+                        int actualizoEstado = Base.ConexionBase(query3);
+                    }
+                }
 
             }
 
@@ -190,7 +206,7 @@ SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRende
         int intentoBloqueoFechas = Base.ConexionBase(query);
         if(intentoBloqueoFechas==0)
         {
-            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Atención", Detail = "Bloqueo eliminado." });
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Bloqueo eliminado." });
         }
 
         RecargarCalendario();

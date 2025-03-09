@@ -9,21 +9,20 @@ class Turno
     public string ApellidoPaciente { get; set; } = "";
     public int? Dni {get; set;}
     public string? Cobertura {get; set;}
-
     public string? Medico {get; set;} ="";
-
     public DateTime FechaTurno {get; set;}
-
     public string HoraTurno {get; set;} ="";
-
     public string? Notas { get; set; } = "";
+    public string? Telefono { get; set; }
+    public string Email { get; set; } = "";
+    public string? Domicilio { get; set; } = "";
 
 
 
-   
 
 
-    
+
+
     public void DesactivarFechas(DateRenderEventArgs args)
     {
         //Determino que dias trabaja el medico

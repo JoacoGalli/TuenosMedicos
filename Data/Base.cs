@@ -134,6 +134,9 @@ class Base
                             Medico = reader.GetString("medico"),
                             FechaTurno = reader.GetDateTime("fechaTurno"),
                             HoraTurno = reader.GetString("horaTurno"),
+                            Domicilio = reader.GetString("domicilio"),
+                            Email = reader.GetString("email"),
+                            Telefono = reader.GetString("telefono"),
                             Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? "" : reader.GetString("notas") // Maneja valores nulos
                         };
 
