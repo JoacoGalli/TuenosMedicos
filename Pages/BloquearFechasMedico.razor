@@ -107,7 +107,6 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
         if (!string.IsNullOrWhiteSpace(motivoABloquear) && fechaABloquarHasta != DateTime.MinValue )
         {
             List<MedicoFechaBloqueada> fechasABloquear = new List<MedicoFechaBloqueada>();
-
             //Por cada dia entre Desde y Hasta, voy a crear un nuevo elemento y agregarlo a la lista.
             for (DateTime fecha = fechaABloquarDesde; fecha <= fechaABloquarHasta; fecha = fecha.AddDays(1))
             {
@@ -119,6 +118,8 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                     });
             }
 
+
+            List<Turno> turnosCancelados = new List<Turno> { };
             foreach (var item in fechasABloquear)
             {
                 //Inserto las fechas bloqueadas en la base
@@ -136,21 +137,28 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                     {
                         EmailService nuevoEmail = new EmailService();
                         string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
-                    
+
                         //nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
                         nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
-                        
+
                         //Actualizo el estado del turno en la base.
                         string query3 = "UPDATE `turnos-medicos`.turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas' WHERE medico='"+turno.Medico+"' AND fechaTurno='"+turno.FechaTurno.ToString("yyyy-MM-dd")+"';";
                         int actualizoEstado = Base.ConexionBase(query3);
+
+                        turnosCancelados.Add(turno);
                     }
                 }
+            }
+            DialogService.Close();
 
+            if(turnosCancelados.Count()>0)
+            {
+                MostrarTurnosCancelados(turnosCancelados);
             }
 
 
             RecargarCalendario();
-            DialogService.Close(); // Cierra el diálogo
+             
         }
         else
         {
@@ -161,6 +169,27 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
 
     }
 
+
+    async Task MostrarTurnosCancelados(List<Turno> turnos)
+    {
+        var result = await DialogService.OpenAsync("Bloqueo establecido.", ds =>
+        @<RadzenStack Gap="1.5rem">
+        <p>Se han cancelado los siguientes turnos:</p>
+        <RadzenStack Gap="0.5rem">
+            @foreach (var turno in turnos)
+        {
+            <p><b>@turno.NombrePaciente @turno.ApellidoPaciente</b> - @turno.FechaTurno.ToString("dd/MM/yyyy") - @turno.HoraTurno hs.</p>
+        }
+        </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                </RadzenStack>
+
+            </RadzenStack>
+        </RadzenStack>
+        );
+    }
 
 
 
