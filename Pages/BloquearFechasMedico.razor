@@ -127,7 +127,7 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                 int intentoBloqueoFechas = Base.ConexionBase(query);
 
                 //Pregunto si hay turnos en ese dia
-                string query2 = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,telefono,domicilio,email FROM `turnos-medicos`.`turnos` WHERE medico='" + medicoSeleccionado + "' AND fechaTurno='" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "';";
+                string query2 = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,telefono,domicilio,email,cancelado,motivoCancelacion FROM `turnos-medicos`.`turnos` WHERE medico='" + medicoSeleccionado + "' AND fechaTurno='" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "';";
                 List<Turno> turnosACancelar = Base.SelectATurnos(query2);
 
                 //Si hay turnos, aviso a cada uno por email que se canceló.
