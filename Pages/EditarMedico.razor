@@ -106,7 +106,7 @@
     {
         var result = await DialogService.OpenAsync("Atención", ds =>
         @<RadzenStack Gap="1.5rem">
-            <p>Está a punto de borrar el horario de : <b>@med.NombreMedico </b></p>
+            <p>Está a punto de cancelar el horario de : <b>@med.NombreMedico </b></p>
             <p>Dia:  <b>@med.diaTrabajo </b></p>
             <p>Hora inicio:  <b>@med.horaInicioTrabajo </b></p>
             <p>Hora fin:  <b>@med.horaFinTrabajo </b></p>
@@ -114,7 +114,7 @@
             <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
                 <RadzenStack Orientation="Orientation.Horizontal">
 
-                <RadzenButton Text="Confirmar" Click="@(args => DeleteABase(med.Id))" />
+                <RadzenButton Text="Confirmar" Click="@(args => CancelarTurno(med.Id))" />
                     <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                 </RadzenStack>
             </RadzenStack>
@@ -265,7 +265,7 @@
 
     }
 
-    void DeleteABase(int idABorrar)
+    void CancelarTurno(int idABorrar)
     {
         string query = "DELETE FROM `turnos-medicos`.`medicos` WHERE idMedicos="+idABorrar+";";
         int borrarFila = Base.ConexionBase(query);

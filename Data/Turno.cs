@@ -16,6 +16,8 @@ class Turno
     public string? Telefono { get; set; }
     public string Email { get; set; } = "";
     public string? Domicilio { get; set; } = "";
+    public bool Cancelado { get; set; } 
+    public string? MotivoCancelacion { get; set; } = "";
 
 
 
