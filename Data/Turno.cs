@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Radzen;
+using System;
 
 class Turno
 {
@@ -76,9 +77,9 @@ class Turno
 
 
 
-    public IEnumerable<string> ObtenerHorariosDisponibles()
+    public IEnumerable<string> ObtenerHorariosDisponibles(bool esAdmin)
     {
-       
+        
         //Traigo los horarios de trabajo del medico (inicio a fin de la jornada)
         string diaSemana = FechaTurno.ToString("dddd", new System.Globalization.CultureInfo("es-ES"));
 
@@ -91,8 +92,13 @@ class Turno
 
         DateTime inicio = DateTime.ParseExact(horaDeInicio, "HH:mm", null);
         DateTime fin = DateTime.ParseExact(horaFinal, "HH:mm", null);
+   
+        if (esAdmin)
+        {
+            inicio = DateTime.ParseExact("06:00", "HH:mm", null);
+            fin = DateTime.ParseExact("23:59", "HH:mm", null);
+        }
 
-        
         //En este punto, horarios tiene todas las horas entre inicio y fin, sin considerar los turnos ya reservados.
         IEnumerable<string> horarios = Enumerable.Range(0, (int)((fin - inicio).TotalMinutes / duracionTurno) + 1)
                                         .Select(i => inicio.AddMinutes(i * duracionTurno).ToString("HH:mm"));
@@ -112,11 +118,8 @@ class Turno
             List<string> horasOcupadas = turnosReservados
                                                         .Select(t => DateTime.ParseExact(t.HoraTurno, "HH:mm", null).ToString("HH:mm"))
                                                         .ToList();
-
             horarios = horarios.Except(horasOcupadas);
         }
-
-
         return horarios;
     }
 

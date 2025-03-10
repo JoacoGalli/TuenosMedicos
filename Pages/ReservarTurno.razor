@@ -1,6 +1,8 @@
 ﻿@page "/reservarturno"
 @inject DialogService DialogService
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
 
 
 <PageTitle>Reservar turno</PageTitle>
@@ -156,9 +158,19 @@
 
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
+    
+    private bool esAdmin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        esAdmin = user.IsInRole("Admin");
+    }
+
     async Task MostrarFechasDisponibles()
     {
-
         if(nuevoTurno.Medico!="")
         {
             var result = await DialogService.OpenAsync("Elegir una fecha", ds =>
@@ -206,7 +218,7 @@
                 <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
                         <RadzenLabel Text="Seleccionar" Component="DropDownBindValue" />
-                        <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno Data=@nuevoTurno.ObtenerHorariosDisponibles() Style="width: 30%; max-width: 400px;" Name="DropDownBindValue" />
+                        <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno Data=@nuevoTurno.ObtenerHorariosDisponibles(esAdmin) Style="width: 30%; max-width: 400px;" Name="DropDownBindValue" />
                     </RadzenStack>
                     <br />
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
