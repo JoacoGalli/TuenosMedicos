@@ -18,7 +18,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()     
       .AddErrorDescriber<ErroresRegistroEnEspañol>();
 
 builder.Services.Configure<IdentityOptions>(options =>

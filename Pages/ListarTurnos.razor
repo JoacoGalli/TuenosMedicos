@@ -1,4 +1,8 @@
 ﻿@page "/listarturnos"
+
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Admin")]
+
 @inject DialogService DialogService
 @inject NavigationManager Navigation
 @inject DialogService DialogService
@@ -6,6 +10,7 @@
 
 
 <PageTitle>Listado de turnos reservados</PageTitle>
+
 
 <h2>Listado de turnos reservados</h2>
 
@@ -15,7 +20,7 @@
         <RadzenRequiredValidator Component="Medico" Text="Debes seleccionar un médico" />
     </RadzenDropDown>
     <RadzenCheckBox @bind-Value=@mostrarCancelados Name="ButtonMostrarCancelados" />
-    <RadzenLabel Text="Ver cancelados" Component="ButtonMostrarCancelados" class="rz-ms-2" />
+    <RadzenLabel Text="Cancelados" Component="ButtonMostrarCancelados" class="rz-ms-2" />
     <RadzenButton Click=@ReloadGrid Text="Ver turnos" Icon="visibility" ButtonStyle="ButtonStyle.Base" />
 </RadzenStack>
 
@@ -32,6 +37,7 @@
         Data="@turnos"
         TItem="Turno"
         ColumnWidth="200px"
+        EmptyText="No hay turnos para mostrar"
         Style="width: 100%; max-width: 100%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
             <Columns>
                 <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="120px">
