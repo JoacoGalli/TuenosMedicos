@@ -8,99 +8,135 @@
 <h2>Editar el turno</h2>
 
 <RadzenTemplateForm Data="@nuevoTurno" Submit="@((Turno args) => { Submit(args); })">
-    <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-4">
+    <RadzenRow Gap="1.5rem" class="rz-p-0 rz-p-lg-4">
+        <!-- Primera Columna -->
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenStack>
-                <RadzenFieldset Text="Complete el siguiente formulario:">
-                    <RadzenStack Gap="1rem">
+            <RadzenFieldset Text="Datos del Paciente">
+                <RadzenStack Gap="1rem">
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Nombre" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value="nuevoTurno.NombrePaciente" Disabled="true" Name="NombrePaciente" Style="width: 100%;" />                            
+                        </RadzenColumn>
+                    </RadzenRow>
 
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="Nombre" Component="NombrePaciente"/>
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenTextBox @bind-Value="nuevoTurno.NombrePaciente" Disabled="true" Style="width: 100%;" Name="NombrePaciente" />
-                                <RadzenRequiredValidator Component="NombrePaciente" Text="Por favor, completa el nombre." />
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="Apellido" Component="ApellidoPaciente" />
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenTextBox @bind-Value="nuevoTurno.ApellidoPaciente" Disabled="true" Style="width: 100%;" Name="ApellidoPaciente" />
-                                <RadzenRequiredValidator Component="ApellidoPaciente" Text="Por favor, completa el apellido." />
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="DNI" Component="DNI" />
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenNumeric ShowUpDown="false" Placeholder="Ingrese su doc." Disabled="true" Style="width: 100%;" Name="DNI" NullValue="null" @bind-Value="nuevoTurno.Dni" />
-                                <RadzenRequiredValidator Component="DNI" Text="Completa el DNI del paciente." />
-                            </RadzenColumn>                            
-                        </RadzenRow>
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="Medico" Component="Medico" />
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenDropDown @bind-Value="nuevoTurno.Medico" Placeholder="Selecciona un medico" Data="@listaMedicos" Style="width: 100%;" TextProperty="NombreMedico" ValueProperty="NombreMedico" Name="Medico">
-                                    <RadzenRequiredValidator Component="Medico" Text="Debes seleccionar un medico" />
-                                </RadzenDropDown>
-                            </RadzenColumn>
-                        </RadzenRow>                
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="Cobertura" Component="Cobertura"/>
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenDropDown @bind-Value="nuevoTurno.Cobertura" Placeholder="Selecciona una cobertura" Data="@listaCoberturas" Style="width: 100%;" TextProperty="NombreCobertura" ValueProperty="NombreCobertura" Name="Cobertura">
-                                    <RadzenRequiredValidator Component="Cobertura" Text="Debes seleccionar una cobertura" />
-                                </RadzenDropDown>
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="Selecciona la fecha del turno" Component="FechasPosibles" />
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateFormat="d/M/yyyy" Disabled="true" Style="width:40%;" Name="FechasPosibles" />
-                                <RadzenButton Text="Ver fechas" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Click=@MostrarFechasDisponibles />
-                                <RadzenRequiredValidator Component="FechasPosibles" Text="Debes seleccionar una fecha" />
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="Hora:" Component="Horarios" />
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenTextBox @bind-Value=@nuevoTurno.HoraTurno Disabled="true" aria-label="Disabled TextBox" Style="width:40%;" Name="Horarios" />
-                                <RadzenButton Text="Ver horarios" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Click=@MostrarHorariosDisponibles />
-                                <RadzenRequiredValidator Component="Horarios" Text="Debes seleccionar un horario" />
-                            </RadzenColumn>
-                        </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Apellido" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value="nuevoTurno.ApellidoPaciente" Disabled="true" Name="ApellidoPaciente" Style="width: 100%;" />
+                            <RadzenRequiredValidator Component="ApellidoPaciente" Text="Por favor, completa el apellido." />
+                        </RadzenColumn>
+                    </RadzenRow>
 
-                        <RadzenRow AlignItems="AlignItems.Center">
-                            <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Text="Notas" Component="Notas" />
-                            </RadzenColumn>
-                            <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenTextBox @bind-Value=@nuevoTurno.Notas MaxLength="500" Style="width: 100%; height: 100px;" />
-                            </RadzenColumn>
-                        </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="DNI" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenNumeric ShowUpDown="false" Placeholder="Ingrese su doc." Disabled="true" Name="DNI" Style="width: 100%;" @bind-Value="nuevoTurno.Dni" />
+                            <RadzenRequiredValidator Component="DNI" Text="Completa el DNI del paciente." />
+                        </RadzenColumn>
+                    </RadzenRow>
 
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Teléfono" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value="nuevoTurno.Telefono" Name="Telefono" Style="width: 100%;" />
+                            <RadzenRequiredValidator Component="Telefono" Text="Por favor, completa el teléfono." />                           
+                        </RadzenColumn>
+                    </RadzenRow>
 
-                    </RadzenStack>                                
-                </RadzenFieldset>
-            </RadzenStack>     
-        </RadzenColumn>   
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Domicilio" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value="nuevoTurno.Domicilio" Name="Domicilio" Style="width: 100%;" />                            
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Email" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Name="Email" Style="width: 100%;" />
+                            <RadzenRequiredValidator Component="Email" Text="Por favor, completa el email." />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                </RadzenStack>
+            </RadzenFieldset>
+        </RadzenColumn>
+
+        <!-- Segunda Columna -->
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenFieldset Text="Detalles del turno">
+                <RadzenStack Gap="1rem">
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Médico" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value="nuevoTurno.Medico" Disabled="true" Name="Medico" Style="width: 100%;" />                                                          
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Cobertura" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value="nuevoTurno.Cobertura" Disabled="true" Name="Cobertura" Style="width: 100%;" />                                                         
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Fecha del turno" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno Name="FechasPosibles" DateFormat="d/M/yyyy" Disabled="true" Style="width:45%;" />
+                            <RadzenButton Text="Ver fechas" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Click=@MostrarFechasDisponibles />
+                            <RadzenRequiredValidator Component="FechasPosibles" Text="Debes seleccionar una fecha." />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Hora del turno" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox @bind-Value=@nuevoTurno.HoraTurno Name="Horarios" Disabled="true" Style="width:45%;" />
+                            <RadzenButton Text="Ver horarios" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Click=@MostrarHorariosDisponibles />
+                            <RadzenRequiredValidator Component="Horarios" Text="Debes seleccionar un horario." />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12">
+                            <RadzenLabel Text="Notas" />
+                            <RadzenTextBox @bind-Value=@nuevoTurno.Notas Name="Notas" MaxLength="500" Style="width: 100%; height: 100px;" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                </RadzenStack>
+            </RadzenFieldset>
+        </RadzenColumn>
+
     </RadzenRow>
-    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" class="rz-mt-8 rz-mb-4">
+
+    <!-- Botones centrados -->
+    <RadzenRow JustifyContent="JustifyContent.Center" class="rz-mt-4">
         <RadzenButton ButtonType="ButtonType.Submit" Click=@MostrarConfirmacion Size="ButtonSize.Large" Icon="save" Text="Confirmar" />
         <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancelar" Click="@Cancelar" />
-    </RadzenStack>
+    </RadzenRow>
 </RadzenTemplateForm>
 
 
@@ -118,7 +154,7 @@
 
         nuevoTurno.Id = Int16.Parse(TurnoId);
 
-        string query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas FROM `turnos-medicos`.turnos WHERE idturno=" + nuevoTurno.Id + ";";
+        string query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE idturno=" + nuevoTurno.Id + ";";
 
         List<Turno> listaTurnos = new List<Turno>();
         listaTurnos = Base.SelectATurnos(query);
@@ -132,6 +168,9 @@
             nuevoTurno.Medico = tur.Medico;
             nuevoTurno.Cobertura = tur.Cobertura;
             nuevoTurno.Notas = tur.Notas;
+            nuevoTurno.Telefono = tur.Telefono;
+            nuevoTurno.Domicilio = tur.Domicilio;
+            nuevoTurno.Email = tur.Email;
         }
     }
 
@@ -140,8 +179,6 @@
     {
         if(nuevoTurno.Medico!="")
         {
-            
-
             var result = await DialogService.OpenAsync("Elegir una fecha", ds =>
             @<RadzenStack Gap="1.5rem">
                 <p><b>Fechas disponibles disponibles:</b></p>
@@ -216,7 +253,7 @@
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            string query = "UPDATE `turnos-medicos`.`turnos` SET `cobertura` = '" + nuevoTurno.Cobertura + "', `medico` = '" + nuevoTurno.Medico + "' , `fechaTurno` = '" + fechaMostrar + "', `horaTurno` = '" + nuevoTurno.HoraTurno + "', `notas` = '" + nuevoTurno.Notas + "' WHERE `idturno` = " + nuevoTurno.Id + ";";
+            string query = "UPDATE `turnos-medicos`.`turnos` SET `cobertura` = '" + nuevoTurno.Cobertura + "', `medico` = '" + nuevoTurno.Medico + "' , `fechaTurno` = '" + fechaMostrar + "', `horaTurno` = '" + nuevoTurno.HoraTurno + "',`telefono` = '"+nuevoTurno.Telefono+"',`email` = '"+nuevoTurno.Email+"',`domicilio` = '"+nuevoTurno.Domicilio+"', `notas` = '" + nuevoTurno.Notas + "' WHERE `idturno` = " + nuevoTurno.Id + ";";
             int intentoRegistrarTurno = Base.ConexionBase(query);
 
             if (intentoRegistrarTurno == 0)
