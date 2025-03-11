@@ -14,6 +14,7 @@ class Turno
     public DateTime FechaTurno {get; set;}
     public string HoraTurno {get; set;} ="";
     public string? Notas { get; set; } = "";
+    public string? NotasInternas { get; set; } = "";
     public string? Telefono { get; set; }
     public string Email { get; set; } = "";
     public string? Domicilio { get; set; } = "";

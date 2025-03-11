@@ -126,6 +126,13 @@
                         </RadzenColumn>
                     </RadzenRow>
 
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12">
+                            <RadzenLabel Text="Notas Internas" />
+                            <RadzenTextBox @bind-Value=@nuevoTurno.NotasInternas Name="Notas" MaxLength="500" Style="width: 100%; height: 100px;" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
                 </RadzenStack>
             </RadzenFieldset>
         </RadzenColumn>
@@ -154,7 +161,7 @@
 
         nuevoTurno.Id = Int16.Parse(TurnoId);
 
-        string query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE idturno=" + nuevoTurno.Id + ";";
+        string query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE idturno=" + nuevoTurno.Id + ";";
 
         List<Turno> listaTurnos = new List<Turno>();
         listaTurnos = Base.SelectATurnos(query);
@@ -168,6 +175,7 @@
             nuevoTurno.Medico = tur.Medico;
             nuevoTurno.Cobertura = tur.Cobertura;
             nuevoTurno.Notas = tur.Notas;
+            nuevoTurno.NotasInternas = tur.NotasInternas;
             nuevoTurno.Telefono = tur.Telefono;
             nuevoTurno.Domicilio = tur.Domicilio;
             nuevoTurno.Email = tur.Email;
@@ -253,7 +261,7 @@
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            string query = "UPDATE `turnos-medicos`.`turnos` SET `cobertura` = '" + nuevoTurno.Cobertura + "', `medico` = '" + nuevoTurno.Medico + "' , `fechaTurno` = '" + fechaMostrar + "', `horaTurno` = '" + nuevoTurno.HoraTurno + "',`telefono` = '"+nuevoTurno.Telefono+"',`email` = '"+nuevoTurno.Email+"',`domicilio` = '"+nuevoTurno.Domicilio+"', `notas` = '" + nuevoTurno.Notas + "' WHERE `idturno` = " + nuevoTurno.Id + ";";
+            string query = "UPDATE `turnos-medicos`.`turnos` SET `cobertura` = '" + nuevoTurno.Cobertura + "', `medico` = '" + nuevoTurno.Medico + "' , `fechaTurno` = '" + fechaMostrar + "', `horaTurno` = '" + nuevoTurno.HoraTurno + "',`telefono` = '" + nuevoTurno.Telefono + "',`email` = '" + nuevoTurno.Email + "',`domicilio` = '" + nuevoTurno.Domicilio + "', `notas` = '" + nuevoTurno.Notas + "',`notasInternas`= '"+nuevoTurno.NotasInternas+"' WHERE `idturno` = " + nuevoTurno.Id + ";";
             int intentoRegistrarTurno = Base.ConexionBase(query);
 
             if (intentoRegistrarTurno == 0)

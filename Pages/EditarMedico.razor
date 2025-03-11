@@ -20,7 +20,7 @@
 
     <RadzenColumn Size="12" SizeMd="8" class="rz-p-2 rz-p-md-8">
         <RadzenStack Gap="1rem">
-            <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true"
+            <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true" EmptyText="No hay horarios para mostrar"
                             Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 800px;">
                 <Columns>
                     <RadzenDataGridColumn Property="NombreMedico" Title="Médico" Width="130px">

@@ -134,6 +134,16 @@
                         </RadzenColumn>
                     </RadzenRow>
 
+                    @if(esAdmin)
+                    {
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12">
+                                <RadzenLabel Text="Notas Internas" />
+                                <RadzenTextBox @bind-Value=@nuevoTurno.NotasInternas Name="Notas" MaxLength="500" Style="width: 100%; height: 100px;" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                    }
+
                 </RadzenStack>
             </RadzenFieldset>
         </RadzenColumn>
@@ -252,7 +262,7 @@
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`,`notas`,`telefono`,`email`,`domicilio`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "','" + nuevoTurno.Notas + "','" + nuevoTurno.Telefono + "','" + nuevoTurno.Email + "','" + nuevoTurno.Domicilio + "');";
+            string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`,`notas`,`notasInternas`,`telefono`,`email`,`domicilio`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "','" + nuevoTurno.Notas + "','"+nuevoTurno.NotasInternas+"','" + nuevoTurno.Telefono + "','" + nuevoTurno.Email + "','" + nuevoTurno.Domicilio + "');";
             int intentoRegistrarTurno = Base.ConexionBase(query);
 
 

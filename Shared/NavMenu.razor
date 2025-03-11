@@ -1,4 +1,8 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+﻿@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.Authorization
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand fs-4"  href="#">MedicShifts</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -31,7 +35,8 @@
                         Turnos
                     </a>
                     <div id="navbarMedicos" class="dropdown-menu navbar-dark bg-dark" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item text-white fs-5" style="" href="/listarturnos">Listado de turnos</a>                        
+                        <a class="dropdown-item text-white fs-5" style="" href="/listarturnos">Listado de turnos</a>  
+                        <a class="dropdown-item text-white fs-5" href="/reservarturno">Reservar un turno</a>
                     </div>
                 </li>
             </AuthorizeView>
@@ -39,7 +44,12 @@
 
             <AuthorizeView>
                 <Authorized>
-                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Reservar turno</a></li>
+                    @if(!isAdmin)
+                    {
+                        <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Mis turnos</a></li>
+                        <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Reservar turno</a></li>
+                    }
+                    
                     <li class="nav-item">
                         <form method="post" action="Identity/Account/LogOut">
                             <button class="btn btn-sm  fs-4" type="submit"><a class="badge badge-light">Cerrar sesión</a></button>
@@ -53,3 +63,16 @@
         </ul>
     </div>
 </nav>
+
+@code
+{
+    private bool isAdmin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAdmin = user.IsInRole("Admin");
+    }
+}

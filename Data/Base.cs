@@ -138,6 +138,7 @@ class Base
                             Email = reader.GetString("email"),
                             Telefono = reader.GetString("telefono"),
                             Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? "" : reader.GetString("notas"), // Maneja valores nulos
+                            NotasInternas = reader.IsDBNull(reader.GetOrdinal("notasInternas")) ? "" : reader.GetString("notasInternas"), // Maneja valores nulos
                             Cancelado = reader.GetBoolean("cancelado"),
                             MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion")
                         }; 

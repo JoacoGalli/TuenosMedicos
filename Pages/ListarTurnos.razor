@@ -95,6 +95,18 @@
                     </Template>
                 </RadzenDataGridColumn>
 
+                <RadzenDataGridColumn Context="shift" Filterable="false" TextAlign="TextAlign.Center" Sortable="false" Title="N.Int" Width="60px">
+                    <Template Context="shift">
+                        @if (!string.IsNullOrEmpty(shift.NotasInternas))
+                        {
+                            <RadzenButton Click=@(args => VerNotas(shift.NotasInternas))
+                                          Text="Ver"
+                                          Size="ButtonSize.Small"
+                                          ButtonStyle="ButtonStyle.Info" />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Contacto" Width="65px">
                     <Template Context="shift">
                         <RadzenButton Click=@(args => VerContacto(shift.NombrePaciente,shift.ApellidoPaciente,shift.Telefono,shift.Email,shift.Domicilio))
@@ -198,11 +210,11 @@
         {
             if(mostrarCancelados)
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE cancelado=true;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE cancelado=true;";
             }
             else
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE cancelado=false;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE cancelado=false;";
             }
 
         }
@@ -210,11 +222,11 @@
         {
             if(mostrarCancelados)
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=true;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=true;";
             }
             else
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=false;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=false;";
             }
 
         }
