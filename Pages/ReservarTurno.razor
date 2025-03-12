@@ -128,6 +128,17 @@
                     </RadzenRow>
 
                     <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Cargar documento" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenUpload Url="upload/single" Style="width: 100%"  InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})">
+                            </RadzenUpload>                                                       
+                        </RadzenColumn>
+                    </RadzenRow>
+
+
+                    <RadzenRow AlignItems="AlignItems.Center">
                         <RadzenColumn Size="12">
                             <RadzenLabel Text="Notas" />
                             <RadzenTextBox @bind-Value=@nuevoTurno.Notas Name="Notas" MaxLength="500" Style="width: 100%; height: 100px;" />
@@ -178,6 +189,8 @@
 
         esAdmin = user.IsInRole("Admin");
     }
+
+
 
     async Task MostrarFechasDisponibles()
     {

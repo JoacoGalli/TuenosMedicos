@@ -24,6 +24,47 @@
 
    
     <script src="_framework/blazor.server.js"></script>
+   
+    <!--Este script lo uso para cerrar la navbar en modo responsive, despues de hacer click en algun item-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function closeNavbar(event) {
+                var navbarCollapse = document.querySelector(".navbar-collapse");
+
+                // Si el clic es en un dropdown-toggle (botón para abrir el menú), no cerrar
+                if (event.target.closest(".dropdown-toggle")) {
+                    return;
+                }
+
+                // Si el clic es en un elemento del dropdown, cerrar la navbar
+                if (event.target.closest(".dropdown-menu .dropdown-item")) {
+                    if (navbarCollapse && navbarCollapse.classList.contains("show")) {
+                        new bootstrap.Collapse(navbarCollapse).hide();
+                    }
+                    return;
+                }
+
+                // Si el clic es en otro enlace de la navbar, cerrar la navbar
+                if (event.target.closest(".navbar-nav .nav-link")) {
+                    if (navbarCollapse && navbarCollapse.classList.contains("show")) {
+                        new bootstrap.Collapse(navbarCollapse).hide();
+                    }
+                }
+            }
+
+            function attachNavbarEvents() {
+                document.removeEventListener("click", closeNavbar);
+                document.addEventListener("click", closeNavbar);
+            }
+
+            // Asegura que el script se vuelva a ejecutar después de cada renderización de Blazor
+            document.addEventListener('DOMContentLoaded', attachNavbarEvents);
+            window.addEventListener('load', attachNavbarEvents);
+            document.addEventListener('blazor:navigation', attachNavbarEvents);
+            window.attachNavbarEvents = attachNavbarEvents;
+        });
+    </script>
+
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 
 

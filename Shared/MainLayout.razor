@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JS
 <RadzenComponents />
 
 <NavMenu />
@@ -49,3 +50,13 @@
     </div>
 </footer>
 
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("attachNavbarEvents"); // Esto es para cerrar la navBar desp de hacerle click.
+        }
+    }
+}

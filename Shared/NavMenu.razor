@@ -11,11 +11,11 @@
         <ul class="navbar-nav ms-auto">
             <AuthorizeView>
                 <Authorized>
-                    <li class="nav-item" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link text-white fs-4" href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>                                     
+                    <li class="nav-item"><a class="nav-link text-white fs-4" href="Identity/Account/Manage">Hola, @context.User.Identity?.Name</a></li>                                     
                 </Authorized>
                 <NotAuthorized>
-                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="Identity/Account/Register">Registrarse</a></li>
-                    <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="Identity/Account/Login">Iniciar sesión</a></li>
+                    <li class="nav-item active"><a class="nav-link fs-4" href="Identity/Account/Register">Registrarse</a></li>
+                    <li class="nav-item active"><a class="nav-link fs-4" href="Identity/Account/Login">Iniciar sesión</a></li>
                 </NotAuthorized>
             </AuthorizeView>
 
@@ -46,8 +46,8 @@
                 <Authorized>
                     @if(!isAdmin)
                     {
-                        <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Mis turnos</a></li>
-                        <li class="nav-item active" data-toggle="collapse" data-target="#navbarNav"><a class="nav-link fs-4" href="/reservarturno">Reservar turno</a></li>
+                        <li class="nav-item active"><a class="nav-link fs-4" href="/reservarturno">Mis turnos</a></li>
+                        <li class="nav-item active"><a class="nav-link fs-4" href="/reservarturno">Reservar turno</a></li>
                     }
                     
                     <li class="nav-item">
