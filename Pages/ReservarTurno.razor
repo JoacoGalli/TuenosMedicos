@@ -141,8 +141,9 @@
                             <RadzenLabel Text="Cargar documento" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenUpload Url="upload/single" Style="width: 100%"  InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select file" }})">
-                            </RadzenUpload>                                                       
+                            <RadzenUpload Accept=".pdf" Multiple="false" Change=@ArchivoSeleccionado Style="width: 100%" Icon="upload" ChooseText="Subir PDF">
+                            </RadzenUpload>           
+                            <RadzenLabel Text=@mensajeErrorArchivo Style="color: red;" Visible=@mostrarErrorArchivo />
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -183,16 +184,15 @@
 
 
     Turno nuevoTurno = new Turno(){};
-
     List<Cobertura> listaCoberturas = Cobertura.ObtenerCoberturas();
-
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
 
-    private bool esAdmin = false;
+    
+    
+    
     private string userEmail = "";
-
-
+    private bool esAdmin = false;
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -206,6 +206,35 @@
         esAdmin = user.IsInRole("Admin");
     }
 
+
+    string mensajeErrorArchivo = "";
+    bool mostrarErrorArchivo = false;
+    const long MAX_FILE_SIZE = 10 * 1024 * 1024;  //Acepta hasta 10 mb de tamaño
+    byte[] pdfBytes;
+    //Este metodo recibe el archivo seleccionado y lo convierte a bytes. Luego lo asigna a 'pdfBytes' que lo uso para el INSERT a base.
+    async Task ArchivoSeleccionado(UploadChangeEventArgs args)
+    {
+        foreach (var file in args.Files)
+        {
+            if (file != null)
+            {
+                
+                if (file.Size > MAX_FILE_SIZE)
+                {
+                    mensajeErrorArchivo = "El archivo es demasiado grande. El tamaño máximo permitido es 10MB.";
+                    mostrarErrorArchivo = true;
+                    return;
+                }
+                using var memoryStream = new MemoryStream();
+                await file.OpenReadStream().CopyToAsync(memoryStream);
+                pdfBytes = memoryStream.ToArray();
+                mensajeErrorArchivo = "";
+                mostrarErrorArchivo = false;
+
+                Console.WriteLine($"Archivo {file.Name} subido con éxito. Tamaño: {file.Size} bytes.");
+            }
+        }
+    }
 
 
     async Task MostrarFechasDisponibles()
@@ -287,14 +316,10 @@
 
     async Task MostrarConfirmacion()
     {
-
-        if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
+        if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="" && mostrarErrorArchivo==false)
         {
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`,`notas`,`notasInternas`,`telefono`,`email`,`domicilio`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "','" + nuevoTurno.Notas + "','"+nuevoTurno.NotasInternas+"','" + nuevoTurno.Telefono + "','" + userEmail + "','" + nuevoTurno.Domicilio + "');";
-            int intentoRegistrarTurno = Base.ConexionBase(query);
-
-
+            int intentoRegistrarTurno = Base.InsertarTurno(nuevoTurno, pdfBytes);
 
             if (intentoRegistrarTurno == 0)
             {

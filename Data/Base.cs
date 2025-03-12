@@ -1,10 +1,13 @@
 using MySqlConnector;
 using System.Collections.Generic;
+using System.Data;
 
 class Base
 {
-
     //este metodo es mejor no usarlo para selects (aunque sirve), porque retorna un INT con un codigo 0-1. Para selects es mejor EjecutarSelect
+    
+    
+    
     public static int ConexionBase(string query)
     {
         // Definir la cadena de conexión
@@ -140,7 +143,10 @@ class Base
                             Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? "" : reader.GetString("notas"), // Maneja valores nulos
                             NotasInternas = reader.IsDBNull(reader.GetOrdinal("notasInternas")) ? "" : reader.GetString("notasInternas"), // Maneja valores nulos
                             Cancelado = reader.GetBoolean("cancelado"),
-                            MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion")
+                            MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion"),
+                            DocumentoPDF = reader.IsDBNull(reader.GetOrdinal("documentoPDF"))
+                                                                                            ? null
+                                                                                            : (byte[])reader.GetValue(reader.GetOrdinal("documentoPDF"))
                         }; 
 
                         resultados.Add(turno);
@@ -189,5 +195,48 @@ class Base
             }
         }
         return resultados;
+    }
+
+    public static int InsertarTurno(Turno nuevoTurno, byte[] pdfBytes)
+    {
+        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
+
+        try
+        {
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = "INSERT INTO `turnos-medicos`.`turnos` " +
+                               "(`nombrePaciente`, `apellidoPaciente`, `dni`, `cobertura`, `medico`, `fechaTurno`, `horaTurno`, `notas`, `notasInternas`, `telefono`, `email`, `domicilio`, `documentoPDF`) " +
+                               "VALUES (@nombrePaciente, @apellidoPaciente, @dni, @cobertura, @medico, @fechaTurno, @horaTurno, @notas, @notasInternas, @telefono, @email, @domicilio, @documentoPDF)";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                {
+                    // Parámetros para evitar SQL Injection
+                    cmd.Parameters.AddWithValue("@nombrePaciente", nuevoTurno.NombrePaciente);
+                    cmd.Parameters.AddWithValue("@apellidoPaciente", nuevoTurno.ApellidoPaciente);
+                    cmd.Parameters.AddWithValue("@dni", nuevoTurno.Dni);
+                    cmd.Parameters.AddWithValue("@cobertura", nuevoTurno.Cobertura);
+                    cmd.Parameters.AddWithValue("@medico", nuevoTurno.Medico);
+                    cmd.Parameters.AddWithValue("@fechaTurno", nuevoTurno.FechaTurno);
+                    cmd.Parameters.AddWithValue("@horaTurno", nuevoTurno.HoraTurno);
+                    cmd.Parameters.AddWithValue("@notas", nuevoTurno.Notas ?? ""); // Manejo de nulls
+                    cmd.Parameters.AddWithValue("@notasInternas", nuevoTurno.NotasInternas ?? ""); // Manejo de nulls
+                    cmd.Parameters.AddWithValue("@telefono", nuevoTurno.Telefono);
+                    cmd.Parameters.AddWithValue("@email", nuevoTurno.Email);
+                    cmd.Parameters.AddWithValue("@domicilio", nuevoTurno.Domicilio);
+                    cmd.Parameters.AddWithValue("@documentoPDF", pdfBytes ?? new byte[0]); // Manejo de nulls en el PDF
+
+                    int filasAfectadas = cmd.ExecuteNonQuery(); // Retorna cuántas filas fueron insertadas
+                    return filasAfectadas > 0 ? 0 : 1; // 0 si insertó correctamente, 1 si falló
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error en la base de datos: " + ex.Message);
+            return 1; // Retornar 1 indica un error
+        }
     }
 }

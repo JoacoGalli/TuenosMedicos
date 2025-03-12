@@ -66,7 +66,7 @@
                             <RadzenLabel Text="Email" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Name="Email" Style="width: 100%;" />
+                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Disabled="true" Name="Email" Style="width: 100%;" />
                             <RadzenRequiredValidator Component="Email" Text="Por favor, completa el email." />
                         </RadzenColumn>
                     </RadzenRow>
@@ -161,7 +161,7 @@
 
         nuevoTurno.Id = Int16.Parse(TurnoId);
 
-        string query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE idturno=" + nuevoTurno.Id + ";";
+        string query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion,documentoPDF FROM `turnos-medicos`.turnos WHERE idturno=" + nuevoTurno.Id + ";";
 
         List<Turno> listaTurnos = new List<Turno>();
         listaTurnos = Base.SelectATurnos(query);

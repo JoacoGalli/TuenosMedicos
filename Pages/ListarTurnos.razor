@@ -95,14 +95,27 @@
                     </Template>
                 </RadzenDataGridColumn>
 
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="PDF" Width="60px">
+                    <Template Context="shift">
+                        @if (shift.DocumentoPDF!=null)
+                        {
+                            <RadzenButton Click=@(args => VerPDF(shift.DocumentoPDF))
+                            Text="Ver"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Info"
+                            />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+
                 <RadzenDataGridColumn Context="shift" Filterable="false" TextAlign="TextAlign.Center" Sortable="false" Title="N.Int" Width="60px">
                     <Template Context="shift">
                         @if (!string.IsNullOrEmpty(shift.NotasInternas))
                         {
                             <RadzenButton Click=@(args => VerNotas(shift.NotasInternas))
-                                          Text="Ver"
-                                          Size="ButtonSize.Small"
-                                          ButtonStyle="ButtonStyle.Info" />
+                            Text="Ver"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Info" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -134,9 +147,9 @@
                         else
                         {
                             <RadzenButton Click=@(args => VerMotivo(shift.NombrePaciente,shift.ApellidoPaciente,shift.MotivoCancelacion))
-                                          Text="Motivo"
-                                          Size="ButtonSize.Small"
-                                          ButtonStyle="ButtonStyle.Light" />
+                            Text="Motivo"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Light" />
                         }                        
                     </Template>
                 </RadzenDataGridColumn>
@@ -186,6 +199,26 @@
     );
     }
 
+    async Task VerPDF(byte[] pdf)
+    {
+        var result = await DialogService.OpenAsync("Archivo adjunto", ds =>
+        @<RadzenStack Gap="1.5rem">
+        <p>El turno tiene el siguiente archivo adjunto: </p>
+
+        <a href="data:application/pdf;base64,@Convert.ToBase64String(pdf)"
+           download="turno.pdf">
+            Descargar PDF
+        </a>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+                <RadzenStack Orientation="Orientation.Horizontal">
+    
+                    <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenStack>
+    );
+    }
+
     void CancelarTurno(int idABorrar)
     {
         string query = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true,motivoCancelacion='Cancelado por admin desde Listado de turnos' WHERE idTurno=" + idABorrar + ";"; 
@@ -210,11 +243,11 @@
         {
             if(mostrarCancelados)
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE cancelado=true;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion,documentoPDF FROM `turnos-medicos`.turnos WHERE cancelado=true;";
             }
             else
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE cancelado=false;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion,documentoPDF FROM `turnos-medicos`.turnos WHERE cancelado=false;";
             }
 
         }
@@ -222,11 +255,11 @@
         {
             if(mostrarCancelados)
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=true;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion,documentoPDF FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=true;";
             }
             else
             {
-                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=false;";
+                query = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,domicilio,email,telefono,cancelado,motivoCancelacion,documentoPDF FROM `turnos-medicos`.turnos WHERE medico='" + medicoSeleccionado + "' AND cancelado=false;";
             }
 
         }

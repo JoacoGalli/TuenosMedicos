@@ -20,6 +20,7 @@ class Turno
     public string? Domicilio { get; set; } = "";
     public bool Cancelado { get; set; } 
     public string? MotivoCancelacion { get; set; } = "";
+    public byte[] DocumentoPDF { get; set; }
 
 
 
