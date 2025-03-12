@@ -108,7 +108,7 @@ class Turno
 
         //aca consulto la tabla turno para ver si el medico en X dia tiene turnos ocupados.
         string fechaMostrar = FechaTurno.ToString("yyyy-MM-dd");
-        string queryTurnos = "SELECT * FROM `turnos-medicos`.turnos where medico = '"+ Medico + "' and fechaTurno='"+ fechaMostrar + "';";
+        string queryTurnos = "SELECT * FROM `turnos-medicos`.turnos WHERE medico = '"+ Medico + "' AND fechaTurno='"+ fechaMostrar + "' AND cancelado=false;";
         List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos);
 
 

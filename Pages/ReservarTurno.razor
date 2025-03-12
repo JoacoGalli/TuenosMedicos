@@ -3,6 +3,7 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 
 
 <PageTitle>Reservar turno</PageTitle>
@@ -70,7 +71,15 @@
                             <RadzenLabel Text="Email" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Name="Email" Style="width: 100%;" />
+                            @if (esAdmin)
+                            {
+                                <RadzenTextBox @bind-Value="nuevoTurno.Email" Name="Email" Style="width: 100%;" />
+                            }
+                            else
+                            {
+                                <RadzenTextBox @bind-Value="userEmail" Disabled="true" Name="Email" Style="width: 100%;" />
+                            }
+
                             <RadzenRequiredValidator Component="Email" Text="Por favor, completa el email." />
                         </RadzenColumn>
                     </RadzenRow>
@@ -179,13 +188,20 @@
 
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
-    
+
     private bool esAdmin = false;
+    private string userEmail = "";
+
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            userEmail = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value ?? "Email no encontrado";
+        }
 
         esAdmin = user.IsInRole("Admin");
     }
@@ -275,7 +291,7 @@
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`,`notas`,`notasInternas`,`telefono`,`email`,`domicilio`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "','" + nuevoTurno.Notas + "','"+nuevoTurno.NotasInternas+"','" + nuevoTurno.Telefono + "','" + nuevoTurno.Email + "','" + nuevoTurno.Domicilio + "');";
+            string query = "INSERT INTO `turnos-medicos`.`turnos`(`nombrePaciente`,`apellidoPaciente`,`dni`,`cobertura`,`medico`,`fechaTurno`,`horaTurno`,`notas`,`notasInternas`,`telefono`,`email`,`domicilio`)VALUES('" + nuevoTurno.NombrePaciente + "','" + nuevoTurno.ApellidoPaciente + "'," + nuevoTurno.Dni + ",'" + nuevoTurno.Cobertura + "','" + nuevoTurno.Medico + "','" + fechaMostrar + "','" + nuevoTurno.HoraTurno + "','" + nuevoTurno.Notas + "','"+nuevoTurno.NotasInternas+"','" + nuevoTurno.Telefono + "','" + userEmail + "','" + nuevoTurno.Domicilio + "');";
             int intentoRegistrarTurno = Base.ConexionBase(query);
 
 
