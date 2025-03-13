@@ -4,12 +4,10 @@ using System.Data;
 
 class Base
 {
-    
-    
+    private static readonly string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
     public static List<Medico> SelectAMedicos(string query, Dictionary<string, object> parameters = null)
     {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
-
         List<Medico> resultados = new List<Medico>();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -59,8 +57,7 @@ class Base
 
 
     public static List<Turno> SelectATurnos(string query, Dictionary<string, object> parameters = null)
-    {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
+    {        
 
         List<Turno> resultados = new List<Turno>();
 
@@ -120,8 +117,7 @@ class Base
     }
 
     public static List<MedicoFechaBloqueada> SelectAMedicosFechasBloqueadas(string query, Dictionary<string, object> parameters = null)
-    {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
+    {        
 
         List<MedicoFechaBloqueada> resultados = new List<MedicoFechaBloqueada>();
 
@@ -173,8 +169,6 @@ class Base
 
     public static int InsertarTurno(Turno nuevoTurno, byte[] pdfBytes)
     {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
-
         try
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -216,8 +210,6 @@ class Base
 
     public static int InsertarMedico(Medico nuevoMedico)
     {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
-
         try
         {
             using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -251,8 +243,7 @@ class Base
     }
 
     public static int InsertDeleteOrUpdateABase(string query, Dictionary<string, object> parametros)
-    {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
+    {        
         int filasAfectadas = 0;
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
