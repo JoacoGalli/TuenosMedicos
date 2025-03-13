@@ -260,11 +260,30 @@
 
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
-            string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            string query = "UPDATE `turnos-medicos`.`turnos` SET `cobertura` = '" + nuevoTurno.Cobertura + "', `medico` = '" + nuevoTurno.Medico + "' , `fechaTurno` = '" + fechaMostrar + "', `horaTurno` = '" + nuevoTurno.HoraTurno + "',`telefono` = '" + nuevoTurno.Telefono + "',`email` = '" + nuevoTurno.Email + "',`domicilio` = '" + nuevoTurno.Domicilio + "', `notas` = '" + nuevoTurno.Notas + "',`notasInternas`= '"+nuevoTurno.NotasInternas+"' WHERE `idturno` = " + nuevoTurno.Id + ";";
-            int intentoRegistrarTurno = Base.ConexionBase(query);
+            string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");          
+            
+            string query = "UPDATE `turnos` SET `cobertura` = @cobertura, `medico` = @medico, `fechaTurno` = @fechaTurno, " +
+           "`horaTurno` = @horaTurno, `telefono` = @telefono, `email` = @email, `domicilio` = @domicilio, " +
+           "`notas` = @notas, `notasInternas` = @notasInternas WHERE `idturno` = @idturno;";
 
-            if (intentoRegistrarTurno == 0)
+            var parametros = new Dictionary<string, object>
+            {
+            { "@cobertura", nuevoTurno.Cobertura },
+            { "@medico", nuevoTurno.Medico },
+            { "@fechaTurno", fechaMostrar }, 
+            { "@horaTurno", nuevoTurno.HoraTurno },
+            { "@telefono", nuevoTurno.Telefono },
+            { "@email", nuevoTurno.Email },
+            { "@domicilio", nuevoTurno.Domicilio },
+            { "@notas", nuevoTurno.Notas },
+            { "@notasInternas", nuevoTurno.NotasInternas },
+            { "@idturno", nuevoTurno.Id }
+            };
+
+
+            int intentoRegistrarTurno = Base.InsertDeleteOrUpdateABase(query, parametros);
+
+            if (intentoRegistrarTurno > 0)
             {
                 var result = await DialogService.OpenAsync("Confirmacion", ds =>
             @<RadzenStack Gap="1.5rem">
@@ -282,8 +301,8 @@
             </RadzenStack>);
             
             }
-        else
-        {
+            else
+            {
             var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>
             @<RadzenStack Gap="1.5rem">
                 <p><b>El turno no se ha modificado.</b></p>

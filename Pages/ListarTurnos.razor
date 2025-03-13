@@ -189,7 +189,7 @@
         <p>Médico:  <b>@shift.Medico </b></p>
 
         <p><b>¿Desea continuar? </b></p>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
                 <RadzenStack Orientation="Orientation.Horizontal">
                     <RadzenButton Text="Confirmar" Click="@(args => CancelarTurno(shift.Id))" />
                     <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
@@ -221,9 +221,11 @@
 
     void CancelarTurno(int idABorrar)
     {
-        string query = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true,motivoCancelacion='Cancelado por admin desde Listado de turnos' WHERE idTurno=" + idABorrar + ";"; 
-        int cambiarEstado = Base.ConexionBase(query);
-        if (cambiarEstado == 0)
+        string query = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true,motivoCancelacion='Cancelado por admin desde Listado de turnos' WHERE idTurno=@idTurno;"; 
+        var parametros = new Dictionary<string, object> { { "@idTurno", idABorrar } };
+
+        int cambiarEstado = Base.InsertDeleteOrUpdateABase(query,parametros);
+        if (cambiarEstado > 0)
         {
             DialogService.Close(); // Cierra el diálogo
             NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Turno cancelado" });

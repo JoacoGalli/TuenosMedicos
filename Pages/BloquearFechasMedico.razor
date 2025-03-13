@@ -123,11 +123,22 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
             foreach (var item in fechasABloquear)
             {
                 //Inserto las fechas bloqueadas en la base
-                string query = "INSERT INTO `turnos-medicos`.`medicos_fechas_bloqueadas` (`nombreMedico`,`fechaBloqueada`,`motivo`) VALUES ('" + item.NombreMedico + "','" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "','" + item.Motivo + "');";
-                int intentoBloqueoFechas = Base.ConexionBase(query);
+                string query = "INSERT INTO `turnos-medicos`.`medicos_fechas_bloqueadas`"+
+                                "(`nombreMedico`,`fechaBloqueada`,`motivo`) VALUES "+
+                                "(@nombreMedico, @fechaBloqueada, @motivo);";
+                
+
+                var parametros = new Dictionary<string, object>
+                {
+                { "@nombreMedico", item.NombreMedico },
+                { "@fechaBloqueada", item.FechaBloqueada.ToString("yyyy-MM-dd") },
+                { "@motivo", item.Motivo }
+                };
+                
+                int intentoBloqueoFechas = Base.InsertDeleteOrUpdateABase(query,parametros);
 
                 //Pregunto si hay turnos en ese dia
-                string query2 = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,telefono,domicilio,email,cancelado,motivoCancelacion FROM `turnos-medicos`.`turnos` WHERE medico='" + medicoSeleccionado + "' AND fechaTurno='" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "';";
+                string query2 = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,telefono,domicilio,email,cancelado,motivoCancelacion,documentoPDF FROM `turnos-medicos`.`turnos` WHERE medico='" + medicoSeleccionado + "' AND fechaTurno='" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "';";
                 List<Turno> turnosACancelar = Base.SelectATurnos(query2);
 
                 //Si hay turnos, aviso a cada uno por email que se canceló.
@@ -142,8 +153,15 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                         nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
 
                         //Actualizo el estado del turno en la base.
-                        string query3 = "UPDATE `turnos-medicos`.turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas' WHERE medico='"+turno.Medico+"' AND fechaTurno='"+turno.FechaTurno.ToString("yyyy-MM-dd")+"';";
-                        int actualizoEstado = Base.ConexionBase(query3);
+                        string query3 = "UPDATE `turnos-medicos`.turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas'"+
+                                        "WHERE medico=@medico AND fechaTurno=@fechaTurno;";
+                        
+                        var parametros2 = new Dictionary<string, object>
+                    {
+                        { "@medico", turno.Medico },
+                        { "@fechaTurno", turno.FechaTurno.ToString("yyyy-MM-dd") }
+                         };
+                        int actualizoEstado = Base.InsertDeleteOrUpdateABase(query3, parametros2);
 
                         turnosCancelados.Add(turno);
                     }
@@ -230,10 +248,19 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
 
     void EliminarFechasEnBase(string motivo, DateTime fechaABorrar)
     {
-        Console.WriteLine(motivo + "- "+ fechaABorrar + "- "+ medicoSeleccionado);
-        string query = "DELETE FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico` = '" + medicoSeleccionado + "' AND `fechaBloqueada`='" + fechaABorrar.ToString("yyyy-MM-dd") + "' AND `motivo`='"+motivo+"';";
-        int intentoBloqueoFechas = Base.ConexionBase(query);
-        if(intentoBloqueoFechas==0)
+        string query = "DELETE FROM `turnos-medicos`.`medicos_fechas_bloqueadas`"+
+        "WHERE `nombreMedico` = @nombreMedico AND `fechaBloqueada`= @fechaBloqueada AND `motivo`= @motivo;";
+
+       
+        var parametros = new Dictionary<string, object>
+                {
+                { "@nombreMedico", medicoSeleccionado },
+                { "@fechaBloqueada", fechaABorrar.ToString("yyyy-MM-dd") },
+                { "@motivo", motivo }
+                };
+
+        int intentoBloqueoFechas = Base.InsertDeleteOrUpdateABase(query, parametros);
+        if(intentoBloqueoFechas > 0)
         {
             NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Bloqueo eliminado." });
         }

@@ -12,8 +12,8 @@
     <RadzenColumn Size="12" SizeMd="4" class="rz-p-2 rz-p-md-4">
         <RadzenStack Gap="0.5rem">
             <RadzenListBox @bind-Value=@medicoSeleccionado Data=@medicos TextProperty="NombreMedico" ValueProperty="NombreMedico"
-                           Style="width: 100%; max-width: 400px; height:200px"
-                           InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})" />
+            Style="width: 100%; max-width: 400px; height:200px"
+            InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})" />
             <RadzenButton Click=@AgregarMedico Icon="add_circle" Text="Nuevo médico" ButtonStyle="ButtonStyle.Primary" Width="100%" />
         </RadzenStack>
     </RadzenColumn>
@@ -21,7 +21,7 @@
     <RadzenColumn Size="12" SizeMd="8" class="rz-p-2 rz-p-md-8">
         <RadzenStack Gap="1rem">
             <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true" EmptyText="No hay horarios para mostrar"
-                            Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 800px;">
+            Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 800px;">
                 <Columns>
                     <RadzenDataGridColumn Property="NombreMedico" Title="Médico" Width="130px">
                         <EditTemplate Context="med">
@@ -100,7 +100,7 @@
                             .Select(nombre => new Medico { NombreMedico = nombre }) // Crea nuevos objetos Medico con nombres únicos
                             .ToList();
     }
-   
+
 
     async Task DeleteRow(Medico med)
     {
@@ -111,10 +111,10 @@
             <p>Hora inicio:  <b>@med.horaInicioTrabajo </b></p>
             <p>Hora fin:  <b>@med.horaFinTrabajo </b></p>
             <p><b>¿Desea continuar? </b></p>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
                 <RadzenStack Orientation="Orientation.Horizontal">
 
-                <RadzenButton Text="Confirmar" Click="@(args => CancelarTurno(med.Id))" />
+                <RadzenButton Text="Confirmar" Click="@(args => CancelarHorario(med.Id))" />
                     <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
                 </RadzenStack>
             </RadzenStack>
@@ -211,7 +211,7 @@
             </RadzenStack>
         </RadzenStack>
     </RadzenStack>
-        );
+    );
         }
         else
         {
@@ -243,8 +243,12 @@
             string horaInicio = horaIni.ToString("HH:mm");
             string horaFinal = horaFin.ToString("HH:mm");
 
-            string query = "INSERT INTO `turnos-medicos`.`medicos` (`nombreMedico`,`diaTrabajo`,`horaInicioTrabajo`,`horaFinTrabajo`,`duracionTurno`)VALUES('" + medicoSeleccionado + "','" + nuevoHorarioMedico.diaTrabajo + "','" + horaInicio + "','" + horaFinal + "'," + nuevoHorarioMedico.duracionTurno + ");";
-            int insertarNuevohorario = Base.ConexionBase(query);
+            nuevoHorarioMedico.NombreMedico = medicoSeleccionado;
+            nuevoHorarioMedico.horaInicioTrabajo = horaInicio;
+            nuevoHorarioMedico.horaFinTrabajo = horaFinal;
+
+
+            int insertarNuevohorario = Base.InsertarMedico(nuevoHorarioMedico);
 
             if (insertarNuevohorario == 0)
             {
@@ -265,11 +269,14 @@
 
     }
 
-    void CancelarTurno(int idABorrar)
+    void CancelarHorario(int idABorrar)
     {
-        string query = "DELETE FROM `turnos-medicos`.`medicos` WHERE idMedicos="+idABorrar+";";
-        int borrarFila = Base.ConexionBase(query);
-        if (borrarFila == 0)
+        string query = "DELETE FROM `turnos-medicos`.`medicos` WHERE idMedicos=@idMedicos;";
+        var parametros = new Dictionary<string, object>{ { "@idMedicos", idABorrar } };
+
+
+        int borrarFila = Base.InsertDeleteOrUpdateABase(query,parametros);
+        if (borrarFila > 0)
         {
             DialogService.Close(); // Cierra el diálogo
             NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Horario borrado" });
