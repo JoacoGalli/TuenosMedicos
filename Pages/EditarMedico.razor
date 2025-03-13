@@ -77,8 +77,6 @@
     RadzenDataGrid<Medico> ordersGrid;
 
     IEnumerable<Medico> medicos;
-    List<Medico> listaMedicos = new List<Medico>();
-
 
     IEnumerable<Medico> diasYhorarios;
     List<Medico> listaHorarios = new List<Medico>();
@@ -91,14 +89,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos;";
-        listaMedicos = Base.SelectAMedicos(query);
-
-        medicos = listaMedicos
-                            .Select(m => m.NombreMedico) // Extrae solo los nombres
-                            .Distinct() // Elimina duplicados
-                            .Select(nombre => new Medico { NombreMedico = nombre }) // Crea nuevos objetos Medico con nombres únicos
-                            .ToList();
+        medicos = Medico.ObtenerMedicos();
     }
 
 
@@ -222,17 +213,16 @@
 
     async Task ReloadGrid()
     {
-        string query = "";
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos";
 
-        if(medicoSeleccionado=="")
-        {
-            query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos;";      
-        }
-        else
-        {
-            query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos WHERE nombreMedico='"+medicoSeleccionado+"';";           
+        if(!string.IsNullOrEmpty(medicoSeleccionado))
+        {         
+            query = query + " WHERE nombreMedico= @nombreMedico ;";
         }        
-        diasYhorarios = Base.SelectAMedicos(query);
+
+        var parametros = new Dictionary<string, object> { { "@nombreMedico", medicoSeleccionado } };
+
+        diasYhorarios = Base.SelectAMedicos(query,parametros);
         await ordersGrid.Reload();
 
     }

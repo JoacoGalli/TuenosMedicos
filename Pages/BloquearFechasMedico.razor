@@ -42,8 +42,9 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
 
     void RecargarCalendario()
     {
-        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico`='" + medicoSeleccionado + "';";
-        bloqueadas = Base.SelectAMedicosFechasBloqueadas(query2);
+        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico ;";
+        var parametros2 = new Dictionary<string, object> { { "@nombreMedico", medicoSeleccionado } };
+        bloqueadas = Base.SelectAMedicosFechasBloqueadas(query2,parametros2);
     }
 
     // Pinta el dia de hoy en el calendario mensual.
@@ -138,8 +139,14 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                 int intentoBloqueoFechas = Base.InsertDeleteOrUpdateABase(query,parametros);
 
                 //Pregunto si hay turnos en ese dia
-                string query2 = "SELECT idturno,nombrePaciente,apellidoPaciente,dni,cobertura,medico,fechaTurno,horaTurno,notas,notasInternas,telefono,domicilio,email,cancelado,motivoCancelacion,documentoPDF FROM `turnos-medicos`.`turnos` WHERE medico='" + medicoSeleccionado + "' AND fechaTurno='" + item.FechaBloqueada.ToString("yyyy-MM-dd") + "';";
-                List<Turno> turnosACancelar = Base.SelectATurnos(query2);
+                string query2 = "SELECT * FROM `turnos-medicos`.`turnos` WHERE medico = @medico AND fechaTurno=@fechaTurno;";
+                var parametros2 = new Dictionary<string, object>
+                            {
+                                { "@medico", medicoSeleccionado },
+                                { "@fechaTurno", item.FechaBloqueada.ToString("yyyy-MM-dd") }
+                            };
+                
+                List<Turno> turnosACancelar = Base.SelectATurnos(query2,parametros2);
 
                 //Si hay turnos, aviso a cada uno por email que se canceló.
                 foreach (Turno turno in turnosACancelar)
@@ -156,12 +163,12 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                         string query3 = "UPDATE `turnos-medicos`.turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas'"+
                                         "WHERE medico=@medico AND fechaTurno=@fechaTurno;";
                         
-                        var parametros2 = new Dictionary<string, object>
+                        var parametros3 = new Dictionary<string, object>
                     {
                         { "@medico", turno.Medico },
                         { "@fechaTurno", turno.FechaTurno.ToString("yyyy-MM-dd") }
                          };
-                        int actualizoEstado = Base.InsertDeleteOrUpdateABase(query3, parametros2);
+                        int actualizoEstado = Base.InsertDeleteOrUpdateABase(query3, parametros3);
 
                         turnosCancelados.Add(turno);
                     }

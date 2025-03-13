@@ -30,11 +30,20 @@ class Turno
 
     public void DesactivarFechas(DateRenderEventArgs args)
     {
+        List<string> diasTrabajo = new List<string>();
         //Determino que dias trabaja el medico
-        string query = " SELECT diaTrabajo FROM `turnos-medicos`.medicos where nombreMedico='"+Medico+"';";
-        List<string> diasTrabajo = Base.EjecutarSelect(query);
+        string query = " SELECT * FROM `turnos-medicos`.medicos WHERE nombreMedico= @nombreMedico ;";
+        var parametros = new Dictionary<string, object> { { "@nombreMedico", Medico } };        
 
-        
+        List<Medico> listaMedicos = Base.SelectAMedicos(query, parametros);
+        foreach (var medico in listaMedicos)
+        {
+            if (!string.IsNullOrEmpty(medico.diaTrabajo))  
+            {
+                diasTrabajo.Add(medico.diaTrabajo);
+            }
+        }
+
         // Convertimos la lista de días de trabajo a DayOfWeek
         var diasPermitidos = diasTrabajo.Select(dia =>
         {
@@ -51,13 +60,13 @@ class Turno
             };
         }).ToList();
 
+        List<DateTime> fechaDes = new List<DateTime>();
 
         //Verifico que fechas fueron bloqueadas por el admin
-        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico`='" + Medico+"';";
-        
-        List<DateTime> fechaDes = new List<DateTime>();
-        
-        List<MedicoFechaBloqueada> fechasBloq = Base.SelectAMedicosFechasBloqueadas(query2);
+        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico ;";
+        var parametros2 = new Dictionary<string, object> { { "@nombreMedico", Medico } };
+
+        List<MedicoFechaBloqueada> fechasBloq = Base.SelectAMedicosFechasBloqueadas(query2,parametros2);
         foreach (var fecha in fechasBloq)
         {
             fechaDes.Add(fecha.FechaBloqueada);   
@@ -83,10 +92,15 @@ class Turno
     {
         
         //Traigo los horarios de trabajo del medico (inicio a fin de la jornada)
-        string diaSemana = FechaTurno.ToString("dddd", new System.Globalization.CultureInfo("es-ES"));
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos "+
+                        " WHERE nombreMedico = @nombreMedico and diaTrabajo = @diaTrabajo ;";
+        var param = new Dictionary<string, object>
+                        {
+                            { "@nombreMedico", Medico },
+                            { "@diaTrabajo", FechaTurno.ToString("dddd", new System.Globalization.CultureInfo("es-ES")) }
+                        };
 
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos where nombreMedico = '" + Medico + "' and diaTrabajo='"+diaSemana+"';";
-        List<Medico> consultaAMedicos = Base.SelectAMedicos(query);
+        List<Medico> consultaAMedicos = Base.SelectAMedicos(query, param);
 
         string horaDeInicio = consultaAMedicos[0].horaInicioTrabajo;
         string horaFinal = consultaAMedicos[0].horaFinTrabajo;
@@ -108,9 +122,14 @@ class Turno
 
 
         //aca consulto la tabla turno para ver si el medico en X dia tiene turnos ocupados.
-        string fechaMostrar = FechaTurno.ToString("yyyy-MM-dd");
-        string queryTurnos = "SELECT * FROM `turnos-medicos`.turnos WHERE medico = '"+ Medico + "' AND fechaTurno='"+ fechaMostrar + "' AND cancelado=false;";
-        List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos);
+        string queryTurnos = "SELECT * FROM `turnos-medicos`.turnos WHERE medico = @medico AND fechaTurno=@fechaTurno AND cancelado=false;";
+
+        var parametros = new Dictionary<string, object>
+                        {
+                            { "@medico", Medico },
+                            { "@fechaTurno", FechaTurno.ToString("yyyy-MM-dd") }
+                        };
+        List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos,parametros);
 
 
 

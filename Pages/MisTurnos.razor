@@ -1,29 +1,23 @@
-﻿@page "/listarturnos"
+﻿@page "/misturnos"
 
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Admin")]
-
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject DialogService DialogService
 @inject NavigationManager Navigation
 @inject DialogService DialogService
 @inject NotificationService NotificationService
 
 
-<PageTitle>Listado de turnos reservados</PageTitle>
+<PageTitle>Mis turnos</PageTitle>
 
 
 <h2>Listado de turnos reservados</h2>
 
-<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
-    <RadzenLabel Text="Seleccionar médico" Component="DropDownBindValue" />
-    <RadzenDropDown @bind-Value="medicoSeleccionado" Placeholder="Seleccionar" Data="@listaMedicos" Style="width: 30%;" TextProperty="NombreMedico" ValueProperty="NombreMedico" Name="Medico">
-        <RadzenRequiredValidator Component="Medico" Text="Debes seleccionar un médico" />
-    </RadzenDropDown>
-    <RadzenCheckBox @bind-Value=@mostrarCancelados Name="ButtonMostrarCancelados" />
-    <RadzenLabel Text="Cancelados" Component="ButtonMostrarCancelados" class="rz-ms-2" />
-    <RadzenButton Click=@ReloadGrid Text="Ver turnos" Icon="visibility" ButtonStyle="ButtonStyle.Base" />
-</RadzenStack>
 
+<RadzenCheckBox @bind-Value=@mostrarCancelados Name="ButtonMostrarCancelados" />
+<RadzenLabel Text="Cancelados" Component="ButtonMostrarCancelados" class="rz-ms-2" />
+<RadzenButton Click=@ReloadGrid Text="Ver turnos" Icon="visibility" ButtonStyle="ButtonStyle.Base" />
 
 <RadzenColumn Size="12" class="rz-p-2" Style="width: 100%; margin-bottom: 4rem;">
     <RadzenStack Gap="1.5rem">
@@ -82,37 +76,11 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas"  Width="60px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" Width="60px">
                     <Template Context="shift">
                         @if (!string.IsNullOrEmpty(shift.Notas))
                         {
                             <RadzenButton Click=@(args => VerNotas(shift.Notas))
-                            Text="Ver"
-                            Size="ButtonSize.Small"
-                            ButtonStyle="ButtonStyle.Info"
-                            />
-                        }
-                    </Template>
-                </RadzenDataGridColumn>
-
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="PDF" Width="60px">
-                    <Template Context="shift">
-                        @if (shift.DocumentoPDF!=null)
-                        {
-                            <RadzenButton Click=@(args => VerPDF(shift.DocumentoPDF))
-                            Text="Ver"
-                            Size="ButtonSize.Small"
-                            ButtonStyle="ButtonStyle.Info"
-                            />
-                        }
-                    </Template>
-                </RadzenDataGridColumn>
-
-                <RadzenDataGridColumn Context="shift" Filterable="false" TextAlign="TextAlign.Center" Sortable="false" Title="N.Int" Width="60px">
-                    <Template Context="shift">
-                        @if (!string.IsNullOrEmpty(shift.NotasInternas))
-                        {
-                            <RadzenButton Click=@(args => VerNotas(shift.NotasInternas))
                             Text="Ver"
                             Size="ButtonSize.Small"
                             ButtonStyle="ButtonStyle.Info" />
@@ -120,25 +88,22 @@
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Contacto" Width="65px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="PDF" Width="60px">
                     <Template Context="shift">
-                        <RadzenButton Click=@(args => VerContacto(shift.NombrePaciente,shift.ApellidoPaciente,shift.Telefono,shift.Email,shift.Domicilio))
-                        Text="Ver"
-                        Size="ButtonSize.Small"
-                        ButtonStyle="ButtonStyle.Light" />
-
+                        @if (shift.DocumentoPDF != null)
+                        {
+                            <RadzenButton Click=@(args => VerPDF(shift.DocumentoPDF))
+                            Text="Ver"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Info" />
+                        }
                     </Template>
                 </RadzenDataGridColumn>
 
-
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="90px">
                     <Template Context="shift">
-                        @if(!shift.Cancelado)
+                        @if (!shift.Cancelado)
                         {
-                            <RadzenButton Icon="build"
-                            ButtonStyle="ButtonStyle.Success"
-                            Size="ButtonSize.Small"
-                            Click="@(args => EditarTurno(shift.Id))" />
                             <RadzenButton Icon="delete"
                             ButtonStyle="ButtonStyle.Danger"
                             Size="ButtonSize.Small"
@@ -146,11 +111,11 @@
                         }
                         else
                         {
-                            <RadzenButton Click=@(args => VerMotivo(shift.NombrePaciente,shift.ApellidoPaciente,shift.MotivoCancelacion))
+                            <RadzenButton Click=@(args => VerMotivo(shift.MotivoCancelacion))
                             Text="Motivo"
                             Size="ButtonSize.Small"
                             ButtonStyle="ButtonStyle.Light" />
-                        }                        
+                        }
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>
@@ -158,12 +123,8 @@
     </RadzenStack>
 </RadzenColumn>
 
-
-
 @code
 {
-    string medicoSeleccionado = "";
-    List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
     bool mostrarCancelados;
 
@@ -173,9 +134,16 @@
 
     IEnumerable<Turno> turnos;
 
+    private string userEmail = "";
     protected override async Task OnInitializedAsync()
     {
-        listaMedicos.Add(new Medico() { NombreMedico = "Todos" });
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            userEmail = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value ?? "Email no encontrado";
+        }
     }
 
 
@@ -183,7 +151,7 @@
     {
         var result = await DialogService.OpenAsync("Atención", ds =>
         @<RadzenStack Gap="1.5rem">
-        <p>Estás a punto de cancelar el turno de : <b>@shift.NombrePaciente @shift.ApellidoPaciente</b></p>
+        <p>Estás a punto de cancelar el turno:</p>
         <p>Día:  <b>@shift.FechaTurno.ToString("dd/MM/yyyy") </b></p>
         <p>Hora:  <b>@shift.HoraTurno </b></p>
         <p>Médico:  <b>@shift.Medico </b></p>
@@ -239,24 +207,14 @@
 
     async Task ReloadGrid()
     {
-        string query = "SELECT * FROM `turnos-medicos`.turnos WHERE cancelado=@cancelado";
+        string query = "SELECT * FROM `turnos-medicos`.turnos WHERE email=@email AND cancelado=@cancelado";
+
         var parametros = new Dictionary<string, object>
-                    {
-                        { "@cancelado", mostrarCancelados }
-                    };
-
-
-        if (!string.IsNullOrEmpty(medicoSeleccionado) &&  medicoSeleccionado!="Todos" )
-        {
-
-            query = query + " AND medico=@medico";
-            parametros = new Dictionary<string, object>
-                        {
-                        { "@cancelado", mostrarCancelados },
-                         { "@medico", medicoSeleccionado }
-                        };
-            
-        }
+            {
+            { "@email", userEmail },
+            { "@cancelado", mostrarCancelados }
+            };
+        
         turnos = Base.SelectATurnos(query,parametros);
 
         await turnosGrid.Reload();
@@ -279,34 +237,12 @@
 
     }
 
-    async Task VerContacto(string nombre, string apellido, string telefono, string email, string domicilio)
-    {
-        var result = await DialogService.OpenAsync("Datos de contacto:", ds =>
-        @<RadzenStack Gap="1.5rem">
-        <p>Datos de contacto de: <b> @nombre @apellido </b></p>
-            <p><b>Teléfono: </b> @telefono </p>
-            <p><b>Email: </b> @email </p>
-
-            @if(!string.IsNullOrEmpty(domicilio))
-            {
-                <p><b>Domicilio: </b> @domicilio </p>
-            }   
-            
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                </RadzenStack>
-            </RadzenStack>
-        </RadzenStack>
-            );
-
-    }
-
-    async Task VerMotivo(string nombre, string apellido, string motivo)
+    
+    async Task VerMotivo(string motivo)
     {
         var result = await DialogService.OpenAsync("Motivo:", ds =>
         @<RadzenStack Gap="1.5rem">
-        <p>El turno de <b>@nombre @apellido </b> tiene el siguiente motivo de cancelación:</p>
+        <p>El turno tiene el siguiente motivo de cancelación:</p>
         <p> @motivo </p>
         
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">

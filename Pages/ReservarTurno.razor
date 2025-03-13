@@ -188,9 +188,9 @@
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
 
-    
-    
-    
+
+
+
     private string userEmail = "";
     private bool esAdmin = false;
     protected override async Task OnInitializedAsync()
@@ -218,7 +218,7 @@
         {
             if (file != null)
             {
-                
+
                 if (file.Size > MAX_FILE_SIZE)
                 {
                     mensajeErrorArchivo = "El archivo es demasiado grande. El tamaño máximo permitido es 10MB.";
@@ -319,6 +319,9 @@
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="" && mostrarErrorArchivo==false)
         {
             string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
+            
+            if (!esAdmin) { nuevoTurno.Email = userEmail; }
+            
             int intentoRegistrarTurno = Base.InsertarTurno(nuevoTurno, pdfBytes);
 
             if (intentoRegistrarTurno == 0)

@@ -5,38 +5,11 @@ using System.Data;
 class Base
 {
     
-    //este metodo solo devuelve una lista de strings de 1 sola columna.
-    public static List<string> EjecutarSelect(string query)
+    
+    public static List<Medico> SelectAMedicos(string query, Dictionary<string, object> parameters = null)
     {
         string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
-        List<string> resultados = new List<string>();
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
-        {
-            try
-            {
-                connection.Open();
-
-                using (MySqlCommand cmd = new MySqlCommand(query, connection))
-                using (MySqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        resultados.Add(reader.GetString(0)); // Agrega el primer campo de cada fila a la lista
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error en la base de datos: " + ex.Message);
-            }
-        }
-        return resultados;
-    }
-
-    public static List<Medico> SelectAMedicos(string query)
-    {
-        string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
         List<Medico> resultados = new List<Medico>();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -46,36 +19,50 @@ class Base
                 connection.Open();
 
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
-                using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
-                    while (reader.Read())
+                    // 🔒 Agrega los parámetros de manera segura si existen
+                    if (parameters != null)
                     {
-                        Medico medico = new Medico
+                        foreach (var param in parameters)
                         {
-                            Id = reader.GetInt32("idMedicos"), 
-                            NombreMedico = reader.GetString("nombreMedico"),
-                            diaTrabajo = reader.GetString("diaTrabajo"),
-                            horaInicioTrabajo = reader.GetString("horaInicioTrabajo"),
-                            horaFinTrabajo = reader.GetString("horaFinTrabajo"),
-                            duracionTurno =  reader.GetInt16("duracionTurno")
-                        };
+                            cmd.Parameters.AddWithValue(param.Key, param.Value);
+                        }
+                    }
 
-                        resultados.Add(medico); 
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Medico medico = new Medico
+                            {
+                                Id = reader.GetInt32("idMedicos"),
+                                NombreMedico = reader.GetString("nombreMedico"),
+                                diaTrabajo = reader.GetString("diaTrabajo"),
+                                horaInicioTrabajo = reader.GetString("horaInicioTrabajo"),
+                                horaFinTrabajo = reader.GetString("horaFinTrabajo"),
+                                duracionTurno = reader.GetInt16("duracionTurno")
+                            };
+
+                            resultados.Add(medico);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error en la base de datos: " + ex.Message);
+                Console.WriteLine("Ocurrió un error: " + ex.Message);
+                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
             }
         }
         return resultados;
     }
 
-    public static List<Turno> SelectATurnos(string query)
+
+    public static List<Turno> SelectATurnos(string query, Dictionary<string, object> parameters = null)
     {
         string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
-        List<Turno> resultados = new List<Turno> ();
+
+        List<Turno> resultados = new List<Turno>();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
@@ -84,47 +71,58 @@ class Base
                 connection.Open();
 
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
-                using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
-                    while (reader.Read())
+                    // 🔒 Agrega los parámetros de manera segura si existen
+                    if (parameters != null)
                     {
-                        Turno turno = new Turno
+                        foreach (var param in parameters)
                         {
-                            Id = reader.GetInt32("idturno"),
-                            NombrePaciente = reader.GetString("nombrePaciente"),
-                            ApellidoPaciente = reader.GetString("apellidoPaciente"),
-                            Dni = reader.GetInt32("dni"),
-                            Cobertura = reader.GetString("cobertura"),
-                            Medico = reader.GetString("medico"),
-                            FechaTurno = reader.GetDateTime("fechaTurno"),
-                            HoraTurno = reader.GetString("horaTurno"),
-                            Domicilio = reader.GetString("domicilio"),
-                            Email = reader.GetString("email"),
-                            Telefono = reader.GetString("telefono"),
-                            Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? "" : reader.GetString("notas"), // Maneja valores nulos
-                            NotasInternas = reader.IsDBNull(reader.GetOrdinal("notasInternas")) ? "" : reader.GetString("notasInternas"), // Maneja valores nulos
-                            Cancelado = reader.GetBoolean("cancelado"),
-                            MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion"),
-                            DocumentoPDF = reader.IsDBNull(reader.GetOrdinal("documentoPDF"))
-                                                                                            ? null
-                                                                                            : (byte[])reader.GetValue(reader.GetOrdinal("documentoPDF"))
-                        }; 
+                            cmd.Parameters.AddWithValue(param.Key, param.Value);
+                        }
+                    }
 
-                        resultados.Add(turno);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Turno turno = new Turno
+                            {
+                                Id = reader.GetInt32("idturno"),
+                                NombrePaciente = reader.GetString("nombrePaciente"),
+                                ApellidoPaciente = reader.GetString("apellidoPaciente"),
+                                Dni = reader.GetInt32("dni"),
+                                Cobertura = reader.GetString("cobertura"),
+                                Medico = reader.GetString("medico"),
+                                FechaTurno = reader.GetDateTime("fechaTurno"),
+                                HoraTurno = reader.GetString("horaTurno"),
+                                Domicilio = reader.GetString("domicilio"),
+                                Email = reader.GetString("email"),
+                                Telefono = reader.GetString("telefono"),
+                                Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? "" : reader.GetString("notas"),
+                                NotasInternas = reader.IsDBNull(reader.GetOrdinal("notasInternas")) ? "" : reader.GetString("notasInternas"),
+                                Cancelado = reader.GetBoolean("cancelado"),
+                                MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion"),
+                                DocumentoPDF = reader.IsDBNull(reader.GetOrdinal("documentoPDF")) ? null : (byte[])reader.GetValue(reader.GetOrdinal("documentoPDF"))
+                            };
+
+                            resultados.Add(turno);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error en la base de datos: " + ex.Message);
+                Console.WriteLine("Ocurrió un error: "+ex.Message);
+                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
             }
         }
         return resultados;
     }
 
-    public static List<MedicoFechaBloqueada> SelectAMedicosFechasBloqueadas(string query)
+    public static List<MedicoFechaBloqueada> SelectAMedicosFechasBloqueadas(string query, Dictionary<string, object> parameters = null)
     {
         string connectionString = "Server=localhost;Database=turnos-medicos;User ID=dotnet;Password=victorinox72401802!;";
+
         List<MedicoFechaBloqueada> resultados = new List<MedicoFechaBloqueada>();
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -134,29 +132,44 @@ class Base
                 connection.Open();
 
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
-                using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
-                    while (reader.Read())
+                    // 🔒 Agrega los parámetros de manera segura si existen
+                    if (parameters != null)
                     {
-                        MedicoFechaBloqueada nuevaFecha = new MedicoFechaBloqueada
+                        foreach (var param in parameters)
                         {
-                            
-                            NombreMedico = reader.GetString("nombreMedico"),
-                            FechaBloqueada = reader.GetDateTime("fechaBloqueada"),
-                            Motivo = reader.IsDBNull(reader.GetOrdinal("motivo")) ? "" : reader.GetString("motivo") // Maneja valores nulos
-                        };
+                            cmd.Parameters.AddWithValue(param.Key, param.Value);
+                        }
+                    }
 
-                        resultados.Add(nuevaFecha);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            MedicoFechaBloqueada nuevaFecha = new MedicoFechaBloqueada
+                            {
+
+                                NombreMedico = reader.GetString("nombreMedico"),
+                                FechaBloqueada = reader.GetDateTime("fechaBloqueada"),
+                                Motivo = reader.IsDBNull(reader.GetOrdinal("motivo")) ? "" : reader.GetString("motivo") // Maneja valores nulos
+                            };
+
+                            resultados.Add(nuevaFecha);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error en la base de datos: " + ex.Message);
+                Console.WriteLine("Ocurrió un error: " + ex.Message);
+                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
             }
         }
         return resultados;
     }
+
+
+
 
     public static int InsertarTurno(Turno nuevoTurno, byte[] pdfBytes)
     {
