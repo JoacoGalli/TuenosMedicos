@@ -14,30 +14,39 @@
 
 <h2 style="text-align: center;  margin-top: 3rem; margin-bottom: 1rem;">📅 Listado de turnos reservados</h2>
 
-<div class="rz-mb-3" style="display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 0;">
-    <RadzenCheckBox @bind-Value=@mostrarCancelados Name="ButtonMostrarCancelados" />
+<div class="rz-mb-3" style="display: flex; align-items: flex-start; justify-content: start; gap: 20px; padding: 10px 0 0 20px;">
     <RadzenLabel Text="Mostrar cancelados" Component="ButtonMostrarCancelados"
-                 style="font-size: 1.1rem; font-weight: bold;" />
-    <RadzenButton Click=@ReloadGrid Text="🔍 Ver turnos" Icon="visibility" ButtonStyle="ButtonStyle.Primary" />
+    style="font-size: 1.1rem; font-weight: bold;" />    
+    <RadzenCheckBox TValue="bool" @bind-Value="mostrarCancelados" Name="ButtonMostrarCancelados" Change="@OnMostrarCanceladosChange" />
+
 </div>
 
-
-
-<RadzenColumn Size="12" class="rz-p-3" style="width: 100%; margin-bottom: 4rem; border-radius: 10px; background: #f9f9f9; padding: 15px;">
+<!-- Mensaje dinámico -->
+<div class="mensaje-turnos">
+    @if (mostrarCancelados)
+    {
+        <span class="mensaje-cancelados">❌ Turnos cancelados</span>
+    }
+    else
+    {
+        <span class="mensaje-pendientes">✅ Turnos pendientes</span>
+    }
+</div
+<br />
+<!-- 📌 TABLA COMPLETA (para pantallas grandes) -->
+<RadzenColumn class="tabla-grande" Size="12" style="width: 100%; margin-bottom: 4rem; border-radius: 10px; background: #f9f9f9;  padding: 15px;">
     <RadzenStack Gap="1.5rem">
         <RadzenDataGrid @ref="turnosGrid"
-                        AllowFiltering="true"
-                        FilterMode="FilterMode.Simple"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        AllowPaging="true"
-                        PageSize="5"
-                        AllowSorting="true"
-                        Data="@turnos"
-                        TItem="Turno"
-                        ColumnWidth="150px"
-                        EmptyText="📭 No hay turnos disponibles"
-                        Style="width: 100%; max-width: 100%; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); padding: 10px;">
-            <Columns>
+        AllowFiltering="false"
+        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+        AllowPaging="true"
+        PageSize="5"
+        AllowSorting="true"
+        Data="@turnos"
+        TItem="Turno"                                                
+        EmptyText="📭 No hay turnos disponibles"
+        Style="width: 100%; max-width: 100%; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); padding: 10px;">
+            <Columns >
                 <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="130px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.NombrePaciente" Style="width: 100%; border-radius: 5px;" />
@@ -50,31 +59,31 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Dni" Title="DNI" Width="110px">
+                <RadzenDataGridColumn  Property="Dni" Title="DNI" Width="110px">
                     <EditTemplate Context="shift">
                         <RadzenNumeric TValue="int?" @bind-Value="shift.Dni" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Medico" Title="Médico" Width="130px">
+                <RadzenDataGridColumn Property="Medico" Title="Médico" Width="80px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.Medico" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="120px">
+                <RadzenDataGridColumn Property="FechaTurno" Filterable="false" TextAlign="TextAlign.Center" Title="Fecha" Width="120px">
                     <Template Context="shift">
                         📅 @shift.FechaTurno.ToString("dd/MM/yyyy")
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="80px">
+                <RadzenDataGridColumn Property="HoraTurno" TextAlign="TextAlign.Center" Title="Hora" Width="80px">
                     <Template Context="shift">
                         🕒 @shift.HoraTurno
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" Width="80px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Title="Notas" Width="80px">
                     <Template Context="shift">
                         @if (!string.IsNullOrEmpty(shift.Notas))
                         {
@@ -83,7 +92,7 @@
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="PDF" Width="80px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Title="PDF" Width="80px">
                     <Template Context="shift">
                         @if (shift.DocumentoPDF != null)
                         {
@@ -101,6 +110,45 @@
                         else
                         {
                             <RadzenButton Click="() => VerMotivo(shift.MotivoCancelacion)" Text="📌 Motivo" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Light" />
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenStack>
+</RadzenColumn>
+
+
+<!-- 📌 TABLA COMPACTA (para pantallas pequeñas) -->
+<RadzenColumn Size="12" class="tabla-pequena" style="width: 100%; margin-bottom: 14rem; border-radius: 10px; background: #f9f9f9; padding: 5px;">
+    <RadzenStack Gap="1.5rem">
+        <RadzenDataGrid AllowPaging="true"
+        PageSize="5"
+        AllowSorting="true"
+        Data="@turnos"
+        TItem="Turno"
+        EmptyText="📭 No hay turnos disponibles"
+        Style="width: 100%; max-width: 100%; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); padding: 10px;">
+            <Columns>
+                <RadzenDataGridColumn Property="Medico" Title="Médico" Width="95px" />
+
+                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="85px">
+                    <Template Context="shift">
+                        @shift.FechaTurno.ToString("dd/MM")
+                    </Template>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="67px" />
+
+                <RadzenDataGridColumn Context="shift" Filterable="false"  Title="" Sortable="false" TextAlign="TextAlign.Left" Width="110px">
+                    <Template Context="shift">
+                        @if (!shift.Cancelado)
+                        {
+                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => DeleteRow(shift)" />
+                        }
+                        else
+                        {
+                            <RadzenButton Click="() => VerMotivo(shift.MotivoCancelacion)" Text="📌Ver" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Light" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -131,7 +179,21 @@
         {
             userEmail = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value ?? "Email no encontrado";
         }
+       
     }
+
+   private bool firstRender = true;
+
+protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+    if (this.firstRender) // ✅ Usamos la variable de instancia
+    {
+        await ReloadGrid();
+        this.firstRender = false; // ✅ Asegurar que solo se ejecute una vez
+        StateHasChanged(); // 🔄 Forzar render para reflejar cambios en la UI
+    }
+}
+
 
 
     async Task DeleteRow(Turno shift)
@@ -192,6 +254,12 @@
         }
     }
 
+    async Task OnMostrarCanceladosChange(bool value)
+    {
+        mostrarCancelados = value;  // Actualiza la variable
+        await ReloadGrid();         // Llama a ReloadGrid() correctamente
+    }
+
     async Task ReloadGrid()
     {
         string query = "SELECT * FROM `turnos-medicos`.turnos WHERE email=@email AND cancelado=@cancelado";
@@ -210,7 +278,7 @@
 
     async Task VerNotas(string nota)
     {
-        var result = await DialogService.OpenAsync("Nota adjunta", ds =>
+        var result = await DialogService.OpenAsync("Nota System.NullReferenceException: 'Object reference not set to an instance of an object.'adjunta", ds =>
         @<RadzenStack Gap="1.5rem">
             <p><b>El turno tiene la siguiente nota:</b></p>
             <p> @nota </p>

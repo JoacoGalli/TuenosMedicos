@@ -583,3 +583,68 @@ h1:focus {
     font-weight: bold;
     font-size: 18px;
 }
+
+
+
+
+/*Esto es para ocultar las columnas en "Mis Turnos" */
+@media (max-width: 1200px) {
+    .tabla-grande {
+        display: none !important;
+    }
+    /* Ocultar tabla grande */
+    .tabla-pequena {
+        display: block !important;
+    }
+    /* Mostrar tabla pequeña */
+}
+
+@media (min-width: 1201px) {
+    .tabla-grande {
+        display: block !important;
+    }
+    /* Mostrar tabla grande */
+    .tabla-pequena {
+        display: none !important;
+    }
+    /* Ocultar tabla pequeña */
+}
+
+/* Aumenta el tamaño del texto en TODA la tabla grande */
+.tabla-grande .rz-datatable {
+    font-size: 2.3rem !important;
+}
+
+/* Aumenta el tamaño de las celdas específicamente */
+.tabla-grande .rz-datatable-body {
+    font-size: 2.3rem !important;
+}
+
+/* Aumenta el tamaño del encabezado de la tabla */
+.tabla-grande .rz-datatable-thead {
+    font-size: 2.3rem !important;
+    font-weight: bold;
+}
+.mensaje-turnos {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.mensaje-pendientes {
+    color: #1b5e20; /* Verde oscuro */
+    background: #c8e6c9; /* Verde claro */
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.mensaje-cancelados {
+    color: #b71c1c; /* Rojo oscuro */
+    background: #ffcdd2; /* Rojo claro */
+    padding: 8px 12px;
+    border-radius: 8px;
+}
