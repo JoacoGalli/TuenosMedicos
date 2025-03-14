@@ -414,3 +414,172 @@ h1:focus {
   }
 }
 
+/* Aplicar tipografía general de la navbar */
+.rz-label, .rz-textbox, .rz-dropdown, .rz-numeric, .rz-datepicker, .rz-upload, .rz-button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+}
+
+/* Estilizar etiquetas y campos de entrada */
+.rz-label {
+    font-weight: 600;
+    color: #1f2937; /* Color oscuro para contrastar con fondo claro */
+}
+
+.rz-textbox, .rz-dropdown, .rz-numeric, .rz-datepicker, .rz-upload {
+    background-color: #ffffff; /* Fondo claro */
+    color: #1f2937;
+    border: 1px  #3b82f6;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+    .rz-textbox::placeholder, .rz-dropdown::placeholder {
+        color: #6b7280;
+    }
+
+/* Estilizar botones */
+.rz-button {
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+    /* Confirmar - Botón principal */
+    .rz-button[icon="save"] {
+        background-color: #3b82f6;
+        border: none;
+        color: white;
+    }
+
+        .rz-button[icon="save"]:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+    /* Cancelar - Botón secundario */
+    .rz-button[icon="cancel"] {
+        background-color: transparent;
+        border: 2px solid #ef4444;
+        color: #ef4444;
+    }
+
+        .rz-button[icon="cancel"]:hover {
+            background-color: #ef4444;
+            color: white;
+            transform: scale(1.05);
+        }
+
+/* Mejorar espaciado de filas */
+.rz-row {
+    margin-bottom: 15px;
+}
+
+/* Estilizar fieldsets */
+.rz-fieldset {
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.5); /* Fondo más claro */
+}
+
+    .rz-fieldset > legend {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1f2937; /* Color oscuro para mejor contraste */
+    }
+
+/* Estilizar errores de validación */
+.rz-validation-message {
+    color: #ef4444;
+    font-weight: bold;
+}
+
+.rz-datepicker input:focus,
+.rz-datepicker input:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #3b82f6 !important;
+}
+
+/* Aplicar tipografía general de la navbar */
+.rz-label, .rz-textbox, .rz-dropdown, .rz-numeric, .rz-datepicker, .rz-upload, .rz-button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+}
+
+/* Estilizar etiquetas y campos de entrada */
+.rz-label {
+    font-weight: 600;
+    color: #1f2937; /* Color oscuro para contrastar con fondo claro */
+}
+
+.rz-textbox, .rz-dropdown, .rz-numeric, .rz-datepicker, .rz-upload {
+    background-color: #ffffff; /* Fondo claro */
+    color: #1f2937;
+    
+    border-radius: 8px;
+    padding: 10px;
+}
+
+    .rz-textbox::placeholder, .rz-dropdown::placeholder {
+        color: #6b7280;
+    }
+
+/* Estilizar botones */
+.rz-button {
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+    /* Confirmar - Botón principal */
+    .rz-button[icon="save"] {
+        background-color: #3b82f6;
+        border: none;
+        color: white;
+    }
+
+        .rz-button[icon="save"]:hover {
+            background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+    /* Cancelar - Botón secundario */
+    .rz-button[icon="cancel"] {
+        background-color: transparent;
+        border: 2px solid #ef4444;
+        color: #ef4444;
+    }
+
+        .rz-button[icon="cancel"]:hover {
+            background-color: #ef4444;
+            color: white;
+            transform: scale(1.05);
+        }
+
+/* Mejorar espaciado de filas */
+.rz-row {
+    margin-bottom: 15px;
+}
+
+/* Estilizar fieldsets */
+.rz-fieldset {
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.5); /* Fondo más claro */
+}
+
+    .rz-fieldset > legend {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1f2937; /* Color oscuro para mejor contraste */
+    }
+
+/* Estilizar errores de validación */
+.rz-validation-message {
+    color: #ef4444;
+    font-weight: bold;
+    font-size: 18px;
+}
