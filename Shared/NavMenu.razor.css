@@ -1,16 +1,145 @@
-html,
-body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Quicksand", sans-serif;
-    font-size: 62.5%;
-    font-size: 10px;
+﻿
+/* 🔥 MISMO COLOR QUE EL FOOTER */
+.custom-navbar {
+    background: linear-gradient(135deg, #0A1931, #185ADB);
+    padding: 15px 0;
+    border-bottom: none;
 }
 
-#navbarMedicos a:hover {
-    background-color:dodgerblue;
+.navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
     color: white !important;
-  
 }
 
+.nav-link {
+    color: white !important;
+    transition: all 0.3s ease-in-out;
+}
+
+    /* ✅ Nuevo color de hover */
+    .nav-link:hover {
+        color: #00bcd4 !important;
+    }
+
+.btn-info {
+    background-color: #00bcd4;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+    .btn-info:hover {
+        background-color: #008ba3;
+    }
+
+.btn-outline-light:hover {
+    background: #00bcd4;
+    color: white !important;
+}
+
+.btn-danger {
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* ✅ Dropdown con nuevo color */
+.dropdown-menu.custom-dropdown {
+    background: #0a0a23;
+    border: none;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item {
+    color: white !important;
+    transition: all 0.3s ease-in-out;
+}
+
+    .dropdown-item:hover {
+        background: #00bcd4;
+    }
+
+/* ✅ ICONO HAMBURGUESA EN BLANCO */
+.custom-toggler {
+    border: none;
+}
+
+    .custom-toggler .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='3' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+
+/* 🔥 RESPONSIVE FIX 🔥 */
+@media (max-width: 992px) {
+    /* ✅ MedicShifts más a la derecha */
+    .navbar-brand {
+        margin-left: 10px;
+    }
+
+    .navbar-nav {
+        text-align: center;
+        width: 100%;
+    }
+
+    .nav-item {
+        margin-bottom: 10px;
+    }
+
+    .dropdown-menu {
+        text-align: center;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+    }
+
+    /* ✅ Reducir ancho de "Cerrar sesión" en móviles */
+    .btn-danger {
+        max-width: 120px;
+    }
+}
+/* 🔥 RESPONSIVE FIX 🔥 */
+@media (max-width: 992px) {
+    /* ✅ MedicShifts más a la derecha */
+    .navbar-brand {
+        margin-left: 10px;
+    }
+
+    .navbar-nav {
+        text-align: center;
+        width: 100%;
+    }
+
+    .nav-item {
+        margin-bottom: 10px;
+    }
+
+    .dropdown-menu {
+        text-align: center;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+    }
+
+    /* ✅ Cerrar sesión centrado y con tamaño adecuado */
+    .btn-danger {
+        max-width: 140px; /* Evita que las letras se corten */
+        margin: 0 auto; /* Lo centra en el contenedor */
+        display: block; /* Asegura el centrado */
+        font-size: 16px; /* Tamaño de fuente adecuado */
+        white-space: nowrap; /* Evita que el texto se divida */
+    }
+}
+@media (max-width: 992px) {
+    /* ✅ Mueve "Cerrar sesión" a la derecha */
+    .btn-danger {
+        margin-left: auto; /* Empuja el botón a la derecha */
+        margin-right: 10px; /* Pequeño margen derecho */
+        display: block;
+        max-width: 140px;
+        font-size: 16px;
+        white-space: nowrap;
+    }
+}

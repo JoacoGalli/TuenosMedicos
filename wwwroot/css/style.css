@@ -16,6 +16,238 @@ h1:focus {
     outline: none;
 }
 
+.home-container {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.home-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.home-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.home-image-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-image {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.home-text-column {
+    text-align: left;
+    padding: 20px;
+    position: relative;
+}
+
+.home-subtitle {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.home-description {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.home-button-container {
+    display: flex;
+    justify-content: flex-end; /* Alinea a la derecha */
+    margin-top: 20px;
+}
+
+.home-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    color: white;
+    background-color: #25d366;
+    text-decoration: none;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s;
+}
+
+    .home-button i {
+        font-size: 1.5rem;
+    }
+
+    .home-button:hover {
+        background-color: #1da851;
+    }
+
+.login-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.login-form {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-input {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+    .custom-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    }
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+    .login-button i {
+        font-size: 1.2rem;
+    }
+
+.text-center a {
+    color: #007bff;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+    .text-center a:hover {
+        text-decoration: underline;
+    }
+
+.reset-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.reset-form {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.custom-input {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+    .custom-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    }
+
+.reset-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+    .reset-button i {
+        font-size: 1.2rem;
+    }
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+
+.register-form {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.register-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.custom-input {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+    .custom-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    }
+
+.register-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+    .register-button i {
+        font-size: 1.2rem;
+    }
+
 
 .site-footer {
     background-color: #26272b;
@@ -181,5 +413,4 @@ h1:focus {
     font-weight:600
   }
 }
-
 

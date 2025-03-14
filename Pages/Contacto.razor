@@ -1,33 +1,41 @@
 ﻿@page "/contacto"
 
 <PageTitle>Contacto</PageTitle>
-
-<!-- Container (Contact Section) -->
+<!-- Contact Section -->
 <div class="w3-content w3-container w3-padding-64" id="contact">
-  <h3 class="w3-center">Donde encontrarnos</h3>
-  <p class="w3-center"><em>Lunes a viernes 09 a 18 hs</em></p>
+    <h2 class="w3-center w3-text-black" style="font-weight: bold;">📍 ¿Dónde encontrarnos?</h2>
+    <p class="w3-center w3-large" style="opacity: 0.8;"><em>Lunes a viernes de 09 a 18 hs</em></p>
 
-  <div class="w3-row w3-padding-32 w3-section">
-    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3260.845963359959!2d-59.100438923395174!3d-35.185391588451594!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bd075150484cb5%3A0x45101605f1175053!2sPlaza%201810%20Bautista%20Benjam%C3%ADn%20Mulassi!5e0!3m2!1ses!2sdk!4v1739735296281!5m2!1ses!2sdk" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    <div style=" text-align: center;"class="w3-large w3-margin-bottom">
-      <i class="fa fa-map-marker fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Plaza 1810  <br>
-      <i class="fa fa-phone fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Telefono: 02227 - 423574<br>
-      <i class="fa fa-envelope fa-fw w3-hover-text-black w3-xlarge w3-margin-right"></i> Email: mail@mail.com<br>
+    <div class="w3-row w3-padding-32 w3-section">
+        <!-- Mapa con bordes redondeados y sombra -->
+        <div style="border-radius: 12px; overflow: hidden; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3260.845963359959!2d-59.100438923395174!3d-35.185391588451594!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bd075150484cb5%3A0x45101605f1175053!2sPlaza%201810%20Bautista%20Benjam%C3%ADn%20Mulassi!5e0!3m2!1ses!2sdk!4v1739735296281!5m2!1ses!2sdk" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+
+        <!-- Sección de información de contacto -->
+        <div class="w3-center w3-padding-16 w3-large" style="margin-top: 20px;">
+            <p><i class="fa fa-map-marker w3-text-red w3-xlarge w3-margin-right"></i><strong> Plaza 1810</strong></p>
+            <p><i class="fa fa-phone w3-text-green w3-xlarge w3-margin-right"></i>📞 <strong>02227 - 423574</strong></p>
+            <p><i class="fa fa-envelope w3-text-blue w3-xlarge w3-margin-right"></i>✉️ <strong>mail@mail.com</strong></p>
+        </div>
+
+        <!-- Formulario con diseño mejorado -->
+        <div class="w3-container w3-padding-16 w3-light-grey w3-round-large" style="margin-top: 20px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+            <h4 class="w3-center">📧 ¡Déjanos tu mensaje!</h4>
+            <form action="/action_page.php" target="_blank">
+                <div class="w3-row-padding" style="margin: 8px 0;">
+                    <div class="w3-half">
+                        <input class="w3-input w3-border w3-round" type="text" placeholder="Nombre" required name="Name">
+                    </div>
+                    <div class="w3-half">
+                        <input class="w3-input w3-border w3-round" type="text" placeholder="Email" required name="Email">
+                    </div>
+                </div>
+                <input class="w3-input w3-border w3-round" type="text" placeholder="Mensaje" required name="Message" style="margin-top: 8px;">
+                <button class="w3-button w3-black w3-round w3-right w3-margin-top" type="submit">
+                    <i class="fa fa-paper-plane"></i> Enviar
+                </button>
+            </form>
+        </div>
     </div>
-    <p>O mandanos un correo:</p>
-    <form action="/action_page.php" target="_blank">
-      <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
-        <div class="w3-half">
-          <input class="w3-input w3-border" type="text" placeholder="Nombre" required name="Name">
-        </div>
-        <div class="w3-half">
-          <input class="w3-input w3-border" type="text" placeholder="Email" required name="Email">
-        </div>
-      </div>
-      <input class="w3-input w3-border" type="text" placeholder="Mensaje" required name="Message">
-      <button class="w3-button w3-black w3-right w3-section" type="submit">
-        <i class="fa fa-paper-plane"></i> Enviar
-      </button>
-    </form>
-  </div>
 </div>

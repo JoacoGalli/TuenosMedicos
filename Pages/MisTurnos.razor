@@ -12,109 +12,95 @@
 <PageTitle>Mis turnos</PageTitle>
 
 
-<h2>Listado de turnos reservados</h2>
+<h2 style="text-align: center; margin-bottom: 1rem;">📅 Listado de Turnos Reservados</h2>
+
+<div class="rz-mb-3" style="display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 0;">
+    <RadzenCheckBox @bind-Value=@mostrarCancelados Name="ButtonMostrarCancelados" />
+    <RadzenLabel Text="Mostrar cancelados" Component="ButtonMostrarCancelados"
+                 style="font-size: 1.1rem; font-weight: bold;" />
+    <RadzenButton Click=@ReloadGrid Text="🔍 Ver turnos" Icon="visibility" ButtonStyle="ButtonStyle.Primary" />
+</div>
 
 
-<RadzenCheckBox @bind-Value=@mostrarCancelados Name="ButtonMostrarCancelados" />
-<RadzenLabel Text="Cancelados" Component="ButtonMostrarCancelados" class="rz-ms-2" />
-<RadzenButton Click=@ReloadGrid Text="Ver turnos" Icon="visibility" ButtonStyle="ButtonStyle.Base" />
 
-<RadzenColumn Size="12" class="rz-p-2" Style="width: 100%; margin-bottom: 4rem;">
+<RadzenColumn Size="12" class="rz-p-3" style="width: 100%; margin-bottom: 4rem; border-radius: 10px; background: #f9f9f9; padding: 15px;">
     <RadzenStack Gap="1.5rem">
         <RadzenDataGrid @ref="turnosGrid"
-        AllowFiltering="true"
-        FilterMode="FilterMode.Simple"
-        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-        AllowPaging="true"
-        PageSize="5"
-        AllowSorting="true"
-        Data="@turnos"
-        TItem="Turno"
-        ColumnWidth="200px"
-        EmptyText="No hay turnos para mostrar"
-        Style="width: 100%; max-width: 100%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                        AllowFiltering="true"
+                        FilterMode="FilterMode.Simple"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        AllowPaging="true"
+                        PageSize="5"
+                        AllowSorting="true"
+                        Data="@turnos"
+                        TItem="Turno"
+                        ColumnWidth="150px"
+                        EmptyText="📭 No hay turnos disponibles"
+                        Style="width: 100%; max-width: 100%; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); padding: 10px;">
             <Columns>
-                <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="120px">
+                <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="130px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.NombrePaciente" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="ApellidoPaciente" Title="Apellido" Width="120px">
+                <RadzenDataGridColumn Property="ApellidoPaciente" Title="Apellido" Width="130px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.ApellidoPaciente" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Dni" Title="DNI" Width="100px">
+                <RadzenDataGridColumn Property="Dni" Title="DNI" Width="110px">
                     <EditTemplate Context="shift">
                         <RadzenNumeric TValue="int?" @bind-Value="shift.Dni" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Cobertura" Title="Cobertura" Width="120px">
-                    <EditTemplate Context="shift">
-                        <RadzenTextBox @bind-Value="shift.Cobertura" Style="width: 100%; border-radius: 5px;" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-
-                <RadzenDataGridColumn Property="Medico" Title="Médico" Width="120px">
+                <RadzenDataGridColumn Property="Medico" Title="Médico" Width="130px">
                     <EditTemplate Context="shift">
                         <RadzenTextBox @bind-Value="shift.Medico" Style="width: 100%; border-radius: 5px;" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="100px">
+                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="120px">
                     <Template Context="shift">
-                        @shift.FechaTurno.ToString("dd/MM/yyyy")
+                        📅 @shift.FechaTurno.ToString("dd/MM/yyyy")
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="70px">
-                    <EditTemplate Context="shift">
-                        <RadzenTextBox @bind-Value="shift.HoraTurno" Style="width: 100%; border-radius: 5px;" />
-                    </EditTemplate>
+                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="80px">
+                    <Template Context="shift">
+                        🕒 @shift.HoraTurno
+                    </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" Width="60px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" Width="80px">
                     <Template Context="shift">
                         @if (!string.IsNullOrEmpty(shift.Notas))
                         {
-                            <RadzenButton Click=@(args => VerNotas(shift.Notas))
-                            Text="Ver"
-                            Size="ButtonSize.Small"
-                            ButtonStyle="ButtonStyle.Info" />
+                            <RadzenButton Click="() => VerNotas(shift.Notas)" Text="📝 Ver" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Info" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="PDF" Width="60px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="PDF" Width="80px">
                     <Template Context="shift">
                         @if (shift.DocumentoPDF != null)
                         {
-                            <RadzenButton Click=@(args => VerPDF(shift.DocumentoPDF))
-                            Text="Ver"
-                            Size="ButtonSize.Small"
-                            ButtonStyle="ButtonStyle.Info" />
+                            <RadzenButton Click="() => VerPDF(shift.DocumentoPDF)" Text="📄 Ver" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Info" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="90px">
+                <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="110px">
                     <Template Context="shift">
                         @if (!shift.Cancelado)
                         {
-                            <RadzenButton Icon="delete"
-                            ButtonStyle="ButtonStyle.Danger"
-                            Size="ButtonSize.Small"
-                            Click="@(args => DeleteRow(shift))" />
+                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => DeleteRow(shift)" />
                         }
                         else
                         {
-                            <RadzenButton Click=@(args => VerMotivo(shift.MotivoCancelacion))
-                            Text="Motivo"
-                            Size="ButtonSize.Small"
-                            ButtonStyle="ButtonStyle.Light" />
+                            <RadzenButton Click="() => VerMotivo(shift.MotivoCancelacion)" Text="📌 Motivo" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Light" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -122,6 +108,7 @@
         </RadzenDataGrid>
     </RadzenStack>
 </RadzenColumn>
+
 
 @code
 {

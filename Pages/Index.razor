@@ -2,19 +2,29 @@
 
 <PageTitle>Inicio</PageTitle>
 
-<br>
-<h1 style="text-align: center;">Consultorio medico del doctor Pepe </h1>
-<br>
-<div>
-    <RadzenRow class="rz-text-align-center" Gap="1rem">
-        <RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="6" SizeLG="6" SizeXL="6" SizeXX="6" class="rz-p-5" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center;">
-            <!-- Imagen -->
-            <img src="images/hush-naidoo-jade-photography-yo01Z-9HQAw-unsplash.jpg" style="width: 100%; height: auto; max-width: 750px;" alt="instrumentomedico">
+<div class="home-container">
+    <h1 class="home-title">🏥 Consultorio Médico del Dr. Cairo</h1>
+
+    <RadzenRow class="home-row">
+        <!-- Imagen -->
+        <RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="6" SizeLG="6" class="home-image-column">
+            <img src="images/hush-naidoo-jade-photography-yo01Z-9HQAw-unsplash.jpg" class="home-image" alt="Consultorio Médico">
         </RadzenColumn>
 
-        <RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="6" SizeLG="6" SizeXL="6" SizeXX="6" class="rz-p-5" style="display: flex; justify-content: center; align-items: center;">
-            <!-- Párrafo -->
-            <h2><b>Somos un consultorio médico especializado en curar personas que se encuentran enfermas y débiles. Llamanos y te curamos.</b></h2>
+        <!-- Texto de presentación -->
+        <RadzenColumn Size="12" SizeXS="12" SizeSM="12" SizeMD="6" SizeLG="6" class="home-text-column">
+            <h2 class="home-subtitle">🩺 Cuidamos tu salud con dedicación y profesionalismo</h2>
+            <p class="home-description">
+                En nuestro consultorio, ofrecemos atención médica especializada para ayudarte a recuperar tu bienestar.
+                <br> Nuestro equipo de profesionales está listo para atenderte con la mejor calidad.
+            </p>
+
+            <!-- Botón de contacto flotante -->
+            <div class="home-button-container">
+                <a href="https://wa.me/541122233344" class="home-button" target="_blank">
+                    <i class="fa fa-whatsapp"></i> WhatsApp / Llamar
+                </a>
+            </div>
         </RadzenColumn>
     </RadzenRow>
 </div>
