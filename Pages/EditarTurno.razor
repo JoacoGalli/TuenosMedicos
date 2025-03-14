@@ -264,7 +264,7 @@
 
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
-            string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");          
+            string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";          
             
             string query = "UPDATE `turnos` SET `cobertura` = @cobertura, `medico` = @medico, `fechaTurno` = @fechaTurno, " +
            "`horaTurno` = @horaTurno, `telefono` = @telefono, `email` = @email, `domicilio` = @domicilio, " +

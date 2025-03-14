@@ -11,7 +11,7 @@ class Turno
     public int? Dni {get; set;}
     public string? Cobertura {get; set;}
     public string? Medico {get; set;} ="";
-    public DateTime FechaTurno {get; set;}
+    public DateTime? FechaTurno {get; set;}
     public string HoraTurno {get; set;} ="";
     public string? Notas { get; set; } = "";
     public string? NotasInternas { get; set; } = "";
@@ -97,7 +97,7 @@ class Turno
         var param = new Dictionary<string, object>
                         {
                             { "@nombreMedico", Medico },
-                            { "@diaTrabajo", FechaTurno.ToString("dddd", new System.Globalization.CultureInfo("es-ES")) }
+                            { "@diaTrabajo", FechaTurno?.ToString("dddd", new System.Globalization.CultureInfo("es-ES")) }
                         };
 
         List<Medico> consultaAMedicos = Base.SelectAMedicos(query, param);
@@ -127,7 +127,7 @@ class Turno
         var parametros = new Dictionary<string, object>
                         {
                             { "@medico", Medico },
-                            { "@fechaTurno", FechaTurno.ToString("yyyy-MM-dd") }
+                            { "@fechaTurno", FechaTurno?.ToString("yyyy-MM-dd") }
                         };
         List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos,parametros);
 

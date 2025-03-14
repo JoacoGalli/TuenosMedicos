@@ -154,7 +154,7 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                     if(!string.IsNullOrEmpty(turno.Email))
                     {
                         EmailService nuevoEmail = new EmailService();
-                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
+                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno?.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
 
                         //nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
                         nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
@@ -166,7 +166,7 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                         var parametros3 = new Dictionary<string, object>
                     {
                         { "@medico", turno.Medico },
-                        { "@fechaTurno", turno.FechaTurno.ToString("yyyy-MM-dd") }
+                        { "@fechaTurno", turno.FechaTurno?.ToString("yyyy-MM-dd") }
                          };
                         int actualizoEstado = Base.InsertDeleteOrUpdateABase(query3, parametros3);
 
@@ -203,7 +203,7 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
         <RadzenStack Gap="0.5rem">
             @foreach (var turno in turnos)
         {
-            <p><b>@turno.NombrePaciente @turno.ApellidoPaciente</b> - @turno.FechaTurno.ToString("dd/MM/yyyy") - @turno.HoraTurno hs.</p>
+            <p><b>@turno.NombrePaciente @turno.ApellidoPaciente</b> - @turno.FechaTurno?.ToString("dd/MM/yyyy") - @turno.HoraTurno hs.</p>
         }
         </RadzenStack>
             <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">

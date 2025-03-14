@@ -73,7 +73,7 @@
 
                 <RadzenDataGridColumn Property="FechaTurno" Filterable="false" TextAlign="TextAlign.Center" Title="Fecha" Width="120px">
                     <Template Context="shift">
-                        📅 @shift.FechaTurno.ToString("dd/MM/yyyy")
+                        📅 @shift.FechaTurno?.ToString("dd/MM/yyyy")
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -134,7 +134,7 @@
 
                 <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="85px">
                     <Template Context="shift">
-                        @shift.FechaTurno.ToString("dd/MM")
+                        @shift.FechaTurno?.ToString("dd/MM")
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -201,7 +201,7 @@ protected override async Task OnAfterRenderAsync(bool firstRender)
         var result = await DialogService.OpenAsync("Atención", ds =>
         @<RadzenStack Gap="1.5rem">
         <p>Estás a punto de cancelar el turno:</p>
-        <p>Día:  <b>@shift.FechaTurno.ToString("dd/MM/yyyy") </b></p>
+        <p>Día:  <b>@shift.FechaTurno?.ToString("dd/MM/yyyy") </b></p>
         <p>Hora:  <b>@shift.HoraTurno </b></p>
         <p>Médico:  <b>@shift.Medico </b></p>
 

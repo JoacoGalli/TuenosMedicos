@@ -92,12 +92,13 @@
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenFieldset Text="Detalles del turno">
                 <RadzenStack Gap="1rem">
+
                     <RadzenRow AlignItems="AlignItems.Center">
                         <RadzenColumn Size="12" SizeMD="4">
                             <RadzenLabel Text="Médico" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenDropDown @bind-Value="nuevoTurno.Medico" Name="Medico" Placeholder="Selecciona un médico" Data="@listaMedicos" Style="width: 100%;" TextProperty="NombreMedico" ValueProperty="NombreMedico">
+                            <RadzenDropDown @bind-Value="nuevoTurno.Medico" Name="Medico" Placeholder="Selecciona un médico" Data="@listaMedicos" Change="@OnMedicoSeleccionado" Style="width: 100%;" TextProperty="NombreMedico" ValueProperty="NombreMedico">
                                 <RadzenRequiredValidator Component="Medico" Text="Debes seleccionar un médico." />
                             </RadzenDropDown>
                         </RadzenColumn>
@@ -116,10 +117,10 @@
 
                     <RadzenRow AlignItems="AlignItems.Center">
                         <RadzenColumn Size="12" SizeMD="4">
-                            <RadzenLabel Text="Fecha del turno" />
+                            <RadzenLabel Text="Fecha del turno 📅" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno Name="FechasPosibles" DateFormat="d/M/yyyy" Disabled="true" Style="width:45%;" />
+                            <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno Name="FechasPosibles" DateFormat="d/M/yyyy" Disabled="true" Style="width:48%;" />
                             <RadzenButton Text="Ver fechas" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Click=@MostrarFechasDisponibles />
                             <RadzenRequiredValidator Component="FechasPosibles" Text="Debes seleccionar una fecha." />
                         </RadzenColumn>
@@ -127,7 +128,7 @@
 
                     <RadzenRow AlignItems="AlignItems.Center">
                         <RadzenColumn Size="12" SizeMD="4">
-                            <RadzenLabel Text="Hora del turno" />
+                            <RadzenLabel Text="Hora del turno 🕒" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenTextBox @bind-Value=@nuevoTurno.HoraTurno Name="Horarios" Disabled="true" Style="width:45%;" />
@@ -136,14 +137,20 @@
                         </RadzenColumn>
                     </RadzenRow>
 
-                    <RadzenRow AlignItems="AlignItems.Center">
-                        <RadzenColumn Size="12" SizeMD="4">
-                            <RadzenLabel Text="Cargar documento" />
+                    <RadzenRow AlignItems="AlignItems.Center" Style="padding: 10px;  border-radius: 8px;">
+                        <RadzenColumn Size="12" SizeMD="4" Style="display: flex; align-items: center;">
+                            <RadzenLabel Text="Cargar documento" Style="font-weight: bold; font-size: 16px; color: #333;" />
                         </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenUpload Accept=".pdf" Multiple="false" Change=@ArchivoSeleccionado Style="width: 100%" Icon="upload" ChooseText="Subir PDF">
-                            </RadzenUpload>           
-                            <RadzenLabel Text=@mensajeErrorArchivo Style="color: red;" Visible=@mostrarErrorArchivo />
+                        <RadzenColumn Size="12" SizeMD="8" Style="display: flex; flex-direction: column; align-items: center;">
+                            <RadzenUpload Accept=".pdf"
+                            Multiple="false"
+                            Change=@ArchivoSeleccionado
+                            Style="width: 100%; max-width: 400px; border: 2px  ; padding: 10px; border-radius: 8px; text-align: center; background-color: #e9f5ff;"
+                            Icon="upload"
+                            ChooseText="📤 Subir PDF" />
+                            <RadzenLabel Text=@mensajeErrorArchivo
+                            Style="color: red; font-size: 14px; margin-top: 5px;"
+                            Visible=@mostrarErrorArchivo />
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -204,7 +211,15 @@
         }
 
         esAdmin = user.IsInRole("Admin");
+
     }
+
+    private void OnMedicoSeleccionado(object value)
+    {
+        nuevoTurno.Medico = value as string;
+        nuevoTurno.FechaTurno = null; // Vaciar la fecha del turno cuando cambia el médico
+    }
+
 
 
     string mensajeErrorArchivo = "";
@@ -242,20 +257,25 @@
         if(nuevoTurno.Medico!="")
         {
             var result = await DialogService.OpenAsync("Elegir una fecha", ds =>
-            @<RadzenStack Gap="1.5rem">
-                <p><b>Fechas disponibles:</b></p>
-                <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem" >
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
-                            <RadzenLabel Text="Seleccionar" Component="FechasPosibles" />
-                            <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno DateRender=@nuevoTurno.DesactivarFechas DateFormat="d/M/yyyy" Name="FechasPosibles" />
+            @<RadzenCard Style="padding: 20px; border-radius: 10px; background-color: #f9f9f9; max-width: 400px;">
+                <RadzenStack Gap="1rem" Orientation="Orientation.Vertical">
+                    <RadzenLabel Text="📅 Fechas disponibles" Style="font-weight: bold; font-size: 18px; color: #333;" />
+
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                        <RadzenLabel Text="Seleccionar fecha:" Style="font-size: 16px;" />
+                        <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno
+                                          DateRender=@nuevoTurno.DesactivarFechas
+                                          DateFormat="d/M/yyyy"
+                                          Name="FechasPosibles"
+                                          Style="width: 100%; max-width: 200px;" />
                     </RadzenStack>
-                <br />
-                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-                        <RadzenButton Text="Confirmar" Click="() => ds.Close(true)" />
-                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" Style="border-radius: 8px;" />
+                        <RadzenButton Text="✅ Confirmar" Click="() => ds.Close(true)" ButtonStyle="ButtonStyle.Primary" Style="border-radius: 8px;" />
                     </RadzenStack>
                 </RadzenStack>
-            </RadzenStack>
+            </RadzenCard>
             );
         }
         else
@@ -278,24 +298,29 @@
     async Task MostrarHorariosDisponibles()
     {
 
-        if (nuevoTurno.FechaTurno != DateTime.MinValue)            
+        if (nuevoTurno.FechaTurno != null)            
         {
             var result = await DialogService.OpenAsync("Elegir horario", ds =>
-            @<RadzenStack Gap="1.5rem">
-                <p><b>Horarios disponibles:</b></p>
-                <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem">
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
-                        <RadzenLabel Text="Seleccionar" Component="DropDownBindValue" />
-                        <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno Data=@nuevoTurno.ObtenerHorariosDisponibles(esAdmin) Style="width: 30%; max-width: 400px;" Name="DropDownBindValue" />
+            @<RadzenCard Style="padding: 20px; border-radius: 10px; background-color: #f9f9f9; max-width: 400px;">
+                <RadzenStack Gap="1rem" Orientation="Orientation.Vertical">
+                    <RadzenLabel Text="⏰ Horarios disponibles" Style="font-weight: bold; font-size: 18px; color: #333;" />
+
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
+                        <RadzenLabel Text="Seleccionar horario:" Style="font-size: 16px;" />
+                        <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno
+                                        Data=@nuevoTurno.ObtenerHorariosDisponibles(esAdmin)
+                                        Style="width: 100%; max-width: 200px;"
+                                        Name="DropDownBindValue"
+                                        Placeholder="Seleccione un horario" />
                     </RadzenStack>
-                    <br />
-                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-                        <RadzenButton Text="Reservar" Click="() => ds.Close(true)" />
-                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" Style="border-radius: 8px;" />
+                        <RadzenButton Text="✅ Reservar" Click="() => ds.Close(true)" ButtonStyle="ButtonStyle.Primary" Style="border-radius: 8px;" />
                     </RadzenStack>
                 </RadzenStack>
-            </RadzenStack>
-    );
+            </RadzenCard>
+            );
         }
         else
         {
@@ -318,31 +343,39 @@
     {
         if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="" && mostrarErrorArchivo==false)
         {
-            string fechaMostrar = nuevoTurno.FechaTurno.ToString("yyyy-MM-dd");
-            
+            string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";
+
             if (!esAdmin) { nuevoTurno.Email = userEmail; }
             
             int intentoRegistrarTurno = Base.InsertarTurno(nuevoTurno, pdfBytes);
 
             if (intentoRegistrarTurno == 0)
             {
-                var result = await DialogService.OpenAsync("Confirmacion de reserva", ds =>
-            @<RadzenStack Gap="1.5rem">
-                <p><b>¡Tu turno ha sido confirmado!</b></p>
-                <p>Aquí están los datos de la reserva:</p>
-                <p><b>Paciente:</b> @nuevoTurno.NombrePaciente</p>
-                <p><b>Médico:</b> @nuevoTurno.Medico</p>
-                <p><b>Fecha:</b> @fechaMostrar</p>
-                <p><b>Hora:</b> @nuevoTurno.HoraTurno</p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
-                    <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenButton Text="Cerrar" Click=@RedirectToHome />
+                var result = await DialogService.OpenAsync("Confirmación de reserva", ds =>
+                @<RadzenStack Gap="1.5rem" Style="text-align: center; padding: 1rem;">
+                    <!-- Icono de confirmación -->
+                    <RadzenIcon Icon="check_circle" Size="50px" Style="color: green;" />
+
+                    <p style="font-size: 1.2rem; font-weight: bold;">✅ ¡Tu turno ha sido confirmado!</p>
+
+                    <p style="margin-bottom: 0.5rem;">Aquí están los datos de la reserva:</p>
+
+                    <RadzenStack Gap="0.5rem" Style="border-radius: 8px; background: #f9f9f9; padding: 1rem; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                        <p><b>🧑 Paciente:</b> @nuevoTurno.NombrePaciente</p>
+                        <p><b>👨‍⚕️ Médico:</b> @nuevoTurno.Medico</p>
+                        <p><b>📅 Fecha:</b> @fechaMostrar</p>
+                        <p><b>🕒 Hora:</b> @nuevoTurno.HoraTurno</p>
                     </RadzenStack>
-                </RadzenStack>
-            </RadzenStack>);
+
+                    <!-- Botón de cerrar -->
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" JustifyContent="JustifyContent.Center">
+                        <RadzenButton Text="Cerrar" Icon="close" ButtonStyle="ButtonStyle.Primary" Click=@RedirectToHome />
+                    </RadzenStack>
+                </RadzenStack>);
+
             
                 EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
+                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
 
                 await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
 
