@@ -5,69 +5,66 @@
 
 <PageTitle>Edicion de medicos</PageTitle>
 
-<h2>Lista de médicos</h2>
+<h2 style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">Lista de Médicos</h2>
 
-
-<RadzenRow class="rz-mb-3" Gap="1rem" Style="flex-wrap: wrap;">
-    <RadzenColumn Size="12" SizeMd="4" class="rz-p-2 rz-p-md-4">
-        <RadzenStack Gap="0.5rem">
-            <RadzenListBox @bind-Value=@medicoSeleccionado Data=@medicos TextProperty="NombreMedico" ValueProperty="NombreMedico"
-            Style="width: 100%; max-width: 400px; height:200px"
-            InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})" />
-            <RadzenButton Click=@AgregarMedico Icon="add_circle" Text="Nuevo médico" ButtonStyle="ButtonStyle.Primary" Width="100%" />
+<RadzenRow class="rz-mb-4" Gap="1.5rem" Style="display: flex; flex-wrap: wrap; justify-content: center;">
+    <RadzenColumn Size="12" SizeMd="4" class="rz-p-3">
+        <RadzenStack Gap="1rem" Style="align-items: center;">
+            <RadzenListBox @bind-Value=@medicoSeleccionado Data=@medicos TextProperty="NombreMedico" ValueProperty="NombreMedico" Change="@OnMedicoSeleccionado"
+                           Style="width: 100%; max-width: 400px; height: 250px; border-radius: 8px; border: 1px solid #ccc; padding: 10px;"
+                           InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})" />
+            <RadzenButton Click=@AgregarMedico Icon="add_circle" Text="Nuevo Médico" ButtonStyle="ButtonStyle.Primary" Width="100%" Style="border-radius: 8px;" />
         </RadzenStack>
     </RadzenColumn>
 
-    <RadzenColumn Size="12" SizeMd="8" class="rz-p-2 rz-p-md-8">
-        <RadzenStack Gap="1rem">
+    <RadzenColumn Size="12" SizeMd="8" class="rz-p-3">
+        <RadzenStack Gap="1.5rem">
             <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true" EmptyText="No hay horarios para mostrar"
-            Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 800px;">
+                            Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 850px; border-radius: 8px; overflow: hidden;">
                 <Columns>
-                    <RadzenDataGridColumn Property="NombreMedico" Title="Médico" Width="130px">
-                        <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.NombreMedico" Style="width: 100%;" />
-                        </EditTemplate>
+                    <RadzenDataGridColumn Property="NombreMedico" Width="150px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="person" Style="margin-right: 5px;" /> Médico
+                        </HeaderTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="diaTrabajo" Title="Día" Width="90px">
-                        <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.diaTrabajo" Style="width: 100%;" />
-                        </EditTemplate>
+                    <RadzenDataGridColumn Property="diaTrabajo" Width="100px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="event" Style="margin-right: 5px;" /> Día
+                        </HeaderTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="horaInicioTrabajo" Title="Inicio" Width="60px">
-                        <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.horaInicioTrabajo" Style="width: 100%;" />
-                        </EditTemplate>
+                    <RadzenDataGridColumn Property="horaInicioTrabajo" Width="90px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Inicio
+                        </HeaderTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="horaFinTrabajo" Title="Fin" Width="60px">
-                        <EditTemplate Context="med">
-                            <RadzenTextBox @bind-Value="med.horaFinTrabajo" Style="width: 100%;" />
-                        </EditTemplate>
+                    <RadzenDataGridColumn Property="horaFinTrabajo" Width="80px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Fin
+                        </HeaderTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Property="duracionTurno" Title="Duración" Width="100px">
-                        <EditTemplate Context="med">
-                            <RadzenNumeric TValue="int" @bind-Value="med.duracionTurno" Style="width: 100%;" />
-                        </EditTemplate>
+                    <RadzenDataGridColumn Property="duracionTurno" Width="120px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="timer" Style="margin-right: 5px;" /> Duración
+                        </HeaderTemplate>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn Context="med" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="80px">
+                    <RadzenDataGridColumn Context="med" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="90px">
                         <Template Context="med">
-                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Click="@(args => DeleteRow(med))" />
+                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Click="@(args => DeleteRow(med))" Style="border-radius: 5px;" />
                         </Template>
                     </RadzenDataGridColumn>
                 </Columns>
             </RadzenDataGrid>
-            <RadzenStack  Gap="1rem" JustifyContent="JustifyContent.Center">
-                <RadzenButton Click=@ReloadGrid Text="Ver horarios" Icon="visibility" ButtonStyle="ButtonStyle.Info" />
-                <RadzenButton Click=@InsertRow Text="Agregar nuevo horario" Icon="add" ButtonStyle="ButtonStyle.Primary" />
+            <RadzenStack Gap="1rem" JustifyContent="JustifyContent.Center">
+                <RadzenButton Click=@InsertRow Text="Agregar Nuevo Horario" Icon="add" ButtonStyle="ButtonStyle.Primary" Style="border-radius: 8px; padding: 0.75rem 1.5rem;" />
             </RadzenStack>
         </RadzenStack>
     </RadzenColumn>
 </RadzenRow>
-
 
 
 @code
@@ -92,25 +89,38 @@
         medicos = Medico.ObtenerMedicos();
     }
 
+    private bool firstRender = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (this.firstRender) // ✅ Usamos la variable de instancia
+        {
+            await ReloadGrid();
+            this.firstRender = false; // ✅ Asegurar que solo se ejecute una vez
+            StateHasChanged(); // 🔄 Forzar render para reflejar cambios en la UI
+        }
+    }
+
+    private void OnMedicoSeleccionado(object value)
+    {
+        ReloadGrid();
+    }
 
     async Task DeleteRow(Medico med)
     {
         var result = await DialogService.OpenAsync("Atención", ds =>
-        @<RadzenStack Gap="1.5rem">
-            <p>Está a punto de cancelar el horario de : <b>@med.NombreMedico </b></p>
-            <p>Dia:  <b>@med.diaTrabajo </b></p>
-            <p>Hora inicio:  <b>@med.horaInicioTrabajo </b></p>
-            <p>Hora fin:  <b>@med.horaFinTrabajo </b></p>
-            <p><b>¿Desea continuar? </b></p>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-                <RadzenStack Orientation="Orientation.Horizontal">
-
-                <RadzenButton Text="Confirmar" Click="@(args => CancelarHorario(med.Id))" />
-                    <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                </RadzenStack>
-            </RadzenStack>
+    @<RadzenStack Gap="1.5rem" Style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
+        <p><RadzenIcon Icon="warning" Style="color: #dc3545; margin-right: 5px;" /> Está a punto de cancelar el horario de: <b>@med.NombreMedico</b></p>
+        <p><RadzenIcon Icon="event" Style="margin-right: 5px;" /> Día: <b>@med.diaTrabajo</b></p>
+        <p><RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Hora inicio: <b>@med.horaInicioTrabajo</b></p>
+        <p><RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Hora fin: <b>@med.horaFinTrabajo</b></p>
+        <p><b>¿Desea continuar?</b></p>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenButton Text="Confirmar" Icon="check" ButtonStyle="ButtonStyle.Danger" Click="@(args => CancelarHorario(med.Id))" />
+            <RadzenButton Text="Cancelar" Icon="close" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
         </RadzenStack>
-    );
+    </RadzenStack>
+        );
     }
 
 
@@ -120,8 +130,8 @@
         IEnumerable<string> listaDias = dias;
 
         var result = await DialogService.OpenAsync("Nuevo médico", ds =>
-    @<RadzenStack Gap="1.5rem" Style="padding: 1.5rem; max-width: 600px;">
-        <p style="font-size: 1.2rem; font-weight: bold;">Agregar un nuevo médico</p>
+    @<RadzenStack Gap="1.5rem" Style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; max-width: 600px;">
+        <p style="font-size: 1.2rem; font-weight: bold;"><RadzenIcon Icon="person_add" Style="margin-right: 5px;" /> Agregar un nuevo médico</p>
 
         <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
             <RadzenRow AlignItems="AlignItems.Center">
@@ -152,13 +162,14 @@
             </RadzenRow>
 
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
-                <RadzenButton Text="Confirmar" Click=InsertABase ButtonStyle="ButtonStyle.Primary" />
-                <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+                <RadzenButton Text="Confirmar" Icon="check" ButtonStyle="ButtonStyle.Primary" Click=InsertABase />
+                <RadzenButton Text="Cancelar" Icon="close" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             </RadzenStack>
         </RadzenStack>
     </RadzenStack>
         );
     }
+
 
 
 

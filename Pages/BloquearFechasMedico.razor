@@ -5,14 +5,13 @@
 
 <PageTitle>Bloquear fechas</PageTitle>
 
-<h2>Bloquear fechas</h2>
+<h2 style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">Bloquear fechas</h2>
 
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
     <RadzenLabel Text="Seleccionar médico" Component="DropDownBindValue" />
-    <RadzenDropDown @bind-Value="medicoSeleccionado" Placeholder="Seleccionar" Data="@listaMedicos" Style="width: 30%;" TextProperty="NombreMedico" ValueProperty="NombreMedico" Name="Medico">
+    <RadzenDropDown @bind-Value="medicoSeleccionado" Placeholder="Seleccionar" Data="@listaMedicos" Style="width: 30%;" Change="@OnMedicoSeleccionado" TextProperty="NombreMedico" ValueProperty="NombreMedico" Name="Medico">
         <RadzenRequiredValidator Component="Medico" Text="Debes seleccionar un médico" />
-    </RadzenDropDown>
-    <RadzenButton Text="Ver" Click=RecargarCalendario Icon="visibility" ButtonStyle="ButtonStyle.Base" />
+    </RadzenDropDown>    
 </RadzenStack>
 
 
@@ -46,6 +45,13 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
         var parametros2 = new Dictionary<string, object> { { "@nombreMedico", medicoSeleccionado } };
         bloqueadas = Base.SelectAMedicosFechasBloqueadas(query2,parametros2);
     }
+
+    private void OnMedicoSeleccionado(object value)
+    {
+        RecargarCalendario();
+    }
+
+
 
     // Pinta el dia de hoy en el calendario mensual.
     void OnSlotRender(SchedulerSlotRenderEventArgs args)

@@ -8,7 +8,7 @@
 
 <PageTitle>Reservar turno</PageTitle>
 
-<h2>Reservar un turno</h2>
+<h2 style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">Reservar un turno</h2>
 
 <RadzenTemplateForm Data="@nuevoTurno" Submit="@((Turno args) => { Submit(args); })">
     <RadzenRow Gap="1.5rem" class="rz-p-0 rz-p-lg-4">
@@ -143,7 +143,7 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8" Style="display: flex; flex-direction: column; align-items: center;">
                             <RadzenUpload Accept=".pdf"
-                            Multiple="false"
+                            Multiple="true"
                             Change=@ArchivoSeleccionado
                             Style="width: 100%; max-width: 400px; border: 2px  ; padding: 10px; border-radius: 8px; text-align: center; background-color: #e9f5ff;"
                             Icon="upload"
@@ -375,7 +375,7 @@
 
             
                 EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
+                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
 
                 await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
 

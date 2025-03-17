@@ -71,7 +71,7 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="FechaTurno" Filterable="false" TextAlign="TextAlign.Center" Title="Fecha" Width="120px">
+                <RadzenDataGridColumn Property="FechaTurno" Filterable="false" SortOrder="SortOrder.Ascending"  TextAlign="TextAlign.Center" Title="Fecha" Width="120px">
                     <Template Context="shift">
                         📅 @shift.FechaTurno?.ToString("dd/MM/yyyy")
                     </Template>
@@ -132,7 +132,7 @@
             <Columns>
                 <RadzenDataGridColumn Property="Medico" Title="Médico" Width="95px" />
 
-                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="85px">
+                <RadzenDataGridColumn Property="FechaTurno" SortOrder="SortOrder.Ascending"  Title="Fecha" Width="85px">
                     <Template Context="shift">
                         @shift.FechaTurno?.ToString("dd/MM")
                     </Template>
@@ -195,26 +195,24 @@ protected override async Task OnAfterRenderAsync(bool firstRender)
 }
 
 
+async Task DeleteRow(Turno shift)
+{
+    var result = await DialogService.OpenAsync("Atención", ds =>
+    @<RadzenStack Gap="1.5rem" Style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
+        <p><RadzenIcon Icon="warning" Style="color: #dc3545; margin-right: 5px;" /> Estás a punto de cancelar el turno:</p>
+        <p><RadzenIcon Icon="event" Style="margin-right: 5px;" /> Día: <b>@shift.FechaTurno?.ToString("dd/MM/yyyy")</b></p>
+        <p><RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Hora: <b>@shift.HoraTurno</b></p>
+        <p><RadzenIcon Icon="person" Style="margin-right: 5px;" /> Médico: <b>@shift.Medico</b></p>
 
-    async Task DeleteRow(Turno shift)
-    {
-        var result = await DialogService.OpenAsync("Atención", ds =>
-        @<RadzenStack Gap="1.5rem">
-        <p>Estás a punto de cancelar el turno:</p>
-        <p>Día:  <b>@shift.FechaTurno?.ToString("dd/MM/yyyy") </b></p>
-        <p>Hora:  <b>@shift.HoraTurno </b></p>
-        <p>Médico:  <b>@shift.Medico </b></p>
-
-        <p><b>¿Desea continuar? </b></p>
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenButton Text="Confirmar" Click="@(args => CancelarTurno(shift.Id))" />
-                    <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                </RadzenStack>
-            </RadzenStack>
+        <p><b>¿Desea continuar?</b></p>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenButton Text="Confirmar" Icon="check" ButtonStyle="ButtonStyle.Danger" Click="@(args => CancelarTurno(shift.Id))" />
+            <RadzenButton Text="Cancelar" Icon="close" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
         </RadzenStack>
+    </RadzenStack>
     );
-    }
+}
+
 
     async Task VerPDF(byte[] pdf)
     {
@@ -278,7 +276,7 @@ protected override async Task OnAfterRenderAsync(bool firstRender)
 
     async Task VerNotas(string nota)
     {
-        var result = await DialogService.OpenAsync("Nota System.NullReferenceException: 'Object reference not set to an instance of an object.'adjunta", ds =>
+        var result = await DialogService.OpenAsync("Notas adjuntas", ds =>
         @<RadzenStack Gap="1.5rem">
             <p><b>El turno tiene la siguiente nota:</b></p>
             <p> @nota </p>
