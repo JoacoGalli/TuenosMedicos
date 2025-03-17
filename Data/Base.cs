@@ -89,6 +89,8 @@ class Base
                                 ApellidoPaciente = reader.GetString("apellidoPaciente"),
                                 Dni = reader.GetInt32("dni"),
                                 Cobertura = reader.GetString("cobertura"),
+                                NumeroAfiliado = reader.IsDBNull(reader.GetOrdinal("numeroAfiliado")) ? "" : reader.GetString("numeroAfiliado"),
+                                CategoriaAfiliado = reader.IsDBNull(reader.GetOrdinal("categoriaAfiliado")) ? "" : reader.GetString("categoriaAfiliado"),
                                 Medico = reader.GetString("medico"),
                                 FechaTurno = reader.GetDateTime("fechaTurno"),
                                 HoraTurno = reader.GetString("horaTurno"),
@@ -176,8 +178,8 @@ class Base
                 connection.Open();
 
                 string query = "INSERT INTO `turnos-medicos`.`turnos` " +
-                               "(`nombrePaciente`, `apellidoPaciente`, `dni`, `cobertura`, `medico`, `fechaTurno`, `horaTurno`, `notas`, `notasInternas`, `telefono`, `email`, `domicilio`, `documentoPDF`) " +
-                               "VALUES (@nombrePaciente, @apellidoPaciente, @dni, @cobertura, @medico, @fechaTurno, @horaTurno, @notas, @notasInternas, @telefono, @email, @domicilio, @documentoPDF)";
+                               "(`nombrePaciente`, `apellidoPaciente`, `dni`, `cobertura`, `medico`, `fechaTurno`, `horaTurno`, `notas`, `notasInternas`, `telefono`, `email`, `domicilio`, `documentoPDF`,`numeroAfiliado`,`categoriaAfiliado`) " +
+                               "VALUES (@nombrePaciente, @apellidoPaciente, @dni, @cobertura, @medico, @fechaTurno, @horaTurno, @notas, @notasInternas, @telefono, @email, @domicilio, @documentoPDF, @numeroAfiliado, @categoriaAfiliado)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
                 {
@@ -195,6 +197,8 @@ class Base
                     cmd.Parameters.AddWithValue("@email", nuevoTurno.Email);
                     cmd.Parameters.AddWithValue("@domicilio", nuevoTurno.Domicilio);
                     cmd.Parameters.AddWithValue("@documentoPDF", pdfBytes ?? new byte[0]); // Manejo de nulls en el PDF
+                    cmd.Parameters.AddWithValue("@numeroAfiliado", nuevoTurno.NumeroAfiliado);
+                    cmd.Parameters.AddWithValue("@categoriaAfiliado", nuevoTurno.CategoriaAfiliado);
 
                     int filasAfectadas = cmd.ExecuteNonQuery(); // Retorna cuántas filas fueron insertadas
                     return filasAfectadas > 0 ? 0 : 1; // 0 si insertó correctamente, 1 si falló

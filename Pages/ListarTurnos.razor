@@ -139,7 +139,7 @@
 
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Contacto" Width="65px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
-                        <RadzenButton Click=@(args => VerContacto(shift.NombrePaciente,shift.ApellidoPaciente,shift.Telefono,shift.Email,shift.Domicilio))
+                        <RadzenButton Click=@(args => VerContacto(shift.NombrePaciente,shift.ApellidoPaciente,shift.Telefono,shift.Email,shift.Domicilio, shift.NumeroAfiliado, shift.CategoriaAfiliado))
                                       Text="📞 Ver"
                                       Size="ButtonSize.Small"
                                       ButtonStyle="ButtonStyle.Light" />
@@ -317,7 +317,7 @@
 
     }
 
-    async Task VerContacto(string nombre, string apellido, string telefono, string email, string domicilio)
+    async Task VerContacto(string nombre, string apellido, string telefono, string email, string domicilio, string numeroAfil, string categAfil)
     {
         var result = await DialogService.OpenAsync("Datos de contacto:", ds =>
         @<RadzenStack Gap="1.5rem">
@@ -325,7 +325,17 @@
             <p><b>Teléfono: </b> @telefono </p>
             <p><b>Email: </b> @email </p>
 
-            @if(!string.IsNullOrEmpty(domicilio))
+        @if(!string.IsNullOrEmpty(numeroAfil))
+            {
+                <p><b>Número Afiliado: </b> @numeroAfil </p>
+            }
+        @if(!string.IsNullOrEmpty(categAfil))
+    {
+        <p><b>Categoria Afiliado: </b> @categAfil </p>
+    }
+
+
+        @if(!string.IsNullOrEmpty(domicilio))
             {
                 <p><b>Domicilio: </b> @domicilio </p>
             }   

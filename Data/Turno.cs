@@ -10,6 +10,8 @@ class Turno
     public string ApellidoPaciente { get; set; } = "";
     public int? Dni {get; set;}
     public string? Cobertura {get; set;}
+    public string? NumeroAfiliado { get; set; }
+    public string? CategoriaAfiliado { get; set; }
     public string? Medico {get; set;} ="";
     public DateTime? FechaTurno {get; set;}
     public string HoraTurno {get; set;} ="";

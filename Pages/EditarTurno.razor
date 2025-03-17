@@ -99,6 +99,25 @@
 
                     <RadzenRow AlignItems="AlignItems.Center">
                         <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Numero de afiliado:" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox MaxLength="45" @bind-Value="nuevoTurno.NumeroAfiliado" Name="NumeroAfiliado" Style="width: 100%;" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Categoria:" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenTextBox MaxLength="45" @bind-Value="nuevoTurno.CategoriaAfiliado" Name="CategoriaAfiliado" Style="width: 100%;" />
+                        </RadzenColumn>
+                    </RadzenRow>
+
+
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
                             <RadzenLabel Text="Fecha del turno" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
@@ -178,6 +197,8 @@
             nuevoTurno.Dni = tur.Dni;
             nuevoTurno.Medico = tur.Medico;
             nuevoTurno.Cobertura = tur.Cobertura;
+            nuevoTurno.NumeroAfiliado = tur.NumeroAfiliado;
+            nuevoTurno.CategoriaAfiliado = tur.CategoriaAfiliado;
             nuevoTurno.Notas = tur.Notas;
             nuevoTurno.NotasInternas = tur.NotasInternas;
             nuevoTurno.Telefono = tur.Telefono;
@@ -268,11 +289,13 @@
             
             string query = "UPDATE `turnos` SET `cobertura` = @cobertura, `medico` = @medico, `fechaTurno` = @fechaTurno, " +
            "`horaTurno` = @horaTurno, `telefono` = @telefono, `email` = @email, `domicilio` = @domicilio, " +
-           "`notas` = @notas, `notasInternas` = @notasInternas WHERE `idturno` = @idturno;";
+           "`notas` = @notas, `notasInternas` = @notasInternas,`numeroAfiliado` = @numeroAfiliado, `categoriaAfiliado` = @categoriaAfiliado  WHERE `idturno` = @idturno;";
 
             var parametros = new Dictionary<string, object>
             {
             { "@cobertura", nuevoTurno.Cobertura },
+            { "@numeroAfiliado", nuevoTurno.NumeroAfiliado },
+            { "@categoriaAfiliado", nuevoTurno.CategoriaAfiliado },
             { "@medico", nuevoTurno.Medico },
             { "@fechaTurno", fechaMostrar }, 
             { "@horaTurno", nuevoTurno.HoraTurno },
