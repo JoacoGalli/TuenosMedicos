@@ -236,7 +236,7 @@ async Task DeleteRow(Turno shift)
 
     void CancelarTurno(int idABorrar)
     {
-        string query = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true,motivoCancelacion='Cancelado por admin desde Listado de turnos' WHERE idTurno=@idTurno;"; 
+        string query = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true,motivoCancelacion='Cancelado por el usuario' WHERE idTurno=@idTurno;"; 
         var parametros = new Dictionary<string, object> { { "@idTurno", idABorrar } };
 
         int cambiarEstado = Base.InsertDeleteOrUpdateABase(query,parametros);
