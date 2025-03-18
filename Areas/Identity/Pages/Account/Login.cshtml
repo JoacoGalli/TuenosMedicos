@@ -5,46 +5,71 @@
     ViewData["Title"] = "Iniciar sesión";
 }
 
-<h1 class="login-title">@ViewData["Title"]</h1>
+<style>
+    .login-container {
+        max-width: 400px;
+        margin: auto;
+        margin-top: 50px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <section class="login-form">
-            <form id="account" method="post">
-                <h2 class="text-center">Inicia sesión con tu cuenta</h2>
-                <p class="text-center text-muted">Si no tienes una, puedes crearla.</p>
-                <hr />
+    .login-header {
+        background: #0D5C8C;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 24px;
+    }
 
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .login-body {
+        padding: 20px;
+    }
 
-                <div class="form-group">
-                    <label asp-for="Input.Email" class="form-label"></label>
-                    <input asp-for="Input.Email" class="form-control custom-input" autocomplete="username" aria-required="true" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-                <div class="form-group">
-                    <label asp-for="Input.Password" class="form-label">Contraseña</label>
-                    <input asp-for="Input.Password" type="password" class="form-control custom-input" autocomplete="current-password" aria-required="true" />
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
+    .btn-primary {
+        width: 100%;
+        background: #0D5C8C;
+        border: none;
+    }
 
-                <div class="form-group form-check">
-                    <input class="form-check-input" asp-for="Input.RememberMe" />
-                    <label asp-for="Input.RememberMe" class="form-check-label">@Html.DisplayNameFor(m => m.Input.RememberMe)</label>
-                </div>
+        .btn-primary:hover {
+            background: #084769;
+        }
 
-                <button id="login-submit" type="submit" class="btn btn-primary btn-lg btn-block login-button">
-                    <i class="fa fa-sign-in-alt"></i> Iniciar sesión
-                </button>
+    .forgot-password {
+        display: block;
+        text-align: right;
+        margin-top: 10px;
+    }
+</style>
 
-                <div class="text-center mt-3">
-                    <p><a id="forgot-password" asp-page="./ForgotPassword">¿Olvidaste tu contraseña?</a></p>
-                    <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrarme</a></p>
-                  
-                </div>
-            </form>
-        </section>
+<div class="login-container">
+    <div class="login-header">Iniciar Sesión con Email y Contraseña</div>
+    <div class="login-body">
+        <form id="account" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Input.Email" class="form-label">Email</label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                <input asp-for="Input.Password" type="password" class="form-control" autocomplete="current-password" aria-required="true" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <button id="login-submit" type="submit" class="btn btn-primary">Login</button>
+            <a id="forgot-password" asp-page="./ForgotPassword" class="forgot-password">Olvido la contraseña?</a>
+        </form>
     </div>
 </div>
 

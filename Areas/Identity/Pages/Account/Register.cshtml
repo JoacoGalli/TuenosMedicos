@@ -4,39 +4,82 @@
     ViewData["Title"] = "Registrarse";
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    .register-container {
+        max-width: 400px;
+        margin: auto;
+        margin-top: 50px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="register-form">
-            <h2 class="register-title">Crear nueva cuenta</h2>
-            <hr />
+    .register-header {
+        background: #0D5C8C;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 24px;
+    }
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .register-body {
+        padding: 20px;
+    }
 
-            <div class="form-group">
-                <label asp-for="Input.Email" class="form-label"></label>
-                <input asp-for="Input.Email" class="form-control custom-input" autocomplete="username" aria-required="true" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
+    .form-group {
+        margin-bottom: 15px;
+    }
 
-            <div class="form-group">
-                <label asp-for="Input.Password" class="form-label">Contraseña</label>
-                <input asp-for="Input.Password" type="password" class="form-control custom-input" autocomplete="new-password" aria-required="true" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
+    .btn-primary {
+        width: 100%;
+        background: #0D5C8C;
+        border: none;
+    }
 
-            <div class="form-group">
-                <label asp-for="Input.ConfirmPassword" class="form-label">Repetir contraseña</label>
-                <input asp-for="Input.ConfirmPassword" type="password" class="form-control custom-input" autocomplete="new-password" aria-required="true" />
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
+        .btn-primary:hover {
+            background: #084769;
+        }
 
-            <br />
-            <button id="registerSubmit" type="submit" class="btn btn-primary register-button">
-                <i class="fa fa-user-plus"></i> Registrarse
-            </button>
-        </form>
+    .forgot-password {
+        display: block;
+        text-align: right;
+        margin-top: 10px;
+    }
+</style>
+<div class="register-container">
+    <div class="register-header">Crear nueva cuenta</div>
+    <div class="register-body">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="register-form">
+                <h2 class="register-title">Crear nueva cuenta</h2>
+                <hr />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="Input.Email" class="form-label">Email</label>
+                    <input asp-for="Input.Email" class="form-control custom-input" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Input.Password" class="form-label">Contraseña</label>
+                    <input asp-for="Input.Password" type="password" class="form-control custom-input" autocomplete="new-password" aria-required="true" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Input.ConfirmPassword" class="form-label">Repetir contraseña</label>
+                    <input asp-for="Input.ConfirmPassword" type="password" class="form-control custom-input" autocomplete="new-password" aria-required="true" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <br />
+                <button id="registerSubmit" type="submit" class="btn btn-primary register-button">
+                    <i class="fa fa-user-plus"></i> Registrarse
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
