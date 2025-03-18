@@ -167,6 +167,52 @@ class Base
     }
 
 
+    public static List<Cobertura> SelectACoberturas(string query, Dictionary<string, object> parameters = null)
+    {
+        List<Cobertura> resultados = new List<Cobertura>();
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                {
+                    // 🔒 Agrega los parámetros de manera segura si existen
+                    if (parameters != null)
+                    {
+                        foreach (var param in parameters)
+                        {
+                            cmd.Parameters.AddWithValue(param.Key, param.Value);
+                        }
+                    }
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Cobertura cobertura = new Cobertura
+                            {
+                                IdCobertura = reader.GetInt32("idCobertura"),
+                                NombreCobertura = reader.GetString("nombreCobertura"),                            
+                            };
+                            resultados.Add(cobertura);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ocurrió un error: " + ex.Message);
+                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
+            }
+        }
+        return resultados;
+    }
+
+
+
 
 
     public static int InsertarTurno(Turno nuevoTurno, byte[] pdfBytes)

@@ -1,0 +1,183 @@
+﻿@page "/coberturas"
+@using Microsoft.EntityFrameworkCore
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<PageTitle>Coberturas</PageTitle>
+
+<h2 style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">Lista de coberturas</h2>
+
+<RadzenRow Gap="1.5rem"  >
+
+
+    <RadzenStack Gap="1.5rem" Style="background: #fff; padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+
+            <RadzenDataGrid @ref="coberturasGrid" AllowFiltering="false" AllowPaging="true" PageSize="10" AllowSorting="true"
+                            EmptyText="No hay coberturas para mostrar" Data="@listaCoberturas" TItem="Cobertura" ColumnWidth="200px"
+                            Style="text-align:center">
+
+                <Columns>
+                    <RadzenDataGridColumn Property="NombreCobertura" TextAlign="TextAlign.Center"  Width="150px">
+                        <HeaderTemplate>
+                        <RadzenIcon Icon="description" Style="margin-right: 5px; text-align:center; color: #555;" />
+                            <span style="font-weight: bold; color: #333;">Cobertura</span>
+                        </HeaderTemplate>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn Context="cob" Filterable="false" Sortable="false" Title="Eliminar" TextAlign="TextAlign.Center" Width="90px">
+                        <Template Context="cob">
+                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat"
+                                      Click="@(args => DeleteRow(cob))" Style="border-radius: 5px; text-align:center; padding: 0.4rem 0.8rem;" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+
+            <RadzenStack Gap="1rem" JustifyContent="JustifyContent.Center">
+                <RadzenButton Click=@InsertRow Text="➕ Agregar nueva cobertura"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Style="border-radius: 8px; padding: 0.75rem 1.5rem; font-weight: bold; font-size: 1rem;" />
+            </RadzenStack>
+
+        </RadzenStack>
+
+</RadzenRow>
+
+
+
+@code
+{
+    RadzenDataGrid<Cobertura> coberturasGrid;
+
+
+
+    IEnumerable<Cobertura> listaCoberturas;
+
+    Cobertura nuevaCobertura = new Cobertura();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private bool firstRender = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (this.firstRender) // ✅ Usamos la variable de instancia
+        {
+            await ReloadGrid();
+            this.firstRender = false; // ✅ Asegurar que solo se ejecute una vez
+            StateHasChanged(); // 🔄 Forzar render para reflejar cambios en la UI
+        }
+    }
+
+
+    async Task DeleteRow(Cobertura cob)
+    {
+        var result = await DialogService.OpenAsync("Atención", ds =>
+    @<RadzenStack Gap="1.5rem" Style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; text-align: center;">
+        <p><RadzenIcon Icon="warning" Style="color: #dc3545; margin-right: 5px;" /> Está a punto de eliminar la cobertura: </p>
+        <p> <b>  @cob.NombreCobertura</b></p>
+        <br />
+        <p><b>¿Desea continuar?</b></p>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenButton Text="Confirmar" Icon="check" ButtonStyle="ButtonStyle.Danger" Click="@(args => EliminarCobertura(cob.IdCobertura))" />
+            <RadzenButton Text="Cancelar" Icon="close" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+        </RadzenStack>
+    </RadzenStack>
+        );
+    }
+
+
+
+    async Task InsertRow()
+    {
+        var result = await DialogService.OpenAsync("Nueva cobertura", ds =>
+    @<RadzenStack Gap="1.5rem" Style="padding: 1.5rem; max-width: 600px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); background: #fff;">
+        <p style="font-size: 1.4rem; font-weight: bold; color: #333; text-align: center; margin-bottom: 1rem;">
+            🏥 Crear nueva cobertura
+        </p>
+
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+            <RadzenRow AlignItems="AlignItems.Center" Style="padding: 0.5rem; border-bottom: 1px solid #eee;">
+                <RadzenLabel Text="Nombre de la cobertura"
+                             Style="width: 40%; font-weight: bold; font-size: 1rem; color: #555;" />
+                <RadzenTextBox @bind-Value=nuevaCobertura.NombreCobertura
+                               Style="width: 60%; border-radius: 5px; padding: 0.4rem;" />
+            </RadzenRow>
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem" Style="margin-top: 1rem;">
+                <RadzenButton Text="✅ Confirmar" Click="@(args => InsertABase(nuevaCobertura.NombreCobertura))"
+                              ButtonStyle="ButtonStyle.Primary" Style="border-radius: 5px; padding: 0.6rem 1.2rem;" />
+                <RadzenButton Text="❌ Cancelar" Click="() => ds.Close(false)"
+                              ButtonStyle="ButtonStyle.Light" Style="border-radius: 5px; padding: 0.6rem 1.2rem; background: #f8f8f8;" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenStack>
+    );
+    }
+
+
+
+    async Task ReloadGrid()
+    {
+        string query = "SELECT * FROM `turnos-medicos`.coberturas";
+
+        listaCoberturas = Base.SelectACoberturas(query);
+        await coberturasGrid.Reload();
+
+    }
+    void InsertABase(string nombre)
+    {
+        if (!string.IsNullOrEmpty(nombre))
+        {
+            string query = "INSERT INTO `turnos-medicos`.`coberturas` (`nombreCobertura`) VALUES (@nombreCobertura);";
+
+            var parametros = new Dictionary<string, object> { { "@nombreCobertura", nombre } };
+
+            int insertarNuevaCobertura = Base.InsertDeleteOrUpdateABase(query, parametros);
+
+            if (insertarNuevaCobertura > 0)
+            {
+                DialogService.Close(); // Cierra el diálogo
+                NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Cobertura agregada" });
+                OnInitializedAsync();
+                ReloadGrid();
+            }
+            else
+            {
+                Console.WriteLine("error");
+            }
+        }
+        else
+        {                    
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Atencion", Detail = "Completa todos los campos" });
+        }
+
+    }
+
+    void EliminarCobertura(int idABorrar)
+    {
+        string query = "DELETE FROM `turnos-medicos`.`coberturas` WHERE idCobertura=@idCobertura;";
+        var parametros = new Dictionary<string, object> { { "@idCobertura", idABorrar } };
+
+
+        int borrarFila = Base.InsertDeleteOrUpdateABase(query,parametros);
+        if (borrarFila > 0)
+        {
+            DialogService.Close(); // Cierra el diálogo
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Cobertura borrada" });
+            OnInitializedAsync();
+            ReloadGrid();
+        }
+        else
+        {
+            Console.WriteLine("error borrando la cobertura");
+        }
+    }
+}
+
+     
