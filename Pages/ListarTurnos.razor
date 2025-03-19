@@ -115,9 +115,9 @@
 
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="PDF" Width="60px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
-                        @if (shift.DocumentoPDF != null)
+                        @if (shift.TienePdf)
                         {
-                            <RadzenButton Click=@(args => VerPDF(shift.DocumentoPDF))
+                            <RadzenButton Click=@(args => VerPDF(shift.Id))
                                           Text="📄 Ver"
                                           Size="ButtonSize.Small"
                                           ButtonStyle="ButtonStyle.Info" />
@@ -237,16 +237,27 @@
     );
     }
 
-    async Task VerPDF(byte[] pdf)
+       async Task VerPDF(int idTurno)
     {
+        string query = "SELECT * FROM `turnos-medicos`.`pdfs` WHERE idTurno = @idTurno";
+        var parametros = new Dictionary<string, object> 
+        {
+            { "@idTurno", idTurno } 
+        };
+
+        List<Pdf> listaArchivos = Base.SelectAPDFS(query, parametros);
+
         var result = await DialogService.OpenAsync("Archivo adjunto", ds =>
         @<RadzenStack Gap="1.5rem">
-        <p>El turno tiene el siguiente archivo adjunto: </p>
+        <p>El turno tiene los siguientes archivos adjuntos: </p>
 
-        <a href="data:application/pdf;base64,@Convert.ToBase64String(pdf)"
-           download="turno.pdf">
-            Descargar PDF
-        </a>
+        @foreach(Pdf archivo in listaArchivos) 
+        {
+             <a href="data:application/pdf;base64,@Convert.ToBase64String(archivo.Archivo)"
+               download="turno.pdf">
+                @archivo.NombreArchivo
+            </a>
+        }
             <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
                 <RadzenStack Orientation="Orientation.Horizontal">
 

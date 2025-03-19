@@ -101,7 +101,7 @@ class Base
                                 NotasInternas = reader.IsDBNull(reader.GetOrdinal("notasInternas")) ? "" : reader.GetString("notasInternas"),
                                 Cancelado = reader.GetBoolean("cancelado"),
                                 MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion"),
-                                DocumentoPDF = reader.IsDBNull(reader.GetOrdinal("documentoPDF")) ? null : (byte[])reader.GetValue(reader.GetOrdinal("documentoPDF"))
+                                TienePdf = reader.GetBoolean("tienePdf")
                             };
 
                             resultados.Add(turno);
@@ -195,9 +195,55 @@ class Base
                             Cobertura cobertura = new Cobertura
                             {
                                 IdCobertura = reader.GetInt32("idCobertura"),
-                                NombreCobertura = reader.GetString("nombreCobertura"),                            
+                                NombreCobertura = reader.GetString("nombreCobertura")                            
                             };
                             resultados.Add(cobertura);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ocurrió un error: " + ex.Message);
+                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
+            }
+        }
+        return resultados;
+    }
+
+
+    public static List<Pdf> SelectAPDFS(string query, Dictionary<string, object> parameters = null)
+    {
+        List<Pdf> resultados = new List<Pdf>();
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            try
+            {
+                connection.Open();
+
+                using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                {
+                    // 🔒 Agrega los parámetros de manera segura si existen
+                    if (parameters != null)
+                    {
+                        foreach (var param in parameters)
+                        {
+                            cmd.Parameters.AddWithValue(param.Key, param.Value);
+                        }
+                    }
+
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Pdf nuevoArchivo = new Pdf
+                            {
+                                IdTurno = reader.GetInt32("idTurno"),
+                                Archivo = reader.IsDBNull(reader.GetOrdinal("archivo")) ? null : (byte[])reader.GetValue(reader.GetOrdinal("archivo")),
+                                NombreArchivo = reader.GetString("nombreArchivo"),
+                            };
+                            resultados.Add(nuevoArchivo);
                         }
                     }
                 }
@@ -215,7 +261,8 @@ class Base
 
 
 
-    public static int InsertarTurno(Turno nuevoTurno, byte[] pdfBytes)
+
+    public static int InsertarTurno(Turno nuevoTurno)
     {
         try
         {
@@ -224,8 +271,8 @@ class Base
                 connection.Open();
 
                 string query = "INSERT INTO `turnos-medicos`.`turnos` " +
-                               "(`nombrePaciente`, `apellidoPaciente`, `dni`, `cobertura`, `medico`, `fechaTurno`, `horaTurno`, `notas`, `notasInternas`, `telefono`, `email`, `domicilio`, `documentoPDF`,`numeroAfiliado`,`categoriaAfiliado`) " +
-                               "VALUES (@nombrePaciente, @apellidoPaciente, @dni, @cobertura, @medico, @fechaTurno, @horaTurno, @notas, @notasInternas, @telefono, @email, @domicilio, @documentoPDF, @numeroAfiliado, @categoriaAfiliado)";
+                               "(`nombrePaciente`, `apellidoPaciente`, `dni`, `cobertura`, `medico`, `fechaTurno`, `horaTurno`, `notas`, `notasInternas`, `telefono`, `email`, `domicilio`, `numeroAfiliado`,`categoriaAfiliado`) " +
+                               "VALUES (@nombrePaciente, @apellidoPaciente, @dni, @cobertura, @medico, @fechaTurno, @horaTurno, @notas, @notasInternas, @telefono, @email, @domicilio,  @numeroAfiliado, @categoriaAfiliado)";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
                 {
@@ -241,8 +288,7 @@ class Base
                     cmd.Parameters.AddWithValue("@notasInternas", nuevoTurno.NotasInternas ?? ""); // Manejo de nulls
                     cmd.Parameters.AddWithValue("@telefono", nuevoTurno.Telefono);
                     cmd.Parameters.AddWithValue("@email", nuevoTurno.Email);
-                    cmd.Parameters.AddWithValue("@domicilio", nuevoTurno.Domicilio);
-                    cmd.Parameters.AddWithValue("@documentoPDF", pdfBytes ?? new byte[0]); // Manejo de nulls en el PDF
+                    cmd.Parameters.AddWithValue("@domicilio", nuevoTurno.Domicilio);                    
                     cmd.Parameters.AddWithValue("@numeroAfiliado", nuevoTurno.NumeroAfiliado);
                     cmd.Parameters.AddWithValue("@categoriaAfiliado", nuevoTurno.CategoriaAfiliado);
 

@@ -160,7 +160,7 @@
                             <RadzenLabel Text="Cargar documento" Style="font-weight: bold; font-size: 16px; color: #333;" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8" Style="display: flex; flex-direction: column; align-items: center;">
-                            <RadzenUpload Accept=".pdf"
+                            <RadzenUpload Accept=".pdf"                                    
                             Multiple="true"
                             Change=@ArchivoSeleccionado
                             Style="width: 100%; max-width: 400px; border: 2px  ; padding: 10px; border-radius: 8px; text-align: center; background-color: #e9f5ff;"
@@ -171,6 +171,16 @@
                             Visible=@mostrarErrorArchivo />
                         </RadzenColumn>
                     </RadzenRow>
+
+                    <!-- Lista de archivos subidos -->
+                    <RadzenDataList Data="@pdfBytes" Style="width: 100%; margin-top: 10px;">
+                        <Template Context="pdf">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; border-bottom: 1px solid #ccc;">
+                                <span>@pdf.NombreArchivo</span>
+                                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => EliminarArchivo(pdf)" />
+                            </div>
+                        </Template>
+                    </RadzenDataList>
 
 
                     <RadzenRow AlignItems="AlignItems.Center">
@@ -243,30 +253,60 @@
     string mensajeErrorArchivo = "";
     bool mostrarErrorArchivo = false;
     const long MAX_FILE_SIZE = 10 * 1024 * 1024;  //Acepta hasta 10 mb de tamaño
-    byte[] pdfBytes;
+    List<Pdf> pdfBytes = new List<Pdf>();
+
     //Este metodo recibe el archivo seleccionado y lo convierte a bytes. Luego lo asigna a 'pdfBytes' que lo uso para el INSERT a base.
     async Task ArchivoSeleccionado(UploadChangeEventArgs args)
     {
-        foreach (var file in args.Files)
+        try
         {
-            if (file != null)
+            // Verificar si hay archivos antes de procesarlos
+            if (args.Files == null || !args.Files.Any())
             {
-
-                if (file.Size > MAX_FILE_SIZE)
+                Console.WriteLine("No hay archivos seleccionados.");
+                return;
+            }
+            foreach (var file in args.Files)
+            {
+                if (file != null)
                 {
-                    mensajeErrorArchivo = "El archivo es demasiado grande. El tamaño máximo permitido es 10MB.";
-                    mostrarErrorArchivo = true;
-                    return;
-                }
-                using var memoryStream = new MemoryStream();
-                await file.OpenReadStream().CopyToAsync(memoryStream);
-                pdfBytes = memoryStream.ToArray();
-                mensajeErrorArchivo = "";
-                mostrarErrorArchivo = false;
+                    if (file.Size > MAX_FILE_SIZE)
+                    {
+                        mensajeErrorArchivo = "El archivo es demasiado grande. El tamaño máximo permitido es 10MB.";
+                        mostrarErrorArchivo = true;
+                        return;
+                    }
+                    Pdf nuevoPdf = new Pdf
+                    {
+                        NombreArchivo = file.Name
+                    };
+                    
 
-                Console.WriteLine($"Archivo {file.Name} subido con éxito. Tamaño: {file.Size} bytes.");
+                    using var memoryStream = new MemoryStream();
+                    await file.OpenReadStream(maxAllowedSize: MAX_FILE_SIZE).CopyToAsync(memoryStream);
+
+                    nuevoPdf.Archivo = memoryStream.ToArray();
+
+                    pdfBytes.Add(nuevoPdf);
+
+                    mensajeErrorArchivo = "";
+                    mostrarErrorArchivo = false;
+
+                    Console.WriteLine($"Archivo {file.Name} subido con éxito. Tamaño: {file.Size} bytes.");
+                }
             }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al subir el archivo: {ex.Message}");
+            mensajeErrorArchivo = "Error al subir el archivo.";
+            mostrarErrorArchivo = true;
+        }
+    }
+
+    void EliminarArchivo(Pdf archivo)
+    {
+        pdfBytes.Remove(archivo);
     }
 
 
@@ -364,8 +404,13 @@
             string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";
 
             if (!esAdmin) { nuevoTurno.Email = userEmail; }
-            
-            int intentoRegistrarTurno = Base.InsertarTurno(nuevoTurno, pdfBytes);
+
+            //Inserto el nuevo turno.
+            int intentoRegistrarTurno = Base.InsertarTurno(nuevoTurno);
+
+            //Inserto los PDFS
+            if(pdfBytes.Count > 0 )  {  Pdf.InsertarPDFS(pdfBytes, nuevoTurno);  }
+
 
             if (intentoRegistrarTurno == 0)
             {
@@ -398,20 +443,20 @@
                 await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
 
             }
-        else
-        {
-            var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>
-            @<RadzenStack Gap="1.5rem">
-                <p><b>Tu turno no ha sido confirmado.</b></p>
-                <p>Intentalo nuevamente.</p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
-                    <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
+            else
+            {
+                var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>
+                @<RadzenStack Gap="1.5rem">
+                    <p><b>Tu turno no ha sido confirmado.</b></p>
+                    <p>Intentalo nuevamente.</p>
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
+                        <RadzenStack Orientation="Orientation.Horizontal">
+                            <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
+                        </RadzenStack>
                     </RadzenStack>
                 </RadzenStack>
-            </RadzenStack>
-        );
-        }
+            );
+            }
         }
         else
         {

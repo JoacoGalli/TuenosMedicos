@@ -651,3 +651,9 @@ h1:focus {
     padding: 8px 12px;
     border-radius: 8px;
 }
+
+
+/* Oculta la lista de archivos subidos */
+.rz-fileupload-files {
+    display: none !important;
+}
