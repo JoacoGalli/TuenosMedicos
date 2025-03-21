@@ -26,8 +26,8 @@ public class RecordatorioHostedService : BackgroundService
             // Esperar 24 horas antes de la siguiente ejecución
             await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
 
-            // Esperar 10 minutos antes de la siguiente ejecución
-            //await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
+            // Esperar 5 minutos antes de la siguiente ejecución (para pruebas)
+            //await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
 
         }
     }

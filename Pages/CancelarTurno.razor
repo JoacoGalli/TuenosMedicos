@@ -1,0 +1,135 @@
+﻿@page "/cancelar-turno/{id:int}"
+@using System.Security.Claims
+@inject DialogService DialogService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<br />
+<RadzenCard Style="max-width: 500px;  margin: auto; padding: 20px; text-align: center;">
+    
+ <h3>Cancelar turno</h3>
+
+ <br />
+
+@if(_autenticado)
+{
+    @if (turnoEncontrado && _turno.Email == userEmail)
+    {
+            <RadzenText Style="font-size:1.5rem;">
+                <p>
+                    ¿Estás seguro de que deseas cancelar tu turno programado para el día
+                    <b>@_turno.FechaTurno?.ToString("dd-MM-yyyy")</b> a las
+                    <b>@_turno.HoraTurno</b> con <b>@_turno.Medico</b>?
+                </p>
+            </RadzenText>
+            <br />
+            <RadzenButton Click="CancelarShift" Text="Sí, Cancelar" Style="width: 100%;" ButtonStyle=ButtonStyle.Danger Icon="cancel" />
+            
+    }
+    else
+    {
+        <p style="font-size:1.5rem;" class="text-danger">El turno no fue encontrado.</p>
+    }
+}
+else
+{
+    <p>Redirigiendo al login...</p>
+}
+
+</RadzenCard>
+
+
+@code {
+    [Parameter] public int id { get; set; }
+    private bool _autenticado = false;
+    private string userEmail = "";
+
+
+    private Turno? _turno = new Turno();
+    private bool turnoEncontrado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            userEmail = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value ?? "Email no encontrado";
+        }
+
+
+        if (authState.User.Identity is not { IsAuthenticated: true })
+        {
+            // Usuario NO autenticado → Redirigir a Login con returnUrl
+            string returnUrl = $"/cancelar-turno/{id}";
+            Navigation.NavigateTo($"/Identity/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}", true);
+        }
+        else
+        {
+            _autenticado = true; // Usuario autenticado → Mostrar contenido
+            string query = "SELECT * FROM `turnos-medicos`.`turnos` WHERE idturno=@idturno LIMIT 1";
+            var parametros = new Dictionary<string, object> { { "@idturno", id } };
+
+            List<Turno>? turnosEncontrados = Base.SelectATurnos(query, parametros);
+
+            foreach (Turno turno in turnosEncontrados)
+            {
+                _turno = turno;
+                turnoEncontrado = true;
+            }
+        }
+
+
+        
+
+    }
+
+
+    private async Task CancelarShift()
+    {
+        string query2 = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true, motivoCancelacion='Cancelado por el paciente.' WHERE idturno=@idturno";
+        var parametros2 = new Dictionary<string, object> { { "@idturno", id } };
+
+        int cancelar = Base.InsertDeleteOrUpdateABase(query2, parametros2);
+
+        if (cancelar > 0)
+        {
+            
+            //Envio el email de confirmacion
+            EmailService nuevoEmail = new EmailService();
+            string cuerpoEmail = "Estimado/a: <br><br> Su turno del dia: <b>" + _turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + _turno.HoraTurno + " hs</b> ha sido <b>cancelado</b> correctamente.<br><br>Muchas gracias. <br> Consultorio Médico. ";
+            //await nuevoEmail.EnviarCorreoAsync(_turno.Email, "Cancelación de turno", cuerpoEmail);
+            await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Cancelación de turno", cuerpoEmail);
+
+
+            var result = await DialogService.OpenAsync("Turno cancelado", ds =>
+            @<RadzenCard Style="background: #fff; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
+    
+                <RadzenIcon Icon="check_circle" Size="50px" Style="color: #28a745; margin-bottom: 10px;" />
+    
+                <RadzenHeading Size="H4" Style="color: #333;">¡Turno cancelado!</RadzenHeading>
+    
+                <RadzenText>
+                    <p>Tu turno ha sido cancelado correctamente.</p>
+                </RadzenText>
+
+                <RadzenText>
+                    <p><b>Muchas gracias.</b></p>
+                </RadzenText>
+
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                    <RadzenButton Text="Cerrar" Icon="close" Click=@RedirectToHome ButtonStyle="ButtonStyle.Primary" Style="width: 100px;" />
+                </RadzenStack>
+
+            </RadzenCard>
+            );
+        }
+        
+        
+    }
+    void RedirectToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+}

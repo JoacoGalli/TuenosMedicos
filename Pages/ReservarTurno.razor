@@ -1,9 +1,11 @@
 ﻿@page "/reservarturno"
+@attribute [Authorize]
 @inject DialogService DialogService
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+
 
 
 <PageTitle>Reservar turno</PageTitle>

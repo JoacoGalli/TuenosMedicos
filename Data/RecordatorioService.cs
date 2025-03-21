@@ -19,9 +19,13 @@ public class RecordatorioService
         foreach (Turno turno in turnosDeMañana)
         {
             //Por cada 'turno' envio un email avisando que el turno es mañana:
-            
+            string cancelarUrl = $"https://localhost:44393/cancelar-turno/{turno.Id}";
+
             EmailService nuevoEmail = new EmailService();
-            string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno + "</b> hs.<br><br>Si no es posible asistir, puede cancelarlo. <br><br> Muchas gracias.<br><br>Consultorio Médico.";
+            string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el dia: <b>" +
+                                    turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno 
+                                    + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: "+cancelarUrl
+                                    +" . <br><br> Muchas gracias.<br><br>Consultorio Médico.";
             //nuevoEmail.EnviarCorreoAsync(turno.email, "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
             nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
 
