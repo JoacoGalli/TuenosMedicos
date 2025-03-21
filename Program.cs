@@ -31,6 +31,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireDigit = true;            // (Opcional) Mantiene el requerimiento de números
     
 });
+builder.Services.AddScoped<RecordatorioService>();
+builder.Services.AddHostedService<RecordatorioHostedService>();
 
 
 builder.Services.AddRazorPages();
