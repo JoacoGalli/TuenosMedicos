@@ -208,7 +208,7 @@
 
     <!-- Botones centrados -->
     <RadzenRow JustifyContent="JustifyContent.Center" class="rz-mt-4">
-        <RadzenButton ButtonType="ButtonType.Submit" Click=@MostrarConfirmacion Size="ButtonSize.Large" Icon="save" Text="Confirmar" />
+        <RadzenButton ButtonType="ButtonType.Submit" Click=@MostrarResumen Size="ButtonSize.Large" Icon="save" Text="Confirmar" />
         <RadzenButton ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Large" Icon="cancel" Text="Cancelar" Click="@Cancelar" />
     </RadzenRow>
 </RadzenTemplateForm>
@@ -280,7 +280,7 @@
                     {
                         NombreArchivo = file.Name
                     };
-                    
+
 
                     using var memoryStream = new MemoryStream();
                     await file.OpenReadStream(maxAllowedSize: MAX_FILE_SIZE).CopyToAsync(memoryStream);
@@ -393,9 +393,35 @@
             </RadzenStack>
     );
         }
-
-
     }
+
+    async Task MostrarResumen()
+    {
+        var result = await DialogService.OpenAsync("Resumen de reserva", ds =>
+        @<RadzenStack Gap="1rem" Padding="1.5rem" Style="font-size: 1.2rem; color: #222;">
+
+            <h3 style="margin-bottom: 0.75rem; font-size: 1.4rem;">📋 Resumen de tu turno</h3>
+
+            <RadzenStack Gap="1rem">
+                <p><b>🧑 Paciente:</b> <span>@nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</span></p>
+                <p><b>🆔 DNI:</b> <span>@nuevoTurno.Dni</span></p>
+                <p><b>📞 Teléfono:</b> <span>@nuevoTurno.Telefono</span></p>
+                <p><b>👨‍⚕️ Médico:</b> <span>@nuevoTurno.Medico</span></p>
+                <p><b>🏥 Cobertura:</b> <span>@nuevoTurno.Cobertura</span></p>
+                <p><b>🔢 Nº Afiliado:</b> <span>@nuevoTurno.NumeroAfiliado</span></p>
+                <p><b>📅 Fecha:</b> <span>@nuevoTurno.FechaTurno</span></p>
+                <p><b>🕒 Hora:</b> <span>@nuevoTurno.HoraTurno</span></p>
+                <p><b>📝 Notas:</b> <span>@nuevoTurno.Notas</span></p>
+            </RadzenStack>
+
+            <!-- Botones -->
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="1.2rem" JustifyContent="JustifyContent.Center" Style="margin-top: 1.2rem;">
+                <RadzenButton Text="✅ Confirmar" ButtonStyle="ButtonStyle.Primary" Click=@MostrarConfirmacion Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
+                <RadzenButton Text="Cancelar" Icon="cancel"  ButtonStyle="ButtonStyle.Danger" Click="() => ds.Close(true)" Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
+            </RadzenStack>
+        </RadzenStack>);
+    }
+
 
     async Task MostrarConfirmacion()
     {
@@ -411,6 +437,11 @@
             //Inserto los PDFS
             if(pdfBytes.Count > 0 )  {  Pdf.InsertarPDFS(pdfBytes, nuevoTurno);  }
 
+            //Envio el email de confirmacion
+            EmailService nuevoEmail = new EmailService();
+            string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
+            await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
+
 
             if (intentoRegistrarTurno == 0)
             {
@@ -420,11 +451,12 @@
                     <RadzenIcon Icon="check_circle" Size="50px" Style="color: green;" />
 
                     <p style="font-size: 1.2rem; font-weight: bold;">✅ ¡Tu turno ha sido confirmado!</p>
+                    <p style="font-size: 1.2rem; font-weight: bold;">Un email ha sido enviado a tu correo.</p>
 
                     <p style="margin-bottom: 0.5rem;">Aquí están los datos de la reserva:</p>
 
                     <RadzenStack Gap="0.5rem" Style="border-radius: 8px; background: #f9f9f9; padding: 1rem; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
-                        <p><b>🧑 Paciente:</b> @nuevoTurno.NombrePaciente</p>
+                        <p><b>🧑 Paciente:</b> @nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</p>
                         <p><b>👨‍⚕️ Médico:</b> @nuevoTurno.Medico</p>
                         <p><b>📅 Fecha:</b> @fechaMostrar</p>
                         <p><b>🕒 Hora:</b> @nuevoTurno.HoraTurno</p>
@@ -434,14 +466,7 @@
                     <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" JustifyContent="JustifyContent.Center">
                         <RadzenButton Text="Cerrar" Icon="close" ButtonStyle="ButtonStyle.Primary" Click=@RedirectToHome />
                     </RadzenStack>
-                </RadzenStack>);
-
-            
-                EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
-
-                await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
-
+                </RadzenStack>);                            
             }
             else
             {
@@ -472,30 +497,16 @@
             </RadzenStack>
                 );
         }
-
-        
-        
-
-
-
-
-
-
-
-        
     }
+
+
+
+     void Submit(Turno arg) {}
+
     
     void RedirectToHome()
     {
         Navigation.NavigateTo("/");
-    }
-    
-
-    void Submit(Turno arg)
-    {
-       
-
-
     }
 
     void Cancelar()
