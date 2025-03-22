@@ -1,16 +1,33 @@
 using MySqlConnector;
-using System.Collections.Generic;
-using System.Data;
+
 
 class Base
 {
-    private static readonly string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+    private static readonly string connectionString;
+
+    static Base()
+    {
+        // 📌 Configuración para leer appsettings.json
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory()) // Ubicación del proyecto
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+        // 📌 Obtener la cadena de conexión
+        connectionString = config.GetConnectionString("DefaultConnection");
+    }
+
+    public static string GetConnectionString()
+    {
+        return connectionString;
+    }
+
 
     public static List<Medico> SelectAMedicos(string query, Dictionary<string, object> parameters = null)
     {
         List<Medico> resultados = new List<Medico>();
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
         {
             try
             {
@@ -61,7 +78,7 @@ class Base
 
         List<Turno> resultados = new List<Turno>();
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
         {
             try
             {
@@ -123,7 +140,7 @@ class Base
 
         List<MedicoFechaBloqueada> resultados = new List<MedicoFechaBloqueada>();
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
         {
             try
             {
@@ -171,7 +188,7 @@ class Base
     {
         List<Cobertura> resultados = new List<Cobertura>();
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
         {
             try
             {
@@ -216,7 +233,7 @@ class Base
     {
         List<Pdf> resultados = new List<Pdf>();
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
         {
             try
             {
@@ -266,7 +283,7 @@ class Base
     {
         try
         {
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
             {
                 connection.Open();
 
@@ -308,7 +325,7 @@ class Base
     {
         try
         {
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
             {
                 connection.Open();
 
@@ -342,7 +359,7 @@ class Base
     {        
         int filasAfectadas = 0;
 
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        using (MySqlConnection connection = new MySqlConnection(Base.GetConnectionString()))
         {
             try
             {
