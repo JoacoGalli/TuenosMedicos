@@ -1,4 +1,5 @@
 using MySqlConnector;
+using Serilog;
 
 
 class Base
@@ -65,8 +66,7 @@ class Base
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ocurrió un error: " + ex.Message);
-                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
+                Log.Error(ex.Message, "Error en el select a medicos");
             }
         }
         return resultados;
@@ -128,8 +128,8 @@ class Base
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ocurrió un error: "+ex.Message);
-                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
+                Log.Error(ex.Message, "Error en el select a turnos");
+                
             }
         }
         return resultados;
@@ -176,8 +176,7 @@ class Base
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ocurrió un error: " + ex.Message);
-                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
+                Log.Error(ex.Message, "Error en el select a fechas bloqueadas");                
             }
         }
         return resultados;
@@ -221,8 +220,7 @@ class Base
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ocurrió un error: " + ex.Message);
-                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
+                Log.Error(ex.Message, "Error en el select a coberturas");                
             }
         }
         return resultados;
@@ -267,8 +265,7 @@ class Base
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ocurrió un error: " + ex.Message);
-                // Logger.LogError(ex); // Usa un sistema de logging seguro como Serilog
+                Log.Error(ex.Message, "Error en el select a pdfs");                
             }
         }
         return resultados;
@@ -316,7 +313,7 @@ class Base
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error en la base de datos: " + ex.Message);
+            Log.Error(ex.Message, "Error en el Base.InsertarTurno");
             return 1; // Retornar 1 indica un error
         }
     }
@@ -350,7 +347,7 @@ class Base
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error en la base de datos: " + ex.Message);
+            Log.Error(ex.Message, "Error en Base.InsertarMedico ");
             return 1; // Retornar 1 indica un error
         }
     }
@@ -378,7 +375,7 @@ class Base
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error en la base de datos: " + ex.Message);
+                Log.Error(ex.Message, "Error en Base.InserDeletOUpdate ");
                 return -1; // Retorna -1 en caso de error
             }
         }

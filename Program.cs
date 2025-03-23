@@ -7,8 +7,17 @@ using Microsoft.EntityFrameworkCore;
 using TurnosMedicos.Areas.Identity;
 using TurnosMedicos.Data;
 using Radzen;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar Serilog para escribir logs en un archivo
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day) // Guarda logs diarios
+    .MinimumLevel.Information() // Solo registra desde nivel Información en adelante
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // Integrar Serilog en la app
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -45,6 +54,8 @@ builder.Services.AddSingleton<EmailService>();
 
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging(); // Para loguear cada request automáticamente
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
