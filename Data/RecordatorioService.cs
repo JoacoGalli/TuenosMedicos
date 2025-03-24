@@ -4,17 +4,26 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Net;
+using Serilog;
 
 public class RecordatorioService 
 {
     public async Task EnviarRecordatorioAsync() 
     {
         string mañana = DateTime.Now.AddDays(1).Date.ToString("yyyy-MM-dd");
-        
-        string query = "SELECT * FROM `turnos-medicos`.`turnos` WHERE recordatorioEnviado=false AND fechaTurno = @mañana";
-        var parametros = new Dictionary<string, object> { { "@mañana", mañana } };
+        List<Turno> turnosDeMañana = new List<Turno>();
+        try 
+        {
+            Log.Information("Buscando los turnos de mañana...");
+            string query = "SELECT * FROM `turnos-medicos`.`turnos` WHERE cancelado=false AND recordatorioEnviado=false AND fechaTurno = @mañana";
+            var parametros = new Dictionary<string, object> { { "@mañana", mañana } };
 
-        List<Turno> turnosDeMañana = Base.SelectATurnos(query, parametros);
+            turnosDeMañana = Base.SelectATurnos(query, parametros);
+        }
+        catch (Exception ex) 
+        {
+            Log.Error(ex, "Error al intentar seleccionar los turnos de mañana");
+        }
 
         foreach (Turno turno in turnosDeMañana)
         {

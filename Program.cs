@@ -22,7 +22,7 @@ builder.Host.UseSerilog(); // Integrar Serilog en la app
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString,new MySqlServerVersion(new Version(8,0,41))));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
@@ -60,7 +60,7 @@ app.UseSerilogRequestLogging(); // Para loguear cada request automáticamente
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    //app.UseMigrationsEndPoint();
 }
 else
 {

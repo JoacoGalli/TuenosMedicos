@@ -112,6 +112,7 @@ namespace TurnosMedicos.Areas.Identity.Pages.Account
             {
                 try 
                 {
+                    Log.Information("Intentando iniciar sesion...");
                     var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                     if (result.Succeeded)
                     {
