@@ -28,14 +28,22 @@ public class RecordatorioHostedService : BackgroundService
                 }
 
                 // Esperar 24 horas antes de la siguiente ejecución
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                try
+                {
+                    await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    Log.Information("Task.Delay fue cancelado, terminando el servicio.");
+                    break; // Salimos del bucle para finalizar correctamente
+                }
 
                 // Esperar 5 minutos antes de la siguiente ejecución (para pruebas)
                 //await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
 
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not TaskCanceledException)
         {
             Log.Error(ex, "Error en el enviar recordatorio async");
         }
