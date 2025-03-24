@@ -181,7 +181,7 @@
 
         nuevoTurno.Id = Int16.Parse(TurnoId);
 
-        string query = "SELECT * FROM `turnos-medicos`.turnos WHERE idturno=@idturno;";
+        string query = "SELECT * FROM turnos WHERE idturno=@idturno;";
         var parametros = new Dictionary<string, object>
                         {
                             { "@idturno", nuevoTurno.Id }

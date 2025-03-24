@@ -7,7 +7,7 @@ class Pdf
     public static void InsertarPDFS(List<Pdf> pdfBytes, Turno turno) 
     {
         //Con los datos de 'nuevoTurno' que use para hacer el insert, voy a preguntarle a turnos por el ID del nuevo turno creado
-        string query = "SELECT * FROM `turnos-medicos`.`turnos` WHERE `nombrePaciente`= @nombrePaciente AND `apellidoPaciente` = @apellidoPaciente " +
+        string query = "SELECT * FROM `turnos` WHERE `nombrePaciente`= @nombrePaciente AND `apellidoPaciente` = @apellidoPaciente " +
                                 " AND `dni` = @dni AND `medico` = @medico AND `fechaTurno` = @fechaTurno AND `horaTurno` = @horaTurno AND `email` = @email ";
 
         var parametros = new Dictionary<string, object>
@@ -32,7 +32,7 @@ class Pdf
 
             foreach (Pdf pdf in pdfBytes)
             {
-                string query2 = "INSERT INTO `turnos-medicos`.`pdfs` (`idTurno`,`archivo`, `nombreArchivo`) VALUES (@idTurno, @archivo, @nombreArchivo);";
+                string query2 = "INSERT INTO `pdfs` (`idTurno`,`archivo`, `nombreArchivo`) VALUES (@idTurno, @archivo, @nombreArchivo);";
                 var parametros2 = new Dictionary<string, object>
                         {
                             { "@idTurno", idNuevoTurnoCreado },
@@ -44,7 +44,7 @@ class Pdf
 
             }
            
-            string query3 = "UPDATE `turnos-medicos`.`turnos` SET tienePDF = true WHERE idturno = @idTurno";
+            string query3 = "UPDATE `turnos` SET tienePDF = true WHERE idturno = @idTurno";
             var parametros3 = new Dictionary<string, object> { { "@idTurno", idNuevoTurnoCreado } };
             int turnoActualizado = Base.InsertDeleteOrUpdateABase(query3, parametros3);
         }

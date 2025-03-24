@@ -284,7 +284,7 @@ class Base
             {
                 connection.Open();
 
-                string query = "INSERT INTO `turnos-medicos`.`turnos` " +
+                string query = "INSERT INTO `turnos` " +
                                "(`nombrePaciente`, `apellidoPaciente`, `dni`, `cobertura`, `medico`, `fechaTurno`, `horaTurno`, `notas`, `notasInternas`, `telefono`, `email`, `domicilio`, `numeroAfiliado`,`categoriaAfiliado`) " +
                                "VALUES (@nombrePaciente, @apellidoPaciente, @dni, @cobertura, @medico, @fechaTurno, @horaTurno, @notas, @notasInternas, @telefono, @email, @domicilio,  @numeroAfiliado, @categoriaAfiliado)";
 
@@ -327,7 +327,7 @@ class Base
                 connection.Open();
 
                
-                string query = "INSERT INTO `turnos-medicos`.`medicos` " +
+                string query = "INSERT INTO `medicos` " +
                                     "(`nombreMedico`,`diaTrabajo`,`horaInicioTrabajo`,`horaFinTrabajo`,`duracionTurno`) " +
                                 "VALUES (@nombreMedico, @diaTrabajo, @horaInicioTrabajo, @horaFinTrabajo, @duracionTurno)";
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))

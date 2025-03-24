@@ -68,7 +68,7 @@ else
         else
         {
             _autenticado = true; // Usuario autenticado → Mostrar contenido
-            string query = "SELECT * FROM `turnos-medicos`.`turnos` WHERE idturno=@idturno LIMIT 1";
+            string query = "SELECT * FROM `turnos` WHERE idturno=@idturno LIMIT 1";
             var parametros = new Dictionary<string, object> { { "@idturno", id } };
 
             List<Turno>? turnosEncontrados = Base.SelectATurnos(query, parametros);
@@ -88,7 +88,7 @@ else
 
     private async Task CancelarShift()
     {
-        string query2 = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true, motivoCancelacion='Cancelado por el paciente.' WHERE idturno=@idturno";
+        string query2 = "UPDATE `turnos` SET cancelado=true, motivoCancelacion='Cancelado por el paciente.' WHERE idturno=@idturno";
         var parametros2 = new Dictionary<string, object> { { "@idturno", id } };
 
         int cancelar = Base.InsertDeleteOrUpdateABase(query2, parametros2);

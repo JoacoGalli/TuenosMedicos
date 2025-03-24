@@ -239,7 +239,7 @@
 
        async Task VerPDF(int idTurno)
     {
-        string query = "SELECT * FROM `turnos-medicos`.`pdfs` WHERE idTurno = @idTurno";
+        string query = "SELECT * FROM `pdfs` WHERE idTurno = @idTurno";
         var parametros = new Dictionary<string, object> 
         {
             { "@idTurno", idTurno } 
@@ -270,7 +270,7 @@
 
     void CancelarTurno(int idABorrar)
     {
-        string query = "UPDATE `turnos-medicos`.`turnos` SET cancelado=true,motivoCancelacion='Cancelado por el Consultorio.' WHERE idTurno=@idTurno;"; 
+        string query = "UPDATE `turnos` SET cancelado=true,motivoCancelacion='Cancelado por el Consultorio.' WHERE idTurno=@idTurno;"; 
         var parametros = new Dictionary<string, object> { { "@idTurno", idABorrar } };
 
         int cambiarEstado = Base.InsertDeleteOrUpdateABase(query,parametros);
@@ -288,7 +288,7 @@
 
     async Task ReloadGrid()
     {
-        string query = "SELECT * FROM `turnos-medicos`.turnos WHERE cancelado=@cancelado";
+        string query = "SELECT * FROM turnos WHERE cancelado=@cancelado";
         var parametros = new Dictionary<string, object>
                     {
                         { "@cancelado", mostrarCancelados }

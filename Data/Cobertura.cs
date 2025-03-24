@@ -7,7 +7,7 @@ class Cobertura
     {
         List<Cobertura> listaADevolver = new List<Cobertura>();
 
-        string query = "SELECT * FROM `turnos-medicos`.coberturas;";
+        string query = "SELECT * FROM coberturas;";
 
         listaADevolver = Base.SelectACoberturas(query);
              

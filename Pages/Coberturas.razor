@@ -125,7 +125,7 @@
 
     async Task ReloadGrid()
     {
-        string query = "SELECT * FROM `turnos-medicos`.coberturas";
+        string query = "SELECT * FROM coberturas";
 
         listaCoberturas = Base.SelectACoberturas(query);
         await coberturasGrid.Reload();
@@ -135,7 +135,7 @@
     {
         if (!string.IsNullOrEmpty(nombre))
         {
-            string query = "INSERT INTO `turnos-medicos`.`coberturas` (`nombreCobertura`) VALUES (@nombreCobertura);";
+            string query = "INSERT INTO `coberturas` (`nombreCobertura`) VALUES (@nombreCobertura);";
 
             var parametros = new Dictionary<string, object> { { "@nombreCobertura", nombre } };
 
@@ -162,7 +162,7 @@
 
     void EliminarCobertura(int idABorrar)
     {
-        string query = "DELETE FROM `turnos-medicos`.`coberturas` WHERE idCobertura=@idCobertura;";
+        string query = "DELETE FROM `coberturas` WHERE idCobertura=@idCobertura;";
         var parametros = new Dictionary<string, object> { { "@idCobertura", idABorrar } };
 
 

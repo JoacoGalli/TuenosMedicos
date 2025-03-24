@@ -15,7 +15,7 @@ public class RecordatorioService
         try 
         {
             Log.Information("Buscando los turnos de mañana...");
-            string query = "SELECT * FROM `turnos-medicos`.`turnos` WHERE cancelado=false AND recordatorioEnviado=false AND fechaTurno = @mañana";
+            string query = "SELECT * FROM turnos WHERE cancelado=false AND recordatorioEnviado=false AND fechaTurno = @mañana";
             var parametros = new Dictionary<string, object> { { "@mañana", mañana } };
 
             turnosDeMañana = Base.SelectATurnos(query, parametros);
@@ -41,7 +41,7 @@ public class RecordatorioService
             
             
             //Luego de enviarlo, updateo "recordatorioEnviado"=true en `turnos`
-            string query2 = "UPDATE `turnos-medicos`.turnos SET recordatorioEnviado=true WHERE idturno=@idturno;";
+            string query2 = "UPDATE turnos SET recordatorioEnviado=true WHERE idturno=@idturno;";
             var parametros2 = new Dictionary<string, object> { { "@idturno", turno.Id } };
             int actualizoEstado = Base.InsertDeleteOrUpdateABase(query2, parametros2);
         }

@@ -34,7 +34,7 @@ class Turno
     {
         List<string> diasTrabajo = new List<string>();
         //Determino que dias trabaja el medico
-        string query = " SELECT * FROM `turnos-medicos`.medicos WHERE nombreMedico= @nombreMedico ;";
+        string query = " SELECT * FROM medicos WHERE nombreMedico= @nombreMedico ;";
         var parametros = new Dictionary<string, object> { { "@nombreMedico", Medico } };        
 
         List<Medico> listaMedicos = Base.SelectAMedicos(query, parametros);
@@ -65,7 +65,7 @@ class Turno
         List<DateTime> fechaDes = new List<DateTime>();
 
         //Verifico que fechas fueron bloqueadas por el admin
-        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `turnos-medicos`.`medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico ;";
+        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico ;";
         var parametros2 = new Dictionary<string, object> { { "@nombreMedico", Medico } };
 
         List<MedicoFechaBloqueada> fechasBloq = Base.SelectAMedicosFechasBloqueadas(query2,parametros2);
@@ -94,7 +94,7 @@ class Turno
     {
         
         //Traigo los horarios de trabajo del medico (inicio a fin de la jornada)
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos "+
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM medicos "+
                         " WHERE nombreMedico = @nombreMedico and diaTrabajo = @diaTrabajo ;";
         var param = new Dictionary<string, object>
                         {
@@ -124,7 +124,7 @@ class Turno
 
 
         //aca consulto la tabla turno para ver si el medico en X dia tiene turnos ocupados.
-        string queryTurnos = "SELECT * FROM `turnos-medicos`.turnos WHERE medico = @medico AND fechaTurno=@fechaTurno AND cancelado=false;";
+        string queryTurnos = "SELECT * FROM turnos WHERE medico = @medico AND fechaTurno=@fechaTurno AND cancelado=false;";
 
         var parametros = new Dictionary<string, object>
                         {

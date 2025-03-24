@@ -225,7 +225,7 @@
 
     async Task ReloadGrid()
     {
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM `turnos-medicos`.medicos";
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM medicos";
 
         if(!string.IsNullOrEmpty(medicoSeleccionado))
         {         
@@ -273,7 +273,7 @@
 
     void CancelarHorario(int idABorrar)
     {
-        string query = "DELETE FROM `turnos-medicos`.`medicos` WHERE idMedicos=@idMedicos;";
+        string query = "DELETE FROM `medicos` WHERE idMedicos=@idMedicos;";
         var parametros = new Dictionary<string, object>{ { "@idMedicos", idABorrar } };
 
 
