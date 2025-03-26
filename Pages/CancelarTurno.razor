@@ -99,9 +99,9 @@ else
             //Envio el email de confirmacion
             EmailService nuevoEmail = new EmailService();
             string cuerpoEmail = "Estimado/a: <br><br> Su turno del dia: <b>" + _turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + _turno.HoraTurno + " hs</b> ha sido <b>cancelado</b> correctamente.<br><br>Muchas gracias. <br> Consultorio Médico. ";
-            //await nuevoEmail.EnviarCorreoAsync(_turno.Email, "Cancelación de turno", cuerpoEmail);
-            await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Cancelación de turno", cuerpoEmail);
-
+            
+            await nuevoEmail.EnviarCorreoAsync(_turno.Email, "Cancelación de turno", cuerpoEmail);
+            
 
             var result = await DialogService.OpenAsync("Turno cancelado", ds =>
             @<RadzenCard Style="background: #fff; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">

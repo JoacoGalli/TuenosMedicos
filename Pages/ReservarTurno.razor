@@ -399,11 +399,9 @@
 
     async Task MostrarResumen()
     {
-        var result = await DialogService.OpenAsync("Resumen de reserva", ds =>
+        var result = await DialogService.OpenAsync("📋 Resumen de reserva", ds =>
         @<RadzenStack Gap="1rem" Padding="1.5rem" Style="font-size: 1.2rem; color: #222;">
-
-            <h3 style="margin-bottom: 0.75rem; font-size: 1.4rem;">📋 Resumen de tu turno</h3>
-
+    
             <RadzenStack Gap="1rem">
                 <p><b>🧑 Paciente:</b> <span>@nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</span></p>
                 <p><b>🆔 DNI:</b> <span>@nuevoTurno.Dni</span></p>
@@ -411,7 +409,7 @@
                 <p><b>👨‍⚕️ Médico:</b> <span>@nuevoTurno.Medico</span></p>
                 <p><b>🏥 Cobertura:</b> <span>@nuevoTurno.Cobertura</span></p>
                 <p><b>🔢 Nº Afiliado:</b> <span>@nuevoTurno.NumeroAfiliado</span></p>
-                <p><b>📅 Fecha:</b> <span>@nuevoTurno.FechaTurno</span></p>
+            <p><b>📅 Fecha:</b> <span>@nuevoTurno.FechaTurno?.ToString("dd-MM-yyyy")</span></p>
                 <p><b>🕒 Hora:</b> <span>@nuevoTurno.HoraTurno</span></p>
                 <p><b>📝 Notas:</b> <span>@nuevoTurno.Notas</span></p>
             </RadzenStack>
@@ -442,7 +440,8 @@
             //Envio el email de confirmacion
             EmailService nuevoEmail = new EmailService();
             string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
-            await nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Confirmación de turno", cuerpoEmail);
+            
+            await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Confirmación de turno", cuerpoEmail);
 
 
             if (intentoRegistrarTurno == 0)

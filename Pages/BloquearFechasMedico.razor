@@ -163,9 +163,8 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                         EmailService nuevoEmail = new EmailService();
                         string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno?.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
 
-                        //nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
-                        nuevoEmail.EnviarCorreoAsync("kevinnatalini@gmail.com", "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
-
+                        nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
+                        
                         //Actualizo el estado del turno en la base.
                         string query3 = "UPDATE turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas'"+
                                         "WHERE medico=@medico AND fechaTurno=@fechaTurno;";
