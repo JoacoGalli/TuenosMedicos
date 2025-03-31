@@ -1,5 +1,6 @@
 using MySqlConnector;
 using Serilog;
+using System.Data;
 
 
 class Base
@@ -104,7 +105,7 @@ class Base
                                 Id = reader.GetInt32("idturno"),
                                 NombrePaciente = reader.GetString("nombrePaciente"),
                                 ApellidoPaciente = reader.GetString("apellidoPaciente"),
-                                Dni = reader.GetInt32("dni"),
+                                Dni = reader.IsDBNull("dni") ? (int?)null : reader.GetInt32("dni"),
                                 Cobertura = reader.GetString("cobertura"),
                                 NumeroAfiliado = reader.IsDBNull(reader.GetOrdinal("numeroAfiliado")) ? "" : reader.GetString("numeroAfiliado"),
                                 CategoriaAfiliado = reader.IsDBNull(reader.GetOrdinal("categoriaAfiliado")) ? "" : reader.GetString("categoriaAfiliado"),
@@ -113,7 +114,7 @@ class Base
                                 HoraTurno = reader.GetString("horaTurno"),
                                 Domicilio = reader.GetString("domicilio"),
                                 Email = reader.GetString("email"),
-                                Telefono = reader.GetString("telefono"),
+                                Telefono = reader.IsDBNull(reader.GetOrdinal("telefono")) ? "" : reader.GetString("telefono"),
                                 Notas = reader.IsDBNull(reader.GetOrdinal("notas")) ? "" : reader.GetString("notas"),
                                 NotasInternas = reader.IsDBNull(reader.GetOrdinal("notasInternas")) ? "" : reader.GetString("notasInternas"),
                                 Cancelado = reader.GetBoolean("cancelado"),

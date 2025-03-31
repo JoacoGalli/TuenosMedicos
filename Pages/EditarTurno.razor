@@ -38,8 +38,7 @@
                             <RadzenLabel Text="DNI" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenNumeric ShowUpDown="false" Placeholder="Ingrese su doc." Disabled="true" Name="DNI" Style="width: 100%;" @bind-Value="nuevoTurno.Dni" />
-                            <RadzenRequiredValidator Component="DNI" Text="Completa el DNI del paciente." />
+                            <RadzenNumeric ShowUpDown="false" Placeholder="Ingrese su doc." Disabled="true" Name="DNI" Style="width: 100%;" @bind-Value="nuevoTurno.Dni" />                            
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -48,8 +47,7 @@
                             <RadzenLabel Text="Teléfono" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox @bind-Value="nuevoTurno.Telefono" Name="Telefono" Style="width: 100%;" />
-                            <RadzenRequiredValidator Component="Telefono" Text="Por favor, completa el teléfono." />                           
+                            <RadzenTextBox @bind-Value="nuevoTurno.Telefono" Name="Telefono" Style="width: 100%;" />                                                  
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -67,8 +65,7 @@
                             <RadzenLabel Text="Email" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Disabled="true" Name="Email" Style="width: 100%;" />
-                            <RadzenRequiredValidator Component="Email" Text="Por favor, completa el email." />
+                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Disabled="true" Name="Email" Style="width: 100%;" />                            
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -284,7 +281,7 @@
     async Task MostrarConfirmacion()
     {
 
-        if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
+        if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
         {
             string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";          
             

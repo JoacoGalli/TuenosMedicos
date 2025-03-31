@@ -44,7 +44,7 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenNumeric ShowUpDown="false" Placeholder="Ingrese su doc." Name="DNI" Style="width: 100%;" @bind-Value="nuevoTurno.Dni" />
-                            <RadzenRequiredValidator Component="DNI" Text="Completa el DNI del paciente." />
+                            @if (!esAdmin) {  <RadzenRequiredValidator Component="DNI" Text="Completa el DNI del paciente." />}
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -54,7 +54,7 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenTextBox @bind-Value="nuevoTurno.Telefono" Name="Telefono" Style="width: 100%;" />
-                            <RadzenRequiredValidator Component="Telefono" Text="Por favor, completa el teléfono." />
+                            @if (!esAdmin) { <RadzenRequiredValidator Component="Telefono" Text="Por favor, completa el teléfono." /> }
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -64,7 +64,7 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenTextBox @bind-Value="nuevoTurno.Domicilio" Name="Domicilio" Style="width: 100%;" />
-                            <RadzenRequiredValidator Component="Domicilio" Text="Por favor, completa el domicilio." />
+                            @if (!esAdmin) { <RadzenRequiredValidator Component="Domicilio" Text="Por favor, completa el domicilio." /> }
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -397,93 +397,30 @@
 
     async Task MostrarResumen()
     {
-        var result = await DialogService.OpenAsync("📋 Resumen de reserva", ds =>
-        @<RadzenStack Gap="1rem" Padding="1.5rem" Style="font-size: 1.2rem; color: #222;">
-
-            <RadzenStack Gap="1rem">
-                <p><b>🧑 Paciente:</b> <span>@nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</span></p>
-                <p><b>🆔 DNI:</b> <span>@nuevoTurno.Dni</span></p>
-                <p><b>📞 Teléfono:</b> <span>@nuevoTurno.Telefono</span></p>
-                <p><b>👨‍⚕️ Médico:</b> <span>@nuevoTurno.Medico</span></p>
-                <p><b>🏥 Cobertura:</b> <span>@nuevoTurno.Cobertura</span></p>
-                <p><b>🔢 Nº Afiliado:</b> <span>@nuevoTurno.NumeroAfiliado</span></p>
-            <p><b>📅 Fecha:</b> <span>@nuevoTurno.FechaTurno?.ToString("dd-MM-yyyy")</span></p>
-                <p><b>🕒 Hora:</b> <span>@nuevoTurno.HoraTurno</span></p>
-                <p><b>📝 Notas:</b> <span>@nuevoTurno.Notas</span></p>
-            </RadzenStack>
-
-            <!-- Botones -->
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="1.2rem" JustifyContent="JustifyContent.Center" Style="margin-top: 1.2rem;">
-                <RadzenButton Text="✅ Confirmar" ButtonStyle="ButtonStyle.Primary" Click=@MostrarConfirmacion Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
-                <RadzenButton Text="Cancelar" Icon="cancel"  ButtonStyle="ButtonStyle.Danger" Click="() => ds.Close(true)" Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
-            </RadzenStack>
-        </RadzenStack>
-    );
-    }
-
-
-    async Task MostrarConfirmacion()
-    {
-        if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Dni != null && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="" && mostrarErrorArchivo==false)
+        if (nuevoTurno.NombrePaciente != "" && nuevoTurno.ApellidoPaciente != ""  && nuevoTurno.Medico != "" && nuevoTurno.Cobertura != null && nuevoTurno.FechaTurno != DateTime.MinValue && nuevoTurno.HoraTurno != "" && mostrarErrorArchivo == false)
         {
-            string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";
+            var result = await DialogService.OpenAsync("📋 Resumen de reserva", ds =>
+            @<RadzenStack Gap="1rem" Padding="1.5rem" Style="font-size: 1.2rem; color: #222;">
 
-            if (!esAdmin) { nuevoTurno.Email = userEmail; }
-
-            //Inserto el nuevo turno.
-            int intentoRegistrarTurno = Base.InsertarTurno(nuevoTurno);
-
-            //Inserto los PDFS
-            if(pdfBytes.Count > 0 )  {  Pdf.InsertarPDFS(pdfBytes, nuevoTurno);  }
-
-            //Envio el email de confirmacion
-            if(!string.IsNullOrEmpty(nuevoTurno.Email))
-            {
-                EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";            
-                await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Confirmación de turno", cuerpoEmail);  
-            }            
-
-            if (intentoRegistrarTurno == 0)
-            {
-                var result = await DialogService.OpenAsync("Confirmación de reserva", ds =>
-                @<RadzenStack Gap="1.5rem" Style="text-align: center; padding: 1rem;">
-                    <!-- Icono de confirmación -->
-                    <RadzenIcon Icon="check_circle" Size="50px" Style="color: green;" />
-
-                    <p style="font-size: 1.2rem; font-weight: bold;">✅ ¡Tu turno ha sido confirmado!</p>
-                    <p style="font-size: 1.2rem; font-weight: bold;">Un email ha sido enviado a tu correo.</p>
-
-                    <p style="margin-bottom: 0.5rem;">Aquí están los datos de la reserva:</p>
-
-                    <RadzenStack Gap="0.5rem" Style="border-radius: 8px; background: #f9f9f9; padding: 1rem; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
-                        <p><b>🧑 Paciente:</b> @nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</p>
-                        <p><b>👨‍⚕️ Médico:</b> @nuevoTurno.Medico</p>
-                        <p><b>📅 Fecha:</b> @fechaMostrar</p>
-                        <p><b>🕒 Hora:</b> @nuevoTurno.HoraTurno</p>
-                    </RadzenStack>
-
-                    <!-- Botón de cerrar -->
-                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" JustifyContent="JustifyContent.Center">
-                        <RadzenButton Text="Cerrar" Icon="close" ButtonStyle="ButtonStyle.Primary" Click=@RedirectToHome />
-                    </RadzenStack>
-                </RadzenStack>);
-
-            }
-            else
-            {
-                var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>
-                @<RadzenStack Gap="1.5rem">
-                    <p><b>Tu turno no ha sido confirmado.</b></p>
-                    <p>Intentalo nuevamente.</p>
-                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
-                        <RadzenStack Orientation="Orientation.Horizontal">
-                            <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
-                        </RadzenStack>
-                    </RadzenStack>
+                <RadzenStack Gap="1rem">
+                    <p><b>🧑 Paciente:</b> <span>@nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</span></p>
+                    <p><b>🆔 DNI:</b> <span>@nuevoTurno.Dni</span></p>
+                    <p><b>📞 Teléfono:</b> <span>@nuevoTurno.Telefono</span></p>
+                    <p><b>👨‍⚕️ Médico:</b> <span>@nuevoTurno.Medico</span></p>
+                    <p><b>🏥 Cobertura:</b> <span>@nuevoTurno.Cobertura</span></p>
+                    <p><b>🔢 Nº Afiliado:</b> <span>@nuevoTurno.NumeroAfiliado</span></p>
+                <p><b>📅 Fecha:</b> <span>@nuevoTurno.FechaTurno?.ToString("dd-MM-yyyy")</span></p>
+                    <p><b>🕒 Hora:</b> <span>@nuevoTurno.HoraTurno</span></p>
+                    <p><b>📝 Notas:</b> <span>@nuevoTurno.Notas</span></p>
                 </RadzenStack>
-            );
-            }
+
+                <!-- Botones -->
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="1.2rem" JustifyContent="JustifyContent.Center" Style="margin-top: 1.2rem;">
+                    <RadzenButton Text="✅ Confirmar" ButtonStyle="ButtonStyle.Primary" Click=@MostrarConfirmacion Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
+                    <RadzenButton Text="Cancelar" Icon="cancel"  ButtonStyle="ButtonStyle.Danger" Click="() => ds.Close(true)" Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
+                </RadzenStack>
+            </RadzenStack>
+          );
         }
         else
         {
@@ -499,6 +436,71 @@
             </RadzenStack>
                 );
         }
+  
+    }
+
+
+    async Task MostrarConfirmacion()
+    {        
+        string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";
+
+        if (!esAdmin) { nuevoTurno.Email = userEmail; }
+
+        //Inserto el nuevo turno.
+        int intentoRegistrarTurno = Base.InsertarTurno(nuevoTurno);
+
+        //Inserto los PDFS
+        if(pdfBytes.Count > 0 )  {  Pdf.InsertarPDFS(pdfBytes, nuevoTurno);  }
+
+        //Envio el email de confirmacion
+        if(!string.IsNullOrEmpty(nuevoTurno.Email))
+        {
+            EmailService nuevoEmail = new EmailService();
+            string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";            
+            await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Confirmación de turno", cuerpoEmail);  
+        }            
+
+        if (intentoRegistrarTurno == 0)
+        {
+            var result = await DialogService.OpenAsync("Confirmación de reserva", ds =>
+            @<RadzenStack Gap="1.5rem" Style="text-align: center; padding: 1rem;">
+                <!-- Icono de confirmación -->
+                <RadzenIcon Icon="check_circle" Size="50px" Style="color: green;" />
+
+                <p style="font-size: 1.2rem; font-weight: bold;">✅ ¡Tu turno ha sido confirmado!</p>
+                <p style="font-size: 1.2rem; font-weight: bold;">Un email ha sido enviado a tu correo.</p>
+
+                <p style="margin-bottom: 0.5rem;">Aquí están los datos de la reserva:</p>
+
+                <RadzenStack Gap="0.5rem" Style="border-radius: 8px; background: #f9f9f9; padding: 1rem; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                    <p><b>🧑 Paciente:</b> @nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</p>
+                    <p><b>👨‍⚕️ Médico:</b> @nuevoTurno.Medico</p>
+                    <p><b>📅 Fecha:</b> @fechaMostrar</p>
+                    <p><b>🕒 Hora:</b> @nuevoTurno.HoraTurno</p>
+                </RadzenStack>
+
+                <!-- Botón de cerrar -->
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" JustifyContent="JustifyContent.Center">
+                    <RadzenButton Text="Cerrar" Icon="close" ButtonStyle="ButtonStyle.Primary" Click=@RedirectToHome />
+                </RadzenStack>
+            </RadzenStack>);
+
+        }
+        else
+        {
+            var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>
+            @<RadzenStack Gap="1.5rem">
+                <p><b>Tu turno no ha sido confirmado.</b></p>
+                <p>Intentalo nuevamente.</p>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenStack>
+        );
+        }
+        
     }
 
 
