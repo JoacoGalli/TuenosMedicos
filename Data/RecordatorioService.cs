@@ -33,14 +33,18 @@ public class RecordatorioService
                 //Por cada 'turno' envio un email avisando que el turno es mañana:
                 string cancelarUrl = $"http://consultoriojoaco.runasp.net/cancelar-turno/{turno.Id}";
 
-                EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el dia: <b>" +
-                                        turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
-                                        + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
-                                        + " . <br><br> Muchas gracias.<br><br>Consultorio Médico.";
-                
-                await nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
-                
+                if (!string.IsNullOrEmpty(turno.Email))
+                {
+                    EmailService nuevoEmail = new EmailService();
+                    string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el dia: <b>" +
+                                            turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
+                                            + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
+                                            + " . <br><br> Muchas gracias.<br><br>Consultorio Médico.";
+
+                    await nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
+
+                }
+
 
                 //Luego de enviarlo, updateo "recordatorioEnviado"=true en `turnos`
                 string query2 = "UPDATE turnos SET recordatorioEnviado=true WHERE idturno=@idturno;";

@@ -24,12 +24,17 @@
 @functions{
     public string EnviarEmailConfirmacion()
     {
-        EmailService nuevoEmail = new EmailService();
-        string cuerpoEmail = "Hemos registrado correctamente tu email.<br><br> Para confirmarlo, haz click en el siguiente link:<br><br> " + Model.EmailConfirmationUrl + "<br><br> Muchas gracias. <br><br><br> Consultorio médico";
+        string mensajeAmostrar = "";
+        if(!string.IsNullOrEmpty(Model.Email))
+        {
+            EmailService nuevoEmail = new EmailService();
+            string cuerpoEmail = "Hemos registrado correctamente tu email.<br><br> Para confirmarlo, haz click en el siguiente link:<br><br> " + Model.EmailConfirmationUrl + "<br><br> Muchas gracias. <br><br><br> Consultorio médico";
 
-        nuevoEmail.EnviarCorreoAsync(Model.Email, "Confirmación de email", cuerpoEmail);
+            nuevoEmail.EnviarCorreoAsync(Model.Email, "Confirmación de email", cuerpoEmail);
+
+            mensajeAmostrar = "Se ha enviado un email de confirmación a " + Model.Email;
+        }
         
-        string mensajeAmostrar = "Se ha enviado un email de confirmación a " + Model.Email;
 
         return mensajeAmostrar;
     }

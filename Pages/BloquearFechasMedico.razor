@@ -164,20 +164,20 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                         string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno?.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
 
                         nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
+                    }
+
+                    //Actualizo el estado del turno en la base.
+                    string query3 = "UPDATE turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas'"+
+                                    "WHERE medico=@medico AND fechaTurno=@fechaTurno;";
                         
-                        //Actualizo el estado del turno en la base.
-                        string query3 = "UPDATE turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas'"+
-                                        "WHERE medico=@medico AND fechaTurno=@fechaTurno;";
-                        
-                        var parametros3 = new Dictionary<string, object>
+                    var parametros3 = new Dictionary<string, object>
                     {
                         { "@medico", turno.Medico },
                         { "@fechaTurno", turno.FechaTurno?.ToString("yyyy-MM-dd") }
-                         };
-                        int actualizoEstado = Base.InsertDeleteOrUpdateABase(query3, parametros3);
+                    };
+                    int actualizoEstado = Base.InsertDeleteOrUpdateABase(query3, parametros3);
 
-                        turnosCancelados.Add(turno);
-                    }
+                    turnosCancelados.Add(turno);                    
                 }
             }
             DialogService.Close();

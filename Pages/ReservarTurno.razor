@@ -80,9 +80,7 @@
                             else
                             {
                                 <RadzenTextBox @bind-Value="userEmail" Disabled="true" Name="Email" Style="width: 100%;" />
-                            }
-
-                            <RadzenRequiredValidator Component="Email" Text="Por favor, completa el email." />
+                            }                            
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -401,7 +399,7 @@
     {
         var result = await DialogService.OpenAsync("📋 Resumen de reserva", ds =>
         @<RadzenStack Gap="1rem" Padding="1.5rem" Style="font-size: 1.2rem; color: #222;">
-    
+
             <RadzenStack Gap="1rem">
                 <p><b>🧑 Paciente:</b> <span>@nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</span></p>
                 <p><b>🆔 DNI:</b> <span>@nuevoTurno.Dni</span></p>
@@ -419,7 +417,8 @@
                 <RadzenButton Text="✅ Confirmar" ButtonStyle="ButtonStyle.Primary" Click=@MostrarConfirmacion Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
                 <RadzenButton Text="Cancelar" Icon="cancel"  ButtonStyle="ButtonStyle.Danger" Click="() => ds.Close(true)" Style="font-size: 1.2rem; padding: 0.75rem 1.5rem;" />
             </RadzenStack>
-        </RadzenStack>);
+        </RadzenStack>
+    );
     }
 
 
@@ -438,11 +437,12 @@
             if(pdfBytes.Count > 0 )  {  Pdf.InsertarPDFS(pdfBytes, nuevoTurno);  }
 
             //Envio el email de confirmacion
-            EmailService nuevoEmail = new EmailService();
-            string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
-            
-            await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Confirmación de turno", cuerpoEmail);
-
+            if(!string.IsNullOrEmpty(nuevoTurno.Email))
+            {
+                EmailService nuevoEmail = new EmailService();
+                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";            
+                await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Confirmación de turno", cuerpoEmail);  
+            }            
 
             if (intentoRegistrarTurno == 0)
             {
