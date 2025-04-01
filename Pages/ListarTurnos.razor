@@ -41,23 +41,31 @@
             <span style="color: green;">✅ Turnos pendientes</span>
         }
     </RadzenLabel>
+
+    <!-- Checkbox de Expirados -->
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+        <RadzenCheckBox @bind-Value="mostrarExpirados" TValue="bool" Change="@OnMostrarExpiradosChange" Name="ButtonMostrarExpirados" />
+        <RadzenLabel Text="Mostrar expirados (anteriores a hoy)" Component="ButtonMostrarExpirados" class="rz-ms-2" />
+    </RadzenStack>
+
+
 </RadzenStack>
 
 
 <RadzenColumn Size="12" class="rz-p-2" Style="width: 100%; margin-bottom: 4rem;">
     <RadzenStack Gap="1.5rem">
         <RadzenDataGrid @ref="turnosGrid"
-                        AllowFiltering="true"
-                        FilterMode="FilterMode.Simple"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        AllowPaging="true"
-                        PageSize="10"
-                        AllowSorting="true"
-                        Data="@turnos"
-                        TItem="Turno"
-                        ColumnWidth="200px"
-                        EmptyText="📭 No hay turnos para mostrar"
-                        Style="width: 1500px; margin-left:-15%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+        AllowFiltering="true"
+        FilterMode="FilterMode.Simple"
+        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+        AllowPaging="true"
+        PageSize="10"
+        AllowSorting="true"
+        Data="@turnos"
+        TItem="Turno"
+        ColumnWidth="200px"
+        EmptyText="📭 No hay turnos para mostrar"
+        Style="width: 1500px; margin-left:-15%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
             <Columns>
                 <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="120px">
                     <EditTemplate Context="shift">
@@ -89,7 +97,7 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="100px" SortOrder="SortOrder.Ascending" TextAlign="TextAlign.Center">
+                <RadzenDataGridColumn Property="FechaTurno" Title="Fecha" Width="100px" SortOrder="@OrdenActual" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         📅 @shift.FechaTurno?.ToString("dd/MM/yyyy")
                     </Template>
@@ -106,9 +114,9 @@
                         @if (!string.IsNullOrEmpty(shift.Notas))
                         {
                             <RadzenButton Click=@(args => VerNotas(shift.Notas))
-                                          Text="📝 Ver"
-                                          Size="ButtonSize.Small"
-                                          ButtonStyle="ButtonStyle.Info" />
+                            Text="📝 Ver"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Info" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -118,9 +126,9 @@
                         @if (shift.TienePdf)
                         {
                             <RadzenButton Click=@(args => VerPDF(shift.Id))
-                                          Text="📄 Ver"
-                                          Size="ButtonSize.Small"
-                                          ButtonStyle="ButtonStyle.Info" />
+                            Text="📄 Ver"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Info" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -130,9 +138,9 @@
                         @if (!string.IsNullOrEmpty(shift.NotasInternas))
                         {
                             <RadzenButton Click=@(args => VerNotas(shift.NotasInternas))
-                                          Text="📌 Ver"
-                                          Size="ButtonSize.Small"
-                                          ButtonStyle="ButtonStyle.Info" />
+                            Text="📌 Ver"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Info" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -140,9 +148,9 @@
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Contacto" Width="65px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         <RadzenButton Click=@(args => VerContacto(shift.NombrePaciente,shift.ApellidoPaciente,shift.Telefono,shift.Email,shift.Domicilio, shift.NumeroAfiliado, shift.CategoriaAfiliado))
-                                      Text="📞 Ver"
-                                      Size="ButtonSize.Small"
-                                      ButtonStyle="ButtonStyle.Light" />
+                        Text="📞 Ver"
+                        Size="ButtonSize.Small"
+                        ButtonStyle="ButtonStyle.Light" />
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -151,20 +159,20 @@
                         @if (!shift.Cancelado)
                         {
                             <RadzenButton Icon="build"
-                                          ButtonStyle="ButtonStyle.Success"
-                                          Size="ButtonSize.Small"
-                                          Click="@(args => EditarTurno(shift.Id))" />
+                            ButtonStyle="ButtonStyle.Success"
+                            Size="ButtonSize.Small"
+                            Click="@(args => EditarTurno(shift.Id))" />
                             <RadzenButton Icon="delete"
-                                          ButtonStyle="ButtonStyle.Danger"
-                                          Size="ButtonSize.Small"
-                                          Click="@(args => DeleteRow(shift))" />
+                            ButtonStyle="ButtonStyle.Danger"
+                            Size="ButtonSize.Small"
+                            Click="@(args => DeleteRow(shift))" />
                         }
                         else
                         {
                             <RadzenButton Click=@(args => VerMotivo(shift.NombrePaciente,shift.ApellidoPaciente,shift.MotivoCancelacion))
-                                          Text="📌 Motivo"
-                                          Size="ButtonSize.Small"
-                                          ButtonStyle="ButtonStyle.Light" />
+                            Text="📌 Motivo"
+                            Size="ButtonSize.Small"
+                            ButtonStyle="ButtonStyle.Light" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -182,6 +190,9 @@
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
     bool mostrarCancelados;
+    bool mostrarExpirados;
+    //Cambio el orden de los turnos dependiendo si mostrarExpirados. 
+    private SortOrder OrdenActual => mostrarExpirados ? SortOrder.Descending : SortOrder.Ascending;
 
     Turno turno = new Turno() { };
 
@@ -217,6 +228,12 @@
         await ReloadGrid();         // Llama a ReloadGrid() correctamente
     }
 
+    async Task OnMostrarExpiradosChange(bool value)
+    {
+        mostrarExpirados = value;  // Actualiza la variable
+        await ReloadGrid();         // Llama a ReloadGrid() correctamente
+    }
+
     async Task DeleteRow(Turno shift)
     {
         var result = await DialogService.OpenAsync("Atención", ds =>
@@ -237,7 +254,7 @@
     );
     }
 
-       async Task VerPDF(int idTurno)
+    async Task VerPDF(int idTurno)
     {
         string query = "SELECT * FROM `pdfs` WHERE idTurno = @idTurno";
         var parametros = new Dictionary<string, object> 
@@ -304,8 +321,18 @@
                         { "@cancelado", mostrarCancelados },
                          { "@medico", medicoSeleccionado }
                         };
-            
+
         }
+
+        if (mostrarExpirados)
+        {
+            query = query + $" AND fechaTurno < '{DateTime.Today.ToString("yyyy-MM-dd")}'";
+        }
+        else
+        {
+            query = query + $" AND fechaTurno >= '{DateTime.Today.ToString("yyyy-MM-dd")}'";        
+        }
+
         turnos = Base.SelectATurnos(query,parametros);
 
         await turnosGrid.Reload();
