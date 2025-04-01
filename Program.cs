@@ -41,7 +41,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     
 });
 builder.Services.AddScoped<RecordatorioService>();
-builder.Services.AddHostedService<RecordatorioHostedService>();
+builder.Services.AddScoped<BackupService>();
+builder.Services.AddHostedService<HostedService>();
 
 
 builder.Services.AddRazorPages();
