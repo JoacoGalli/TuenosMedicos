@@ -1,0 +1,85 @@
+﻿@page "/turnos_disponibles"
+@attribute [Authorize(Roles = "Admin")]
+@using Microsoft.EntityFrameworkCore
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<PageTitle>Turnos Disponibles</PageTitle>
+
+<h2 style="text-align: center; margin-top: 1rem;">Turnos disponibles</h2>
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem" class="rz-p-sm-12">
+    <RadzenLabel Text="Seleccionar médico" Component="DropDownBindValue" />
+    <RadzenDropDown @bind-Value="medicoSeleccionado" Placeholder="Seleccionar"
+                    Data="@listaMedicos" Style="width: 30%;"
+                    Change="@OnMedicoSeleccionado" TextProperty="NombreMedico" ValueProperty="NombreMedico" />
+</RadzenStack>
+
+@if (turnosVisuales?.Any() == true)
+{
+    <RadzenScheduler TItem="TurnoVisual" Data="@turnosVisuales"
+                     StartProperty="FechaHora" EndProperty="FechaHora"
+                     TextProperty="Texto" style="height: 768px;">
+        <RadzenMonthView />
+    </RadzenScheduler>
+}
+
+@code {
+    public class TurnoVisual
+    {
+        public DateTime FechaHora { get; set; }
+        public string Texto => FechaHora.ToString("HH:mm");
+    }
+
+    string? medicoSeleccionado;
+    List<TurnoVisual> turnosVisuales = new();
+    List<Medico> listaMedicos = Medico.ObtenerMedicos();
+
+    private async Task OnMedicoSeleccionado(object value)
+    {
+        medicoSeleccionado = value?.ToString();
+        if (!string.IsNullOrEmpty(medicoSeleccionado))
+        {
+            await GenerarTurnosParaTodoElAño();
+        }
+    }
+
+    private async Task GenerarTurnosParaTodoElAño()
+    {
+        turnosVisuales.Clear();
+
+        DateTime hoy = DateTime.Today;
+
+        for (int i = 0; i < 12; i++)
+        {
+            var fechaBase = hoy.AddMonths(i);
+            int año = fechaBase.Year;
+            int mes = fechaBase.Month;
+            int diasEnElMes = DateTime.DaysInMonth(año, mes);
+
+            for (int dia = 1; dia <= diasEnElMes; dia++)
+            {
+                var fecha = new DateTime(año, mes, dia);
+                var turno = new Turno
+                    {
+                        Medico = medicoSeleccionado,
+                        FechaTurno = fecha
+                    };
+
+                var horarios = turno.ObtenerHorariosDisponibles(false);
+                foreach (var h in horarios)
+                {
+                    if (DateTime.TryParseExact(h, "HH:mm", null, System.Globalization.DateTimeStyles.None, out var hora))
+                    {
+                        var fechaHora = new DateTime(fecha.Year, fecha.Month, fecha.Day, hora.Hour, hora.Minute, 0);
+
+                        turnosVisuales.Add(new TurnoVisual
+                            {
+                                FechaHora = fechaHora
+                            });
+                    }
+                }
+            }
+        }
+    }
+}

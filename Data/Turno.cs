@@ -104,6 +104,12 @@ class Turno
 
         List<Medico> consultaAMedicos = Base.SelectAMedicos(query, param);
 
+        if (consultaAMedicos.Count == 0)
+        {
+            Console.WriteLine($"No se encontró horario para el médico '{Medico}' en '{FechaTurno?.ToString("dddd")}'");
+            return new List<string>(); // o podés devolver null si querés distinguirlo después
+        }
+
         string horaDeInicio = consultaAMedicos[0].horaInicioTrabajo;
         string horaFinal = consultaAMedicos[0].horaFinTrabajo;
         int duracionTurno = consultaAMedicos[0].duracionTurno;
