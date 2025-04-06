@@ -53,6 +53,12 @@
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
 
+                    <RadzenDataGridColumn Property="duracionSobreTurno" Width="120px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="timer" Style="margin-right: 5px;" /> Duración Sobre Turno
+                        </HeaderTemplate>
+                    </RadzenDataGridColumn>
+
                     <RadzenDataGridColumn Context="med" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="90px">
                         <Template Context="med">
                             <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Click="@(args => DeleteRow(med))" Style="border-radius: 5px;" />
@@ -88,6 +94,7 @@
     protected override async Task OnInitializedAsync()
     {
         medicos = Medico.ObtenerMedicos();
+        nuevoHorarioMedico.duracionSobreTurno = 0;
     }
 
     private bool firstRender = true;
@@ -208,6 +215,11 @@
                 <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@nuevoHorarioMedico.duracionTurno Placeholder="Duración" Style="width: 60%;" />
             </RadzenRow>
 
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Duración del sobre turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value=@nuevoHorarioMedico.duracionSobreTurno Placeholder="Duración Sobre Turno" Style="width: 60%;" />
+            </RadzenRow>
+
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
                 <RadzenButton Text="Confirmar" Click=InsertABase ButtonStyle="ButtonStyle.Primary" />
                 <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
@@ -225,7 +237,7 @@
 
     async Task ReloadGrid()
     {
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM medicos";
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno FROM medicos";
 
         if(!string.IsNullOrEmpty(medicoSeleccionado))
         {         
@@ -240,7 +252,7 @@
     }
     void InsertABase()
     {
-        if (nuevoHorarioMedico.diaTrabajo!="" && nuevoHorarioMedico.duracionTurno!=0)
+        if (nuevoHorarioMedico.diaTrabajo != "" && nuevoHorarioMedico.duracionTurno != 0 && nuevoHorarioMedico.duracionSobreTurno != 0)
         {
             string horaInicio = horaIni.ToString("HH:mm");
             string horaFinal = horaFin.ToString("HH:mm");

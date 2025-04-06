@@ -8,6 +8,11 @@ using TurnosMedicos.Areas.Identity;
 using TurnosMedicos.Data;
 using Radzen;
 using Serilog;
+using System.Globalization;
+
+var defaultCulture = new CultureInfo("es-AR"); // o "es-ES"
+CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 
