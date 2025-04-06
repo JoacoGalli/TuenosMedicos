@@ -57,7 +57,8 @@ class Base
                                 diaTrabajo = reader.GetString("diaTrabajo"),
                                 horaInicioTrabajo = reader.GetString("horaInicioTrabajo"),
                                 horaFinTrabajo = reader.GetString("horaFinTrabajo"),
-                                duracionTurno = reader.GetInt16("duracionTurno")
+                                duracionTurno = reader.GetInt16("duracionTurno"),
+                                duracionSobreTurno = reader.IsDBNull(reader.GetOrdinal("duracionSobreTurno"))? null: reader.GetInt16(reader.GetOrdinal("duracionSobreTurno"))
                             };
 
                             resultados.Add(medico);
@@ -329,8 +330,8 @@ class Base
 
                
                 string query = "INSERT INTO `medicos` " +
-                                    "(`nombreMedico`,`diaTrabajo`,`horaInicioTrabajo`,`horaFinTrabajo`,`duracionTurno`) " +
-                                "VALUES (@nombreMedico, @diaTrabajo, @horaInicioTrabajo, @horaFinTrabajo, @duracionTurno)";
+                                    "(`nombreMedico`,`diaTrabajo`,`horaInicioTrabajo`,`horaFinTrabajo`,`duracionTurno`,`duracionSobreTurno`) " +
+                                "VALUES (@nombreMedico, @diaTrabajo, @horaInicioTrabajo, @horaFinTrabajo, @duracionTurno, @duracionSobreTurno)";
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
                 {
                     // Parámetros para evitar SQL Injection
@@ -339,7 +340,8 @@ class Base
                     cmd.Parameters.AddWithValue("@horaInicioTrabajo", nuevoMedico.horaInicioTrabajo);
                     cmd.Parameters.AddWithValue("@horaFinTrabajo", nuevoMedico.horaFinTrabajo);
                     cmd.Parameters.AddWithValue("@duracionTurno", nuevoMedico.duracionTurno);
-                    
+                    cmd.Parameters.AddWithValue("@duracionSobreTurno", nuevoMedico.duracionSobreTurno);
+
 
                     int filasAfectadas = cmd.ExecuteNonQuery(); // Retorna cuántas filas fueron insertadas
                     return filasAfectadas > 0 ? 0 : 1; // 0 si insertó correctamente, 1 si falló

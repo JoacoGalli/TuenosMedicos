@@ -87,21 +87,17 @@ class Turno
     }
 
 
-
-
-
-
     public IEnumerable<string> ObtenerHorariosDisponibles(bool esAdmin)
     {
-        
-        //Traigo los horarios de trabajo del medico (inicio a fin de la jornada)
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno FROM medicos "+
-                        " WHERE nombreMedico = @nombreMedico and diaTrabajo = @diaTrabajo ;";
+        // Traigo los horarios de trabajo del medico
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno FROM medicos " +
+                       " WHERE nombreMedico = @nombreMedico and diaTrabajo = @diaTrabajo ;";
+
         var param = new Dictionary<string, object>
-                        {
-                            { "@nombreMedico", Medico },
-                            { "@diaTrabajo", FechaTurno?.ToString("dddd", new System.Globalization.CultureInfo("es-ES")) }
-                        };
+    {
+        { "@nombreMedico", Medico },
+        { "@diaTrabajo", FechaTurno?.ToString("dddd", new System.Globalization.CultureInfo("es-ES")) }
+    };
 
         List<Medico> consultaAMedicos = Base.SelectAMedicos(query, param);
 
@@ -114,44 +110,72 @@ class Turno
         string horaDeInicio = consultaAMedicos[0].horaInicioTrabajo;
         string horaFinal = consultaAMedicos[0].horaFinTrabajo;
         int duracionTurno = consultaAMedicos[0].duracionTurno;
+        int duracionSobreTurno = consultaAMedicos[0].duracionSobreTurno ?? 0;
 
-        DateTime inicio = DateTime.ParseExact(horaDeInicio, "HH:mm", null);
-        DateTime fin = DateTime.ParseExact(horaFinal, "HH:mm", null);
-   
+
+        DateTime inicioLaboral = DateTime.ParseExact(horaDeInicio, "HH:mm", null);
+        DateTime finLaboral = DateTime.ParseExact(horaFinal, "HH:mm", null);
+
+        List<string> horarios = new List<string>();
+
+        // Turnos normales dentro del horario laboral
+        horarios.AddRange(
+            Enumerable.Range(0, (int)((finLaboral - inicioLaboral).TotalMinutes / duracionTurno) + 1)
+                .Select(i => inicioLaboral.AddMinutes(i * duracionTurno).ToString("HH:mm"))
+        );
+
         if (esAdmin)
         {
-            inicio = DateTime.ParseExact("06:00", "HH:mm", null);
-            fin = DateTime.ParseExact("23:59", "HH:mm", null);
+            DateTime inicioExt = DateTime.ParseExact("06:00", "HH:mm", null);
+            DateTime finExt = DateTime.ParseExact("23:59", "HH:mm", null);
+
+            if (duracionSobreTurno <= 0)
+            {
+                Console.WriteLine("DuracionSobreTurno inválida: " + duracionSobreTurno);
+                return new List<string>();
+            }
+
+            // Turnos antes del horario laboral
+            if (inicioLaboral > inicioExt)
+            {
+                horarios.AddRange(
+                    Enumerable.Range(0, (int)((inicioLaboral - inicioExt).TotalMinutes / duracionSobreTurno))
+                        .Select(i => inicioExt.AddMinutes(i * duracionSobreTurno).ToString("HH:mm"))
+                );
+            }
+
+            // Turnos después del horario laboral
+            if (finExt > finLaboral)
+            {
+                horarios.AddRange(
+                    Enumerable.Range(0, (int)((finExt - finLaboral).TotalMinutes / duracionSobreTurno))
+                        .Select(i => finLaboral.AddMinutes(i * duracionSobreTurno).ToString("HH:mm"))
+                );
+            }
         }
 
-        //En este punto, horarios tiene todas las horas entre inicio y fin, sin considerar los turnos ya reservados.
-        IEnumerable<string> horarios = Enumerable.Range(0, (int)((fin - inicio).TotalMinutes / duracionTurno) + 1)
-                                        .Select(i => inicio.AddMinutes(i * duracionTurno).ToString("HH:mm"));
-
-
-
-        //aca consulto la tabla turno para ver si el medico en X dia tiene turnos ocupados.
+        // Consultar los turnos ya reservados
         string queryTurnos = "SELECT * FROM turnos WHERE medico = @medico AND fechaTurno=@fechaTurno AND cancelado=false;";
-
         var parametros = new Dictionary<string, object>
-                        {
-                            { "@medico", Medico },
-                            { "@fechaTurno", FechaTurno?.ToString("yyyy-MM-dd") }
-                        };
-        List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos,parametros);
+    {
+        { "@medico", Medico },
+        { "@fechaTurno", FechaTurno?.ToString("yyyy-MM-dd") }
+    };
 
+        List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos, parametros);
 
-
-        //Si encuentro turnos reservados, los quito de horarios para que no puedan ser seleccionados.
-        if (turnosReservados.Count>0)
+        if (turnosReservados.Count > 0)
         {
             List<string> horasOcupadas = turnosReservados
-                                                        .Select(t => DateTime.ParseExact(t.HoraTurno, "HH:mm", null).ToString("HH:mm"))
-                                                        .ToList();
-            horarios = horarios.Except(horasOcupadas);
+                .Select(t => DateTime.ParseExact(t.HoraTurno, "HH:mm", null).ToString("HH:mm"))
+                .ToList();
+
+            horarios = horarios.Except(horasOcupadas).ToList();
         }
-        return horarios;
+
+        return horarios.OrderBy(h => h); // para devolverlos ordenados
     }
+
 
 
 }
