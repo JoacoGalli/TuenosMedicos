@@ -40,12 +40,7 @@
 
                 <AuthorizeView Roles="Admin">
 
-                    <!-- Turnos Disponibles -->
-                    <li class="nav-item me-lg-3">
-                        <a class="nav-link text-white fs-4" href="/turnos_disponibles" style="white-space: nowrap;">
-                            Turnos Disponibles
-                        </a>
-                    </li>
+                   
 
 
                     <!-- Coberturas -->
@@ -74,6 +69,8 @@
                             Turnos
                         </a>
                         <ul class="dropdown-menu custom-dropdown" aria-labelledby="dropdownTurnos">
+                           
+                            <li><a class="dropdown-item text-white fs-5" href="/turnos_disponibles"> Turnos Disponibles </a></li>
                             <li><a class="dropdown-item text-white fs-5" href="/listarturnos">Listado de turnos</a></li>
                             <li><a class="dropdown-item text-white fs-5" href="/reservarturno">Reservar un turno</a></li>
                         </ul>

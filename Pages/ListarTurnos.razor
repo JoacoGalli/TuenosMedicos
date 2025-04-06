@@ -65,7 +65,7 @@
         TItem="Turno"
         ColumnWidth="200px"
         EmptyText="📭 No hay turnos para mostrar"
-        Style="width: 1500px; margin-left:-15%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+        Style="width: 1600px; margin-left:-25%; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
             <Columns>
                 <RadzenDataGridColumn Property="NombrePaciente" Title="Nombre" Width="120px">
                     <EditTemplate Context="shift">
@@ -165,7 +165,7 @@
                             <RadzenButton Icon="delete"
                             ButtonStyle="ButtonStyle.Danger"
                             Size="ButtonSize.Small"
-                            Click="@(args => DeleteRow(shift))" />
+                            Click="@(args => ButtonCancelarTurno(shift))" />
                         }
                         else
                         {
@@ -173,6 +173,12 @@
                             Text="📌 Motivo"
                             Size="ButtonSize.Small"
                             ButtonStyle="ButtonStyle.Light" />
+
+                            <RadzenButton Icon="delete"
+                                          ButtonStyle="ButtonStyle.Danger"
+                                          Size="ButtonSize.Small"
+                                          Style="margin-left:2px;"
+                                          Click="@(args => ButtonEliminarTurno(shift))" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -234,7 +240,7 @@
         await ReloadGrid();         // Llama a ReloadGrid() correctamente
     }
 
-    async Task DeleteRow(Turno shift)
+    async Task ButtonCancelarTurno(Turno shift)
     {
         var result = await DialogService.OpenAsync("Atención", ds =>
         @<RadzenStack Gap="1.5rem">
@@ -252,6 +258,26 @@
             </RadzenStack>
         </RadzenStack>
     );
+    }
+
+    async Task ButtonEliminarTurno(Turno shift)
+    {
+        var result = await DialogService.OpenAsync("Atención", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <p>Estás a punto de eliminar el turno de : <b>@shift.NombrePaciente @shift.ApellidoPaciente</b> definitivamente.</p>
+        <p>Día:  <b>@shift.FechaTurno?.ToString("dd/MM/yyyy") </b></p>
+        <p>Hora:  <b>@shift.HoraTurno </b></p>
+        <p>Médico:  <b>@shift.Medico </b></p>
+
+        <p>¿Desea continuar?  <b> Esta opción no se puede deshacer. </b></p>
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+            <RadzenStack Orientation="Orientation.Horizontal">
+                <RadzenButton Text="Confirmar" Click="@(args => EliminarTurno(shift.Id))" />
+                <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenStack>
+        );
     }
 
     async Task VerPDF(int idTurno)
@@ -300,6 +326,24 @@
         else
         {
             Console.WriteLine("error cancelando el turno");
+        }
+    }
+
+    void EliminarTurno(int idABorrar)
+    {
+        string query = "DELETE FROM turnos WHERE idTurno=@idTurno;";
+        var parametros = new Dictionary<string, object> { { "@idTurno", idABorrar } };
+
+        int cambiarEstado = Base.InsertDeleteOrUpdateABase(query, parametros);
+        if (cambiarEstado > 0)
+        {
+            DialogService.Close(); // Cierra el diálogo
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Turno eliminado." });
+            ReloadGrid();
+        }
+        else
+        {
+            Console.WriteLine("error eliminando el turno");
         }
     }
 

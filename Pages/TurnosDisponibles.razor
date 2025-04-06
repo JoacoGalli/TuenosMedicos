@@ -12,25 +12,29 @@
     <RadzenLabel Text="Seleccionar médico" Component="DropDownBindValue" />
     <RadzenDropDown @bind-Value="medicoSeleccionado" Placeholder="Seleccionar"
                     Data="@listaMedicos" Style="width: 30%;"
-                    Change="@OnMedicoSeleccionado" TextProperty="NombreMedico" ValueProperty="NombreMedico" />
+                    Change="@(async args => await OnMedicoSeleccionado(args))" TextProperty="NombreMedico" ValueProperty="NombreMedico" />
 </RadzenStack>
 
 @if (turnosVisuales?.Any() == true)
 {
-    <RadzenScheduler TItem="TurnoVisual" Data="@turnosVisuales"
-                     StartProperty="FechaHora" EndProperty="FechaHora"
-                     TextProperty="Texto" style="height: 768px;">
+    <RadzenScheduler @ref=@calendario TItem="TurnoVisual" Data="@turnosVisuales"
+                     StartProperty="FechaHora" EndProperty="FechaHora" SlotRender="@(args => OnSlotRender(args))"
+    TextProperty="Texto" style="height: 768px;">
         <RadzenMonthView />
     </RadzenScheduler>
+
+
 }
 
 @code {
     public class TurnoVisual
     {
         public DateTime FechaHora { get; set; }
-        public string Texto => FechaHora.ToString("HH:mm");
+        public string Texto => FechaHora.ToString("HH:mm");        
+        public string Medico { get; set; } = "";
     }
 
+    RadzenScheduler<TurnoVisual> calendario;
     string? medicoSeleccionado;
     List<TurnoVisual> turnosVisuales = new();
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
@@ -41,6 +45,8 @@
         if (!string.IsNullOrEmpty(medicoSeleccionado))
         {
             await GenerarTurnosParaTodoElAño();
+            StateHasChanged();
+            await calendario.Reload();
         }
     }
 
@@ -48,6 +54,7 @@
     {
         turnosVisuales.Clear();
 
+        List<Medico> horariosMedicos = Base.SelectAMedicos("SELECT * FROM medicos");
         DateTime hoy = DateTime.Today;
 
         for (int i = 0; i < 12; i++)
@@ -66,20 +73,73 @@
                         FechaTurno = fecha
                     };
 
-                var horarios = turno.ObtenerHorariosDisponibles(false);
-                foreach (var h in horarios)
-                {
-                    if (DateTime.TryParseExact(h, "HH:mm", null, System.Globalization.DateTimeStyles.None, out var hora))
-                    {
-                        var fechaHora = new DateTime(fecha.Year, fecha.Month, fecha.Day, hora.Hour, hora.Minute, 0);
+                string nombreDiaEnEspañol = "";
 
-                        turnosVisuales.Add(new TurnoVisual
+                switch (fecha.DayOfWeek)
+                {
+                    case DayOfWeek.Monday:
+                        nombreDiaEnEspañol = "Lunes";
+                        break;
+                    case DayOfWeek.Tuesday:
+                        nombreDiaEnEspañol = "Martes";
+                        break;
+                    case DayOfWeek.Wednesday:
+                        nombreDiaEnEspañol = "Miercoles";
+                        break;
+                    case DayOfWeek.Thursday:
+                        nombreDiaEnEspañol = "Jueves";
+                        break;
+                    case DayOfWeek.Friday:
+                        nombreDiaEnEspañol = "Viernes";
+                        break;
+                    case DayOfWeek.Saturday:
+                        nombreDiaEnEspañol = "Sabado";
+                        break;
+                    case DayOfWeek.Sunday:
+                        nombreDiaEnEspañol = "Domingo";
+                        break;
+                    default:
+                        nombreDiaEnEspañol = "Desconocido";
+                        break;
+                }
+
+                foreach (Medico med in horariosMedicos)
+                {
+                    if (med.NombreMedico == medicoSeleccionado && med.diaTrabajo == nombreDiaEnEspañol)
+                    {
+                        var horarios = turno.ObtenerHorariosDisponibles(false);
+                        foreach (var h in horarios)
+                        {
+                            if (DateTime.TryParseExact(h, "HH:mm", null, System.Globalization.DateTimeStyles.None, out var hora))
                             {
-                                FechaHora = fechaHora
-                            });
+                                var fechaHora = new DateTime(fecha.Year, fecha.Month, fecha.Day, hora.Hour, hora.Minute, 0);
+
+                                turnosVisuales.Add(new TurnoVisual
+                                    {
+                                        FechaHora = fechaHora,
+                                        Medico = medicoSeleccionado
+                                    });
+                            }
+                        }
                     }
                 }
+
+               
             }
         }
+        
+    }
+
+    void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+
+        //Pinta el dia de hoy
+        if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+        {
+            args.Attributes["style"] = "background: var(--rz-scheduler-highlight-background-color, rgba(255,220,40,.2));";
+        }
+
+        
+
     }
 }

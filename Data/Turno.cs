@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Radzen;
+using Serilog;
 using System;
 
 class Turno
@@ -106,7 +107,7 @@ class Turno
 
         if (consultaAMedicos.Count == 0)
         {
-            Console.WriteLine($"No se encontró horario para el médico '{Medico}' en '{FechaTurno?.ToString("dddd")}'");
+            Log.Information($"No se encontró horario para el médico '{Medico}' en '{FechaTurno?.ToString("dddd")}'");
             return new List<string>(); // o podés devolver null si querés distinguirlo después
         }
 
