@@ -37,7 +37,6 @@ class Base
 
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
                 {
-                    // 🔒 Agrega los parámetros de manera segura si existen
                     if (parameters != null)
                     {
                         foreach (var param in parameters)

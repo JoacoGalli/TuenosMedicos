@@ -8,57 +8,62 @@
 
 <h2 style="text-align: center; margin-top: 1rem; margin-bottom: 1rem;">Lista de Médicos</h2>
 
-<RadzenRow class="rz-mb-4" Gap="1.5rem" Style="display: flex; flex-wrap: wrap; justify-content: center;">
-    <RadzenColumn Size="12" SizeMd="4" class="rz-p-3">
-        <RadzenStack Gap="1rem" Style="align-items: center;">
-            <RadzenListBox @bind-Value=@medicoSeleccionado Data=@medicos TextProperty="NombreMedico" ValueProperty="NombreMedico" Change="@OnMedicoSeleccionado"
-                           Style="width: 100%; max-width: 400px; height: 250px; border-radius: 8px; border: 1px solid #ccc; padding: 10px;"
+<RadzenRow Gap="0.5rem"
+           Style="max-width: 1200px; margin: auto; display: flex; flex-wrap: wrap; justify-content: center;">
+
+    <!-- Columna izquierda: Médicos -->
+    <RadzenColumn Size="12" SizeMd="4" class="rz-p-1">
+        <RadzenStack Gap="1rem" Style="align-items: stretch;">
+            <RadzenListBox @bind-Value=@medicoSeleccionado Data=@medicos
+                           TextProperty="NombreMedico" ValueProperty="NombreMedico"
+                           Change="@OnMedicoSeleccionado"
+                           Style="width: 100%; height: 250px; border-radius: 8px; border: 1px solid #ccc; padding: 10px;"
                            InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "select company" }})" />
-            <RadzenButton Click=@AgregarMedico Icon="add_circle" Text="Nuevo Médico" ButtonStyle="ButtonStyle.Primary" Width="100%" Style="border-radius: 8px;" />
+
+            <RadzenButton Click=@AgregarMedico Icon="add_circle" Text="AGREGAR NUEVO MÉDICO"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Style="border-radius: 8px; padding: 0.5rem 1rem;" />
         </RadzenStack>
     </RadzenColumn>
 
-    <RadzenColumn Size="12" SizeMd="8" class="rz-p-3">
-        <RadzenStack Gap="1.5rem">
-            <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true" EmptyText="No hay horarios para mostrar"
-                            Data="@diasYhorarios" TItem="Medico" ColumnWidth="200px" Style="width: 100%; max-width: 850px; border-radius: 8px; overflow: hidden;">
+    <!-- Columna derecha: Grid -->
+    <RadzenColumn Size="12" SizeMd="8" class="rz-p-1">
+        <RadzenStack Gap="0.5rem">
+            <RadzenDataGrid @ref="ordersGrid" AllowFiltering="false" AllowPaging="true" PageSize="5" AllowSorting="true"
+                            EmptyText="No hay horarios para mostrar"
+                            Data="@diasYhorarios" TItem="Medico"
+                            Style="width: 100%; border-radius: 8px; overflow-x: auto;">
                 <Columns>
-                    <RadzenDataGridColumn Property="NombreMedico" Width="150px">
+                    <RadzenDataGridColumn Property="NombreMedico" Width="120px">
                         <HeaderTemplate>
                             <RadzenIcon Icon="person" Style="margin-right: 5px;" /> Médico
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
-
                     <RadzenDataGridColumn Property="diaTrabajo" Width="100px">
                         <HeaderTemplate>
                             <RadzenIcon Icon="event" Style="margin-right: 5px;" /> Día
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn Property="horaInicioTrabajo" Width="90px">
+                    <RadzenDataGridColumn Property="horaInicioTrabajo" Width="110px">
                         <HeaderTemplate>
                             <RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Inicio
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn Property="horaFinTrabajo" Width="80px">
+                    <RadzenDataGridColumn Property="horaFinTrabajo" Width="110px">
                         <HeaderTemplate>
                             <RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Fin
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn Property="duracionTurno" Width="120px">
+                    <RadzenDataGridColumn Property="duracionTurno" Width="130px" TextAlign="TextAlign.Center">
                         <HeaderTemplate>
                             <RadzenIcon Icon="timer" Style="margin-right: 5px;" /> Duración
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
-
-                    <RadzenDataGridColumn Property="duracionSobreTurno" Width="120px">
+                    <RadzenDataGridColumn Property="duracionSobreTurno" Width="230px" TextAlign="TextAlign.Center">
                         <HeaderTemplate>
                             <RadzenIcon Icon="timer" Style="margin-right: 5px;" /> Duración Sobre Turno
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
-
                     <RadzenDataGridColumn Context="med" Filterable="false" Sortable="false" TextAlign="TextAlign.Left" Width="90px">
                         <Template Context="med">
                             <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Click="@(args => DeleteRow(med))" Style="border-radius: 5px;" />
@@ -71,7 +76,9 @@
             </RadzenStack>
         </RadzenStack>
     </RadzenColumn>
+
 </RadzenRow>
+
 
 
 @code
@@ -167,6 +174,11 @@
             <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenLabel Text="Duración del turno" Style="width: 40%; font-weight: bold;" />
                 <RadzenNumeric ShowUpDown="false" TValue="int" @bind-Value=@nuevoHorarioMedico.duracionTurno Placeholder="Duración" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Duración del sobre turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value=@nuevoHorarioMedico.duracionSobreTurno Placeholder="Duración sobre turno" Style="width: 60%;" />
             </RadzenRow>
 
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
