@@ -1,6 +1,7 @@
 ﻿@page "/listarturnos"
 
 @using Microsoft.AspNetCore.Authorization
+@using Serilog
 @attribute [Authorize(Roles = "Admin")]
 
 @inject DialogService DialogService
@@ -147,7 +148,7 @@
 
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Contacto" Width="65px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
-                        <RadzenButton Click=@(args => VerContacto(shift.NombrePaciente,shift.ApellidoPaciente,shift.Telefono,shift.Email,shift.Domicilio, shift.NumeroAfiliado, shift.CategoriaAfiliado))
+                        <RadzenButton Click=@(args => VerContacto(shift))
                         Text="📞 Ver"
                         Size="ButtonSize.Small"
                         ButtonStyle="ButtonStyle.Light" />
@@ -175,10 +176,10 @@
                             ButtonStyle="ButtonStyle.Light" />
 
                             <RadzenButton Icon="delete"
-                                          ButtonStyle="ButtonStyle.Danger"
-                                          Size="ButtonSize.Small"
-                                          Style="margin-left:2px;"
-                                          Click="@(args => ButtonEliminarTurno(shift))" />
+                            ButtonStyle="ButtonStyle.Danger"
+                            Size="ButtonSize.Small"
+                            Style="margin-left:2px;"
+                            Click="@(args => ButtonEliminarTurno(shift))" />
                         }
                     </Template>
                 </RadzenDataGridColumn>
@@ -399,37 +400,64 @@
 
     }
 
-    async Task VerContacto(string nombre, string apellido, string telefono, string email, string domicilio, string numeroAfil, string categAfil)
+    async Task VerContacto(Turno datosContacto)
     {
         var result = await DialogService.OpenAsync("Datos de contacto:", ds =>
-        @<RadzenStack Gap="1.5rem">
-        <p>Datos de contacto de: <b> @nombre @apellido </b></p>
-            <p><b>Teléfono: </b> @telefono </p>
-            <p><b>Email: </b> @email </p>
+    @<RadzenStack Gap="2rem">
+        <p style="font-size: 1.2rem; color: #333;">Datos de contacto de: <b>@datosContacto.NombrePaciente @datosContacto.ApellidoPaciente</b></p>
 
-        @if(!string.IsNullOrEmpty(numeroAfil))
-            {
-                <p><b>Número Afiliado: </b> @numeroAfil </p>
-            }
-        @if(!string.IsNullOrEmpty(categAfil))
-    {
-        <p><b>Categoría Afiliado: </b> @categAfil </p>
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+            <!-- Email y botón de reenvío -->
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" AlignItems="AlignItems.Center">
+                <p style="font-size: 1rem; color: #555;"><b>Email:</b> @datosContacto.Email</p>
+                <RadzenButton Text="Reenviar email" Icon="email" Click="() => ReenviarEmailConfirmacion(datosContacto)" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" />
+            </RadzenStack>
+
+            <!-- Número de afiliado -->
+            @if(!string.IsNullOrEmpty(datosContacto.NumeroAfiliado))
+        {
+            <p style="font-size: 1rem; color: #555;"><b>Número Afiliado:</b> @datosContacto.NumeroAfiliado</p>
+        }
+
+            <!-- Categoría de afiliado -->
+            @if(!string.IsNullOrEmpty(datosContacto.CategoriaAfiliado))
+        {
+            <p style="font-size: 1rem; color: #555;"><b>Categoría Afiliado:</b> @datosContacto.CategoriaAfiliado</p>
+        }
+
+            <!-- Domicilio -->
+            @if(!string.IsNullOrEmpty(datosContacto.Domicilio))
+        {
+            <p style="font-size: 1rem; color: #555;"><b>Domicilio:</b> @datosContacto.Domicilio</p>
+        }
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+            <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Medium" />
+        </RadzenStack>
+    </RadzenStack>
+    );
     }
 
 
-        @if(!string.IsNullOrEmpty(domicilio))
-            {
-                <p><b>Domicilio: </b> @domicilio </p>
-            }   
-            
-            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                </RadzenStack>
-            </RadzenStack>
-        </RadzenStack>
-            );
 
+
+    async Task ReenviarEmailConfirmacion(Turno datosContacto)
+    {
+        //Envio el email de confirmacion
+        if (!string.IsNullOrEmpty(datosContacto.Email))
+        {
+            EmailService nuevoEmail = new EmailService();
+            string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + datosContacto.NombrePaciente + " " + datosContacto.ApellidoPaciente + "<br> <b>Fecha:</b> " +
+                                    datosContacto.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + datosContacto.HoraTurno + 
+                                    "<br><b>Médico:</b> " + datosContacto.Medico +
+                                    "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
+            await nuevoEmail.EnviarCorreoAsync(datosContacto.Email, "Confirmación de turno", cuerpoEmail);
+            Log.Information("Email enviado manualmente.");
+
+            DialogService.Close(); // Cierra el diálogo
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Email enviado" });
+        }
     }
 
     async Task VerMotivo(string nombre, string apellido, string motivo)
