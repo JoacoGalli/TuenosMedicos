@@ -57,6 +57,15 @@
         List<Medico> horariosMedicos = Base.SelectAMedicos("SELECT * FROM medicos");
         DateTime hoy = DateTime.Today;
 
+        // 1. Obtener fechas bloqueadas del médico seleccionado
+        string query = "SELECT nombreMedico, fechaBloqueada, motivo FROM medicos_fechas_bloqueadas WHERE nombreMedico = @nombreMedico";
+        var parametros = new Dictionary<string, object> { { "@nombreMedico", medicoSeleccionado } };
+
+        List<MedicoFechaBloqueada> fechasBloqueadasFull = Base.SelectAMedicosFechasBloqueadas(query, parametros);
+        List<DateTime> fechasBloqueadas = fechasBloqueadasFull
+            .Select(f => f.FechaBloqueada.Date) // Nos quedamos solo con la parte de la fecha
+            .ToList();
+
         for (int i = 0; i < 12; i++)
         {
             var fechaBase = hoy.AddMonths(i);
@@ -67,41 +76,28 @@
             for (int dia = 1; dia <= diasEnElMes; dia++)
             {
                 var fecha = new DateTime(año, mes, dia);
+
+                // 2. Si la fecha está bloqueada, la salteamos
+                if (fechasBloqueadas.Contains(fecha.Date))
+                    continue;
+
                 var turno = new Turno
                     {
                         Medico = medicoSeleccionado,
                         FechaTurno = fecha
                     };
 
-                string nombreDiaEnEspañol = "";
-
-                switch (fecha.DayOfWeek)
+                string nombreDiaEnEspañol = fecha.DayOfWeek switch
                 {
-                    case DayOfWeek.Monday:
-                        nombreDiaEnEspañol = "Lunes";
-                        break;
-                    case DayOfWeek.Tuesday:
-                        nombreDiaEnEspañol = "Martes";
-                        break;
-                    case DayOfWeek.Wednesday:
-                        nombreDiaEnEspañol = "Miercoles";
-                        break;
-                    case DayOfWeek.Thursday:
-                        nombreDiaEnEspañol = "Jueves";
-                        break;
-                    case DayOfWeek.Friday:
-                        nombreDiaEnEspañol = "Viernes";
-                        break;
-                    case DayOfWeek.Saturday:
-                        nombreDiaEnEspañol = "Sabado";
-                        break;
-                    case DayOfWeek.Sunday:
-                        nombreDiaEnEspañol = "Domingo";
-                        break;
-                    default:
-                        nombreDiaEnEspañol = "Desconocido";
-                        break;
-                }
+                    DayOfWeek.Monday => "Lunes",
+                    DayOfWeek.Tuesday => "Martes",
+                    DayOfWeek.Wednesday => "Miercoles",
+                    DayOfWeek.Thursday => "Jueves",
+                    DayOfWeek.Friday => "Viernes",
+                    DayOfWeek.Saturday => "Sabado",
+                    DayOfWeek.Sunday => "Domingo",
+                    _ => "Desconocido"
+                };
 
                 foreach (Medico med in horariosMedicos)
                 {
@@ -123,12 +119,10 @@
                         }
                     }
                 }
-
-               
             }
         }
-        
     }
+
 
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
     {
