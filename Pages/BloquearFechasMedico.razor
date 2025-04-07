@@ -38,11 +38,15 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
     DateTime fechaABloquarDesde;
     DateTime fechaABloquarHasta;
     string motivoABloquear;
+    List<string> horariosABloquear = new List<string>();
+    bool bloqueoParcial = false;
+    string horaInicialBloqueo = "00:00";
+    string horaFinalBloqueo =  "23:59";
 
 
     void RecargarCalendario()
     {
-        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico ;";
+        string query2 = "SELECT * FROM `medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico ;";
         var parametros2 = new Dictionary<string, object> { { "@nombreMedico", medicoSeleccionado } };
         bloqueadas = Base.SelectAMedicosFechasBloqueadas(query2,parametros2);
     }
@@ -72,36 +76,82 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
         fechaABloquarDesde = args.Start;
         fechaABloquarHasta = args.Start;
         motivoABloquear = "";
+        bloqueoParcial = false;
+        horaInicialBloqueo = "00:00";
+        horaFinalBloqueo = "23:59";
+
+
+
+        DateTime inicio = DateTime.ParseExact(horaInicialBloqueo, "HH:mm", null);
+        DateTime fin = DateTime.ParseExact(horaFinalBloqueo, "HH:mm", null);
+
+
+        horariosABloquear.Clear();
+        horariosABloquear.AddRange(
+        Enumerable.Range(0, (int)((fin - inicio).TotalMinutes / 10))
+            .Select(i => inicio.AddMinutes(i * 10).ToString("HH:mm"))
+    );
 
         if (args.View.Text != "Year" && medicoSeleccionado!="")
         {
             var result = await DialogService.OpenAsync("Bloquear fecha", ds =>
-            @<RadzenStack Gap="1.5rem">
-            <p>Estas bloqueando las fechas para: <b>@medicoSeleccionado</b></p>
-                <RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem">
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+            @<RadzenStack Gap="1.5rem" Style="padding: 1.5rem; border-radius: 12px; background-color: #f9f9f9;">
+                <p style="margin: 0; font-size: 1rem;">Estas bloqueando las fechas para: <b>@medicoSeleccionado</b></p>
+
+                <RadzenStack Orientation="Orientation.Vertical" Gap="0.75rem">
+
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap"
+                                 Style="gap: 0.75rem;">
                         <RadzenLabel Text="Motivo" Style="width: 4rem;" />
-                <RadzenTextBox @bind-Value="@motivoABloquear" Name="Motivo" Style="width: 12rem;" />
-                <RadzenRequiredValidator Component="motivoABloquear" Text="El motivo es necesario" />
+                        <RadzenTextBox @bind-Value="@motivoABloquear" Name="Motivo" Style="width: 12rem; border-radius: 8px;" />
+                        <RadzenRequiredValidator Component="motivoABloquear" Text="El motivo es necesario" />
                     </RadzenStack>
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap"
+                                 Style="gap: 0.75rem;">
                         <RadzenLabel Text="Desde" Style="width: 4rem;" />
-                <RadzenDatePicker @bind-Value="@fechaABloquarDesde" Name="Desde" DateFormat="d/M/yyyy" ShowTime="false" Style="width: 12rem;" />
-                    <RadzenRequiredValidator Component="Desde" Text="Especifica una fecha" />
+                        <RadzenDatePicker @bind-Value="@fechaABloquarDesde" Name="Desde" Disabled=@bloqueoParcial
+                                          DateFormat="d/M/yyyy" ShowTime="false"
+                                          Style="width: 12rem; border-radius: 8px;" />
+                        <RadzenRequiredValidator Component="Desde" Text="Especifica una fecha" />
                     </RadzenStack>
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
-                <RadzenLabel Text="Hasta" Style="width: 4rem;" />
-                <RadzenDatePicker Name="Hasta" @bind-Value="@fechaABloquarHasta" DateFormat="d/M/yyyy" ShowTime="false" Style="width: 12rem;" />
-                <RadzenRequiredValidator Component="Hasta" Text="Especifica una fecha" />
+
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap"
+                                 Style="gap: 0.75rem;">
+                        <RadzenLabel Text="Hasta" Style="width: 4rem;" />
+                        <RadzenDatePicker Name="Hasta" @bind-Value="@fechaABloquarHasta" Disabled=@bloqueoParcial
+                                          DateFormat="d/M/yyyy" ShowTime="false"
+                                          Style="width: 12rem; border-radius: 8px;" />
+                        <RadzenRequiredValidator Component="Hasta" Text="Especifica una fecha" />
                     </RadzenStack>
-                    <br />
-                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-                        <RadzenButton Text="Confirmar" Click=InsertarFechasABase />
-                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
+
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap"
+                                 Style="gap: 0.75rem;">
+                        <RadzenLabel Text="Bloqueo por horas" Style="width: 8rem;" />
+                        <RadzenButton Text="Configurar horas" Style="font-size: 12px; padding: 6px 12px;" Click=@MostrarHorariosBloqueo />
+                    </RadzenStack>
+
+                    @if(horaInicialBloqueo!="00:00")
+                {
+                    <RadzenTextBox @bind-Value="@horaInicialBloqueo" Disabled=true Name="Motivo"
+                                   Style="width: 12rem; border-radius: 8px;" />
+                }
+
+                    @if(horaFinalBloqueo!="23:59")
+                {
+                    <RadzenTextBox @bind-Value="@horaFinalBloqueo" Disabled=true Name="Motivo"
+                                   Style="width: 12rem; border-radius: 8px;" />
+                }
+
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End"
+                                 Style="margin-top: 1rem; gap: 0.75rem;">
+                        <RadzenButton Text="Confirmar" Click=InsertarFechasABase Style="padding: 6px 16px;" />
+                        <RadzenButton Text="Cancelar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light"
+                                      Style="padding: 6px 16px;" />
                     </RadzenStack>
                 </RadzenStack>
-            </RadzenStack>
-    );
+            </RadzenStack>);
+
             await calendario.Reload();
         }
         else
@@ -115,16 +165,35 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
         if (!string.IsNullOrWhiteSpace(motivoABloquear) && fechaABloquarHasta != DateTime.MinValue )
         {
             List<MedicoFechaBloqueada> fechasABloquear = new List<MedicoFechaBloqueada>();
-            //Por cada dia entre Desde y Hasta, voy a crear un nuevo elemento y agregarlo a la lista.
-            for (DateTime fecha = fechaABloquarDesde; fecha <= fechaABloquarHasta; fecha = fecha.AddDays(1))
-            {
+
+            if(bloqueoParcial)
+            {                
                 fechasABloquear.Add(new MedicoFechaBloqueada
-                    {
-                        NombreMedico = medicoSeleccionado,
-                        FechaBloqueada = fecha,
-                        Motivo = motivoABloquear
-                    });
+                        {
+                            NombreMedico = medicoSeleccionado,
+                            FechaBloqueada = fechaABloquarDesde,
+                            Motivo = motivoABloquear,
+                            TodoElDia = false,
+                            HoraInicioBloqueo = horaInicialBloqueo,
+                            HoraFinBloqueo = horaFinalBloqueo
+                        });
             }
+            else
+            {
+                //Por cada dia entre Desde y Hasta, voy a crear un nuevo elemento y agregarlo a la lista.
+                for (DateTime fecha = fechaABloquarDesde; fecha <= fechaABloquarHasta; fecha = fecha.AddDays(1))
+                {
+                    fechasABloquear.Add(new MedicoFechaBloqueada
+                        {
+                            NombreMedico = medicoSeleccionado,
+                            FechaBloqueada = fecha,
+                            Motivo = motivoABloquear,
+                            TodoElDia = true
+                        });
+                }
+
+            }
+
 
 
             List<Turno> turnosCancelados = new List<Turno> { };
@@ -132,17 +201,20 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
             {
                 //Inserto las fechas bloqueadas en la base
                 string query = "INSERT INTO `medicos_fechas_bloqueadas`"+
-                                "(`nombreMedico`,`fechaBloqueada`,`motivo`) VALUES "+
-                                "(@nombreMedico, @fechaBloqueada, @motivo);";
-                
+                "(`nombreMedico`,`fechaBloqueada`,`motivo`,`todoElDia`,`horaInicioBloqueo`,`horaFinBloqueo`) VALUES " +
+                                "(@nombreMedico, @fechaBloqueada, @motivo, @todoeldia, @horainicio, @horafin);";
+
 
                 var parametros = new Dictionary<string, object>
                 {
                 { "@nombreMedico", item.NombreMedico },
                 { "@fechaBloqueada", item.FechaBloqueada.ToString("yyyy-MM-dd") },
-                { "@motivo", item.Motivo }
+                { "@motivo", item.Motivo },
+                { "@todoeldia", item.TodoElDia },
+                { "@horainicio", item.HoraInicioBloqueo },
+                { "@horafin", item.HoraFinBloqueo }
                 };
-                
+
                 int intentoBloqueoFechas = Base.InsertDeleteOrUpdateABase(query,parametros);
 
                 //Pregunto si hay turnos en ese dia
@@ -152,7 +224,7 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                                 { "@medico", medicoSeleccionado },
                                 { "@fechaTurno", item.FechaBloqueada.ToString("yyyy-MM-dd") }
                             };
-                
+
                 List<Turno> turnosACancelar = Base.SelectATurnos(query2,parametros2);
 
                 //Si hay turnos, aviso a cada uno por email que se canceló.
@@ -169,7 +241,7 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                     //Actualizo el estado del turno en la base.
                     string query3 = "UPDATE turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas'"+
                                     "WHERE medico=@medico AND fechaTurno=@fechaTurno;";
-                        
+
                     var parametros3 = new Dictionary<string, object>
                     {
                         { "@medico", turno.Medico },
@@ -189,7 +261,7 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
 
 
             RecargarCalendario();
-             
+
         }
         else
         {
@@ -219,7 +291,48 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
 
             </RadzenStack>
         </RadzenStack>
-        );
+    );
+    }
+
+    async Task MostrarHorariosBloqueo()
+    {
+        var result = await DialogService.OpenAsync("Seleccionar horarios.", ds =>
+        @<RadzenStack Gap="1.5rem" Style="padding: 1.5rem; border-radius: 12px; background-color: #f9f9f9;">
+
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem"
+                            Style="flex-wrap: wrap;">
+                <RadzenLabel Text="Hora inicial de bloqueo" Style="font-size: 16px; min-width: 180px;" />
+                <RadzenDropDown @bind-Value=@horaInicialBloqueo
+                                Data=@horariosABloquear
+                                Style="width: 100%; max-width: 200px; border-radius: 8px;"
+                                Name="DropDownBindValue"
+                                Placeholder="Seleccione un horario" />
+            </RadzenStack>
+
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem"
+                            Style="flex-wrap: wrap;">
+                <RadzenLabel Text="Hora final de bloqueo" Style="font-size: 16px; min-width: 180px;" />
+                <RadzenDropDown @bind-Value=@horaFinalBloqueo
+                                Data=@horariosABloquear
+                                Style="width: 100%; max-width: 200px; border-radius: 8px;"
+                                Name="DropDownBindValue"
+                                Placeholder="Seleccione un horario" />
+            </RadzenStack>
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem"
+                            Style="margin-top: 1rem;">
+                <RadzenButton Text="Guardar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Primary"
+                                Style="padding: 6px 16px;" />
+                <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light"
+                                Style="padding: 6px 16px;" />
+            </RadzenStack>
+
+        </RadzenStack>);
+
+        bloqueoParcial = true;
+        fechaABloquarHasta = fechaABloquarDesde;
+
+        
     }
 
 

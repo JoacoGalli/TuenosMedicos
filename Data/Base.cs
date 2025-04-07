@@ -167,7 +167,10 @@ class Base
 
                                 NombreMedico = reader.GetString("nombreMedico"),
                                 FechaBloqueada = reader.GetDateTime("fechaBloqueada"),
-                                Motivo = reader.IsDBNull(reader.GetOrdinal("motivo")) ? "" : reader.GetString("motivo") // Maneja valores nulos
+                                Motivo = reader.IsDBNull(reader.GetOrdinal("motivo")) ? "" : reader.GetString("motivo"),
+                                TodoElDia = reader.GetBoolean("todoElDia"),
+                                HoraInicioBloqueo = reader.IsDBNull(reader.GetOrdinal("horaInicioBloqueo")) ? "" : reader.GetString("horaInicioBloqueo"), 
+                                HoraFinBloqueo = reader.IsDBNull(reader.GetOrdinal("horaFinBloqueo")) ? "" : reader.GetString("horaFinBloqueo") 
                             };
 
                             resultados.Add(nuevaFecha);

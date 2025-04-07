@@ -66,7 +66,7 @@ class Turno
         List<DateTime> fechaDes = new List<DateTime>();
 
         //Verifico que fechas fueron bloqueadas por el admin
-        string query2 = "SELECT `nombreMedico`,`fechaBloqueada`,`motivo` FROM `medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico ;";
+        string query2 = "SELECT * FROM `medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico AND todoElDia=true ;";
         var parametros2 = new Dictionary<string, object> { { "@nombreMedico", Medico } };
 
         List<MedicoFechaBloqueada> fechasBloq = Base.SelectAMedicosFechasBloqueadas(query2,parametros2);
@@ -171,6 +171,35 @@ class Turno
                 .ToList();
 
             horarios = horarios.Except(horasOcupadas).ToList();
+        }
+
+        //Aca debo consultar a medicos_fechas_bloquedas si ese medico en esa fecha tiene un bloqueo temporal.
+        string queryFechasBloqueadas = "SELECT * FROM medicos_fechas_bloqueadas WHERE nombreMedico = @medico AND fechaBloqueada = @fechaTurno AND todoElDia = false LIMIT 1 ";
+        var parametros2 = new Dictionary<string, object>
+        {
+            { "@medico", Medico },
+            { "@fechaTurno", FechaTurno?.ToString("yyyy-MM-dd") }
+        };
+
+        List<MedicoFechaBloqueada> fechaBloqueadas = Base.SelectAMedicosFechasBloqueadas(queryFechasBloqueadas, parametros2);
+
+        if (fechaBloqueadas.Count > 0)
+        {
+            if (!string.IsNullOrEmpty(fechaBloqueadas[0].HoraInicioBloqueo) && !string.IsNullOrEmpty(fechaBloqueadas[0].HoraFinBloqueo)) 
+            {
+                DateTime inicioBloqueo = DateTime.ParseExact(fechaBloqueadas[0].HoraInicioBloqueo, "HH:mm", null);
+                DateTime finBloqueo = DateTime.ParseExact(fechaBloqueadas[0].HoraFinBloqueo, "HH:mm", null);
+
+                List<string> horariosBloqueados = new List<string>();
+
+                horariosBloqueados.AddRange(
+                    Enumerable.Range(0, (int)((finBloqueo - inicioBloqueo).TotalMinutes / duracionTurno))
+                        .Select(i => inicioBloqueo.AddMinutes(i * duracionTurno).ToString("HH:mm")));
+
+                horarios = horarios.Except(horariosBloqueados).ToList();
+                Log.Information("Se ocultaron los horarios bloqueados.");
+            }
+           
         }
 
         return horarios.OrderBy(h => h); // para devolverlos ordenados
