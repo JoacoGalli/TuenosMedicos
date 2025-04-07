@@ -31,7 +31,7 @@ public class RecordatorioService
             {
                 Log.Information("Se encontraron "+ turnosDeMañana.Count +" turnos. Enviando emails de notificaciòn.");
                 //Por cada 'turno' envio un email avisando que el turno es mañana:
-                string cancelarUrl = $"http://consultoriojoaco.runasp.net/cancelar-turno/{turno.Id}";
+                string cancelarUrl = $"https://consultoriocairo.com.ar/cancelar-turno/{turno.Id}";
 
                 if (!string.IsNullOrEmpty(turno.Email))
                 {
