@@ -58,7 +58,7 @@
         DateTime hoy = DateTime.Today;
 
         // 1. Obtener fechas bloqueadas del médico seleccionado
-        string query = "SELECT nombreMedico, fechaBloqueada, motivo FROM medicos_fechas_bloqueadas WHERE nombreMedico = @nombreMedico";
+        string query = "SELECT * FROM medicos_fechas_bloqueadas WHERE nombreMedico = @nombreMedico";
         var parametros = new Dictionary<string, object> { { "@nombreMedico", medicoSeleccionado } };
 
         List<MedicoFechaBloqueada> fechasBloqueadasFull = Base.SelectAMedicosFechasBloqueadas(query, parametros);
