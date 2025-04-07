@@ -120,7 +120,7 @@ class Turno
 
         // Turnos normales dentro del horario laboral
         horarios.AddRange(
-            Enumerable.Range(0, (int)((finLaboral - inicioLaboral).TotalMinutes / duracionTurno) + 1)
+            Enumerable.Range(0, (int)((finLaboral - inicioLaboral).TotalMinutes / duracionTurno))
                 .Select(i => inicioLaboral.AddMinutes(i * duracionTurno).ToString("HH:mm"))
         );
 
@@ -131,7 +131,7 @@ class Turno
 
             if (duracionSobreTurno <= 0)
             {
-                Console.WriteLine("DuracionSobreTurno inválida: " + duracionSobreTurno);
+                Log.Error("DuracionSobreTurno invalida: " + duracionSobreTurno);
                 return new List<string>();
             }
 
