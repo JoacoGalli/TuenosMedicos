@@ -154,6 +154,10 @@ class Turno
             }
         }
 
+        //Elimino cualquier posibilidad de horarios repetidos para evitar excepciones con Radzen.
+        horarios = horarios.Distinct().ToList();
+
+
         // Consultar los turnos ya reservados
         string queryTurnos = "SELECT * FROM turnos WHERE medico = @medico AND fechaTurno=@fechaTurno AND cancelado=false;";
         var parametros = new Dictionary<string, object>
