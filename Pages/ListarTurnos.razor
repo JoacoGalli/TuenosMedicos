@@ -416,7 +416,7 @@
                     <RadzenButton Text="Reenviar email de confirmacion" Icon="email" Click="() => ReenviarEmailConfirmacion(datosContacto)" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" />
                 </RadzenStack>
             }
-            
+
 
             <!-- Número de afiliado -->
             @if(!string.IsNullOrEmpty(datosContacto.NumeroAfiliado))
@@ -452,13 +452,23 @@
         //Envio el email de confirmacion
         if (!string.IsNullOrEmpty(datosContacto.Email))
         {
-            EmailService nuevoEmail = new EmailService();
-            string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + datosContacto.NombrePaciente + " " + datosContacto.ApellidoPaciente + "<br> <b>Fecha:</b> " +
-                                    datosContacto.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + datosContacto.HoraTurno + 
+            try
+            {
+                EmailService nuevoEmail = new EmailService();
+                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + datosContacto.NombrePaciente + " " + datosContacto.ApellidoPaciente + "<br> <b>Fecha:</b> " +
+                                    datosContacto.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + datosContacto.HoraTurno +
                                     "<br><b>Médico:</b> " + datosContacto.Medico +
                                     "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
-            await nuevoEmail.EnviarCorreoAsync(datosContacto.Email, "Confirmación de turno", cuerpoEmail);
-            Log.Information("Email enviado manualmente.");
+                await nuevoEmail.EnviarCorreoAsync(datosContacto.Email, "Confirmación de turno", cuerpoEmail);
+                Log.Information("Email enviado manualmente.");
+
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex,"Ocurrio un error al reenviar el email de confirmacion");
+
+            }
+           
 
             DialogService.Close(); // Cierra el diálogo
             NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Email enviado" });

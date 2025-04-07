@@ -5,6 +5,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
+@using Serilog
 
 
 
@@ -434,9 +435,9 @@
                     </RadzenStack>
                 </RadzenStack>
             </RadzenStack>
-                );
+    );
         }
-  
+
     }
 
 
@@ -455,9 +456,19 @@
         //Envio el email de confirmacion
         if(!string.IsNullOrEmpty(nuevoTurno.Email))
         {
-            EmailService nuevoEmail = new EmailService();
-            string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";            
-            await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Confirmación de turno", cuerpoEmail);  
+            try
+            {
+                EmailService nuevoEmail = new EmailService();
+                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";            
+                await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Confirmación de turno", cuerpoEmail);
+                Log.Information("Email de confirmacion enviado correctamente a: "+nuevoTurno.Email);
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "Ocurrio un error al enviar el email de confirmacion en reservar turnos.");
+
+            }
+           
         }            
 
         if (intentoRegistrarTurno == 0)

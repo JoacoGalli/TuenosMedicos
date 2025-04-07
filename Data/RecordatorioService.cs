@@ -35,13 +35,21 @@ public class RecordatorioService
 
                 if (!string.IsNullOrEmpty(turno.Email))
                 {
-                    EmailService nuevoEmail = new EmailService();
-                    string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el dia: <b>" +
-                                            turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
-                                            + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
-                                            + " . <br><br> Muchas gracias.<br><br>Consultorio Médico.";
+                    try 
+                    {
+                        EmailService nuevoEmail = new EmailService();
+                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el dia: <b>" +
+                                                turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
+                                                + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
+                                                + " . <br><br> Muchas gracias.<br><br>Consultorio Médico.";
 
-                    await nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
+                        await nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
+                    }
+                    catch(Exception ex) 
+                    {
+                        Log.Error(ex, "Error al enviar el recordatorio de turno para: " + turno.Email);
+                    }
+                    
 
                 }
 

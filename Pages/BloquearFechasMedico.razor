@@ -1,6 +1,7 @@
 ﻿@page "/bloquearfechasmedico"
 @attribute [Authorize(Roles = "Admin")]
 @using Microsoft.EntityFrameworkCore
+@using Serilog
 @inject DialogService DialogService
 @inject NotificationService NotificationService
 
@@ -150,7 +151,8 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                                       Style="padding: 6px 16px;" />
                     </RadzenStack>
                 </RadzenStack>
-            </RadzenStack>);
+            </RadzenStack>
+    );
 
             await calendario.Reload();
         }
@@ -232,10 +234,18 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                 {
                     if(!string.IsNullOrEmpty(turno.Email))
                     {
-                        EmailService nuevoEmail = new EmailService();
-                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno?.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
+                        try
+                        {
+                            EmailService nuevoEmail = new EmailService();
+                            string cuerpoEmail = "<b>Estimado/a:</b><br><br>Su turno con <b>" + turno.Medico + "</b> el dia: <b>" + turno.FechaTurno?.ToString("yyyy-MM-dd") + "</b> a las: <b>" + turno.HoraTurno + "</b> ha sido cancelado.<br><br>Por favor, comuníquese con el consultorio para reprogramarlo.<br><br>Muchas gracias.<br><br>Consultorio Médico.";
 
-                        nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);
+                            nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Importante - Su turno ha sido cancelado", cuerpoEmail);                            
+                        }
+                        catch(Exception ex)
+                        {
+                            Log.Error(ex, "Ocurrio un error al enviar el email de bloqueo de fechas.");
+                        }
+                        
                     }
 
                     //Actualizo el estado del turno en la base.
