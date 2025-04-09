@@ -220,7 +220,12 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                 int intentoBloqueoFechas = Base.InsertDeleteOrUpdateABase(query,parametros);
 
                 //Pregunto si hay turnos en ese dia
-                string query2 = "SELECT * FROM `turnos` WHERE medico = @medico AND fechaTurno=@fechaTurno;";
+                string query2 = "SELECT * FROM `turnos` WHERE medico = @medico AND fechaTurno=@fechaTurno";
+
+                if (bloqueoParcial && !string.IsNullOrEmpty(horaInicialBloqueo) && !string.IsNullOrEmpty(horaFinalBloqueo))
+                {
+                    query2 = query2 + $" AND horaTurno BETWEEN '{horaInicialBloqueo}' AND '{horaFinalBloqueo}';";
+                }
                 var parametros2 = new Dictionary<string, object>
                             {
                                 { "@medico", medicoSeleccionado },
@@ -250,7 +255,13 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
 
                     //Actualizo el estado del turno en la base.
                     string query3 = "UPDATE turnos SET cancelado=true, motivoCancelacion='Cancelado automáticamente por bloqueo de fechas'"+
-                                    "WHERE medico=@medico AND fechaTurno=@fechaTurno;";
+                                    "WHERE medico=@medico AND fechaTurno=@fechaTurno";
+    
+                    if (bloqueoParcial && !string.IsNullOrEmpty(horaInicialBloqueo) && !string.IsNullOrEmpty(horaFinalBloqueo))
+                    {
+                        query3 = query3 + $" AND horaTurno BETWEEN '{horaInicialBloqueo}' AND '{horaFinalBloqueo}';";
+                    }
+
 
                     var parametros3 = new Dictionary<string, object>
                     {
