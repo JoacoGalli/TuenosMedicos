@@ -24,6 +24,7 @@ class Turno
     public bool Cancelado { get; set; } 
     public string? MotivoCancelacion { get; set; } = "";
     public bool TienePdf { get; set; }
+    public bool PacienteAsistio { get; set; }
 
 
 

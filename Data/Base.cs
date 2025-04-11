@@ -119,7 +119,8 @@ class Base
                                 NotasInternas = reader.IsDBNull(reader.GetOrdinal("notasInternas")) ? "" : reader.GetString("notasInternas"),
                                 Cancelado = reader.GetBoolean("cancelado"),
                                 MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion"),
-                                TienePdf = reader.GetBoolean("tienePdf")
+                                TienePdf = reader.GetBoolean("tienePdf"),
+                                PacienteAsistio = reader.GetBoolean("pacienteAsistio")
                             };
 
                             resultados.Add(turno);

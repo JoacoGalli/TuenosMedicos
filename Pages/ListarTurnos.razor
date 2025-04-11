@@ -110,6 +110,12 @@
                     </Template>
                 </RadzenDataGridColumn>
 
+                <RadzenDataGridColumn Property="PacienteAsistio" Title="Asistió" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="shift">
+                        <RadzenCheckBox @bind-Value=shift.PacienteAsistio TValue="bool" Change="@(args => CambiarEstadoAsistencia(args, shift.Id))" Name="PacienteAsistioCheckBox" />
+                    </Template>
+                </RadzenDataGridColumn>
+
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" Width="60px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         @if (!string.IsNullOrEmpty(shift.Notas))
@@ -311,6 +317,16 @@
         </RadzenStack>
     );
     }
+
+    void CambiarEstadoAsistencia(bool value, int idAModificar)
+    {
+        string query = $"UPDATE `turnos` SET pacienteAsistio={value} WHERE idTurno=@idTurno;";
+        var parametros = new Dictionary<string, object> { { "@idTurno", idAModificar } };
+
+        int cambiarEstado = Base.InsertDeleteOrUpdateABase(query, parametros);
+                
+    }
+
 
     void CancelarTurno(int idABorrar)
     {
