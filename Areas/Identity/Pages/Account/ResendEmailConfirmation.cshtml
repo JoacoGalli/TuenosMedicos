@@ -18,9 +18,17 @@
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Reenviar</button>
         </form>
+        @if (ViewData["MensajeInfo"] != null)
+        {
+            <div class="alert alert-info">
+                @ViewData["MensajeInfo"]
+            </div>
+        }
+
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

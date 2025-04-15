@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Serilog;
 
 namespace TurnosMedicos.Areas.Identity.Pages.Account
 {
@@ -70,10 +71,22 @@ namespace TurnosMedicos.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(
-                    Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                try
+                {
+                    EmailService nuevoEmail = new EmailService();
+                    string cuerpoEmail = $"Por favor, reestablece tu contraseña <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clickeando aqui</a>.";
+                    await nuevoEmail.EnviarCorreoAsync(Input.Email, "Reestablecer contraseña", cuerpoEmail);
+                    ViewData["MensajeInfo"] = "Email enviado. Por favor, revisa tu correo.";
+
+
+                    Log.Information("Email de reestablecimiento de contraseña para: " + Input.Email);
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Error enviando el email a {Input.Email}", ex);
+                }
+
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
