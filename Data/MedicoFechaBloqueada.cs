@@ -1,4 +1,4 @@
-class MedicoFechaBloqueada
+public class MedicoFechaBloqueada
 {
     public string NombreMedico { get; set; } = "";
     public DateTime FechaBloqueada {get; set;}

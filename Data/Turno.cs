@@ -1,10 +1,13 @@
-using Microsoft.AspNetCore.Components;
+ï»¿using Microsoft.AspNetCore.Components;
 using Radzen;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using TurnosMedicos.Data;
 
 class Turno
 {
+    #region propiedades
     public int Id {get; set;} = 0;
 
     public string NombrePaciente {get; set;} ="";
@@ -26,67 +29,147 @@ class Turno
     public bool TienePdf { get; set; }
     public bool PacienteAsistio { get; set; }
 
+    #endregion
 
 
-
-
-
-
-    public void DesactivarFechas(DateRenderEventArgs args)
+    #region metodos
+       
+    public void DesactivarFechas(DateRenderEventArgs args, bool esAdmin)
     {
-        List<string> diasTrabajo = new List<string>();
-        //Determino que dias trabaja el medico
+        //Obtengo los datos del medico
         string query = " SELECT * FROM medicos WHERE nombreMedico= @nombreMedico ;";
-        var parametros = new Dictionary<string, object> { { "@nombreMedico", Medico } };        
-
+        var parametros = new Dictionary<string, object> { { "@nombreMedico", Medico } };
         List<Medico> listaMedicos = Base.SelectAMedicos(query, parametros);
-        foreach (var medico in listaMedicos)
+
+        
+        //Determino los dias que trabaja
+        var diasPermitidos = Horarios.DiasTrabajo(Medico, listaMedicos);
+
+
+        //Obtengo las fechas bloqueadas y las agrego a fechaDes
+        List<DateTime> fechaDes = new List<DateTime>();
+        List<MedicoFechaBloqueada> fechasBloq = Horarios.FechasBloqueadasPorAdmin(Medico);
+        foreach (var fecha in fechasBloq)
         {
-            if (!string.IsNullOrEmpty(medico.diaTrabajo))  
+            fechaDes.Add(fecha.FechaBloqueada);
+        }
+
+        //Obtengo los horarios configurados del medico.
+        List<Horarios> listaHorarios = Horarios.HorariosConfigurados(esAdmin, listaMedicos);
+
+        //Obtengo los turnos reservados de hoy a seis meses.
+        DateTime hoy = DateTime.Today;
+        DateTime seisMeses = hoy.AddMonths(6);
+        List<Turno> turnosReservados = ConsultarTurnosReservados(Medico, hoy, seisMeses);
+
+        List<DateTime> fechasSinDisponibilidad = new List<DateTime>();
+
+        for (DateTime fecha = hoy;  fecha <= seisMeses; fecha = fecha.AddDays(1))
+        {
+            foreach (var dia in diasPermitidos)
             {
-                diasTrabajo.Add(medico.diaTrabajo);
+                if (fecha.DayOfWeek == dia) 
+                {
+                    bool existeBloqueo = fechasBloq.Any(f => f.FechaBloqueada.Date == fecha.Date); //Si existeBloqueo no necesito consultar disponibilidad.
+                    if (!existeBloqueo)
+                    {
+                        //Filto los turnos de esa fecha
+                        var turnosDelDia = turnosReservados.Where(t => t.FechaTurno?.Date == fecha.Date).ToList();
+
+                        if (turnosDelDia.Count()>0)        //En este punto (un dia que trabaja y no esta bloqueado) si no hay turnos reservados no necesito consultar disponibilidad.
+                        {
+                            //Filtro los horarios dependiendo "fecha" del for.
+                            var diasEnEspaÃ±ol = new Dictionary<DayOfWeek, string>
+                            {
+                                { DayOfWeek.Monday, "Lunes" },
+                                { DayOfWeek.Tuesday, "Martes" },
+                                { DayOfWeek.Wednesday, "Miercoles" },
+                                { DayOfWeek.Thursday, "Jueves" },
+                                { DayOfWeek.Friday, "Viernes" },
+                                { DayOfWeek.Saturday, "Sabado" },
+                                { DayOfWeek.Sunday, "Domingo" }
+                            };
+
+                            var horariosDelDia = listaHorarios
+                                .Where(h => h.DiaTrabajo == diasEnEspaÃ±ol[fecha.DayOfWeek])  // Comparar en espaÃ±ol
+                                .ToList();
+
+                            bool fechaConTurnosDisponibles = VerificarDisponibilidadDeTurnos(esAdmin, turnosDelDia, horariosDelDia);
+
+                            if (!fechaConTurnosDisponibles)
+                            {
+                                fechasSinDisponibilidad.Add(fecha);
+                            }
+                        } 
+                        
+                    }
+
+                }
             }
         }
 
-        // Convertimos la lista de días de trabajo a DayOfWeek
-        var diasPermitidos = diasTrabajo.Select(dia =>
-        {
-            return dia switch
-            {
-                "Lunes" => DayOfWeek.Monday,
-                "Martes" => DayOfWeek.Tuesday,
-                "Miercoles" => DayOfWeek.Wednesday,
-                "Jueves" => DayOfWeek.Thursday,
-                "Viernes" => DayOfWeek.Friday,
-                "Sabado" => DayOfWeek.Saturday,
-                "Domingo" => DayOfWeek.Sunday,
-                _ => throw new ArgumentException("Día no válido en diasTrabajo")
-            };
-        }).ToList();
-
-        List<DateTime> fechaDes = new List<DateTime>();
-
-        //Verifico que fechas fueron bloqueadas por el admin
-        string query2 = "SELECT * FROM `medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico AND todoElDia=true ;";
-        var parametros2 = new Dictionary<string, object> { { "@nombreMedico", Medico } };
-
-        List<MedicoFechaBloqueada> fechasBloq = Base.SelectAMedicosFechasBloqueadas(query2,parametros2);
-        foreach (var fecha in fechasBloq)
-        {
-            fechaDes.Add(fecha.FechaBloqueada);   
-        }
-
-        // Desactivo los dias que no trabaja.
-        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) || args.Date.Date < DateTime.Today || fechaDes.Contains(args.Date.Date);
-
-
+        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) || args.Date.Date < DateTime.Today || fechaDes.Contains(args.Date.Date) || fechasSinDisponibilidad.Contains(args.Date.Date);
 
         if (!args.Disabled)
         {
-            args.Attributes.Add("style", "background-color: #41ff6d; border-color: white;");
+            args.Attributes.Add("style", "background-color: #41ff6d; border-color: white;"); // Verde si estÃ¡ habilitado
         }
+        else if (fechasSinDisponibilidad.Contains(args.Date.Date))
+        {
+            args.Attributes.Add("style", "background-color: #ff6961; border-color: white;"); // Rojo si estÃ¡ deshabilitado por falta de disponibilidad
+        }
+
+
     }
 
+    //Verifica la disponibilidad horaria de un dia particular. Devuelve True si tiene horarios disponibles y false si no los tiene.
+    public bool VerificarDisponibilidadDeTurnos(bool esAdmin, List<Turno> turnosReservados, List<Horarios> listaDeHorarios)
+    {
+        var horarioEseDia = listaDeHorarios
+           .Select(h => new Horarios
+           {
+               DiaTrabajo = h.DiaTrabajo,
+               ListaHorarios = h.ListaHorarios.ToList() // Hago una copia de la lista para que no me modifique la original.
+           })
+           .ToList();
+
+        // Obtengo la lista de horas reservadas (por ejemplo: "08:45", "15:30", etc.)
+        var horasReservadas = turnosReservados.Select(t => t.HoraTurno).ToHashSet(); // mÃ¡s eficiente para bÃºsquedas
+
+        // Recorro horarioEseDia y filtramos las horas que se encuentren en horasReservadas, para que queden solo las libres
+        foreach (var horario in horarioEseDia)
+        {
+            horario.ListaHorarios = horario.ListaHorarios.Where(hora => !horasReservadas.Contains(hora)).ToList(); 
+        }
+
+        if (horarioEseDia[0].ListaHorarios.Any())
+        {
+            return true;        //Si hay horarios devuelve true,sino false.
+        }
+        else
+        {
+            return false;
+        }
+
+
+    }
+
+    public List<Turno> ConsultarTurnosReservados(string med, DateTime fechaIni, DateTime fechaFin)
+    {
+        // Consultar los turnos ya reservados
+        string queryTurnos = "SELECT * FROM turnos WHERE medico = @medico AND fechaTurno BETWEEN @fechaIni AND @fechaFin AND cancelado=false;";
+        var parametros = new Dictionary<string, object>
+        {
+            { "@medico", med },
+            { "@fechaIni", fechaIni.ToString("yyyy-MM-dd") },
+            { "@fechaFin", fechaFin.ToString("yyyy-MM-dd") }
+        };
+
+        List<Turno> turnosReservados = Base.SelectATurnos(queryTurnos, parametros);
+
+        return turnosReservados;
+
+    }
 
     public IEnumerable<string> ObtenerHorariosDisponibles(bool esAdmin)
     {
@@ -104,8 +187,8 @@ class Turno
 
         if (consultaAMedicos.Count == 0)
         {
-            Log.Information($"No se encontró horario para el médico '{Medico}' en '{FechaTurno?.ToString("dddd")}'");
-            return new List<string>(); // o podés devolver null si querés distinguirlo después
+            Log.Information($"No se encontrÃ³ horario para el mÃ©dico '{Medico}' en '{FechaTurno?.ToString("dddd")}'");
+            return new List<string>(); // o podÃ©s devolver null si querÃ©s distinguirlo despuÃ©s
         }
 
         string horaDeInicio = consultaAMedicos[0].horaInicioTrabajo;
@@ -145,7 +228,7 @@ class Turno
                 );
             }
 
-            // Turnos después del horario laboral
+            // Turnos despuÃ©s del horario laboral
             if (finExt > finLaboral)
             {
                 horarios.AddRange(
@@ -190,7 +273,7 @@ class Turno
 
         if (fechaBloqueadas.Count > 0)
         {
-            if (!string.IsNullOrEmpty(fechaBloqueadas[0].HoraInicioBloqueo) && !string.IsNullOrEmpty(fechaBloqueadas[0].HoraFinBloqueo)) 
+            if (!string.IsNullOrEmpty(fechaBloqueadas[0].HoraInicioBloqueo) && !string.IsNullOrEmpty(fechaBloqueadas[0].HoraFinBloqueo))
             {
                 DateTime inicioBloqueo = DateTime.ParseExact(fechaBloqueadas[0].HoraInicioBloqueo, "HH:mm", null);
                 DateTime finBloqueo = DateTime.ParseExact(fechaBloqueadas[0].HoraFinBloqueo, "HH:mm", null);
@@ -204,11 +287,15 @@ class Turno
                 horarios = horarios.Except(horariosBloqueados).ToList();
                 Log.Information("Se ocultaron los horarios bloqueados.");
             }
-           
+
         }
 
         return horarios.OrderBy(h => h); // para devolverlos ordenados
     }
+
+
+
+    #endregion
 
 
 

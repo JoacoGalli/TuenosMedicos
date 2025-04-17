@@ -151,7 +151,7 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenTextBox @bind-Value=@nuevoTurno.HoraTurno Name="Horarios" Disabled="true" Style="width:45%;" />
-                            <RadzenButton Text="Ver horarios" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Disabled=@horarioDesactivado Click=@MostrarHorariosDisponibles />
+                            <RadzenButton Text="Ver horarios" ButtonStyle="ButtonStyle.Secondary" Style="width:50%;" Disabled=false Click=@MostrarHorariosDisponibles />
                             <RadzenRequiredValidator Component="Horarios" Text="Debes seleccionar un horario." />
                         </RadzenColumn>
                     </RadzenRow>
@@ -309,8 +309,7 @@
     {
         pdfBytes.Remove(archivo);
     }
-
-    bool horarioDesactivado = false;
+    
     async Task MostrarFechasDisponibles()
     {
         if(nuevoTurno.Medico!="")
@@ -323,7 +322,7 @@
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
                         <RadzenLabel Text="Seleccionar fecha:" Style="font-size: 16px;" />
                         <RadzenDatePicker @bind-Value=@nuevoTurno.FechaTurno
-                                          DateRender=@nuevoTurno.DesactivarFechas
+                                  DateRender=@((args) => nuevoTurno.DesactivarFechas(args, esAdmin))
                                           DateFormat="d/M/yyyy"
                                           Name="FechasPosibles"
                                           Style="width: 100%; max-width: 200px;" />
@@ -335,33 +334,7 @@
                     </RadzenStack>
                 </RadzenStack>
             </RadzenCard>
-            );
-
-            //Chequeamos si en esa fecha hay horarios. Si no hay, entonces desactivamos el button Ver Horarios y mostramos un mensaje.
-            IEnumerable<string> horariosDisponibles = nuevoTurno.ObtenerHorariosDisponibles(esAdmin);
-            if(horariosDisponibles.Count()==0)
-            {
-                horarioDesactivado = true;
-                nuevoTurno.HoraTurno = null; //Esto es importante para que no eligan otro horario en otra fecha y vuelvan a poner la fecha sin horarios.
-
-                var result2 = await DialogService.OpenAsync("No hay horarios disponibles", ds =>
-                @<RadzenStack Gap="1.5rem">
-                    <p><b>Lamentablemente, no tenemos horarios disponibles en la fecha solicitada.</b></p>
-                    <p>Por favor, elige otra fecha.</p>
-                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-                        <RadzenStack Orientation="Orientation.Horizontal">
-                            <RadzenButton Text="Cerrar" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
-                        </RadzenStack>
-                    </RadzenStack>
-                </RadzenStack>
-    );            
-            }
-            else
-            {
-                horarioDesactivado = false;
-            }
-
-
+            );            
         }
         else
         {
