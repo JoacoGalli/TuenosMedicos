@@ -19,7 +19,7 @@
 @if (turnosVisuales?.Any() == true)
 {
     <RadzenScheduler @ref=@calendario TItem="TurnoVisual" Data="@turnosVisuales"
-    StartProperty="FechaHora" EndProperty="FechaHora" AppointmentSelect=@OnAppointmentSelect SlotRender="@(args => OnSlotRender(args))"
+    StartProperty="FechaHora" EndProperty="FechaHora" AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender SlotRender="@(args => OnSlotRender(args))"
     TextProperty="Texto" style="height: 768px;">
         <RadzenMonthView />
     </RadzenScheduler>
@@ -31,8 +31,11 @@
     public class TurnoVisual
     {
         public DateTime FechaHora { get; set; }
-        public string Texto => FechaHora.ToString("HH:mm");        
+        public string Texto { get; set; }
+        //=> FechaHora.ToString("HH:mm");
+
         public string Medico { get; set; } = "";
+        public bool SobreTurno { get; set; }
     }
 
     RadzenScheduler<TurnoVisual> calendario;
@@ -115,6 +118,10 @@
                 {
                     if (med.NombreMedico == medicoSeleccionado && med.diaTrabajo == nombreDiaEnEspañol)
                     {
+
+                        TimeSpan horaInicio = TimeSpan.Parse(med.horaInicioTrabajo);
+                        TimeSpan horaFin = TimeSpan.Parse(med.horaFinTrabajo);
+
                         var horarios = turno.ObtenerHorariosDisponibles(true);
                         foreach (var h in horarios)
                         {
@@ -122,10 +129,20 @@
                             {
                                 var fechaHora = new DateTime(fecha.Year, fecha.Month, fecha.Day, hora.Hour, hora.Minute, 0);
 
+                                bool esSobreTurno = false;
+                                string textoAcolocar = fechaHora.ToString("HH:mm");
+                                if (hora.TimeOfDay < horaInicio || hora.TimeOfDay > horaFin )
+                                {
+                                    esSobreTurno = true;
+                                    textoAcolocar = textoAcolocar + " - Sobreturno";
+                                }
+
                                 turnosVisuales.Add(new TurnoVisual
                                     {
                                         FechaHora = fechaHora,
-                                        Medico = medicoSeleccionado
+                                        Texto = textoAcolocar,
+                                        Medico = medicoSeleccionado,
+                                        SobreTurno = esSobreTurno
                                     });
                             }
                         }
@@ -147,17 +164,32 @@
         }
 
 
-
     }
 
     async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<TurnoVisual> args)
     {
-        
+
         string medico = args.Data.Medico;
         string fecha = args.Data.FechaHora.ToString("dd-MM-yyyy");
         string hora = args.Data.FechaHora.ToString("HH:mm");
 
         Navigation.NavigateTo($"reservarturno/{medico}/{fecha}/{hora}");
+    }
+
+    void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<TurnoVisual> args)
+    {
+        if (args.Data.SobreTurno)
+        {
+        
+            args.Attributes["style"] = "background: #F08080; color: white; border-radius: 6px; padding: 2px 6px; font-weight: bold; font-family: 'Segoe UI', sans-serif; letter-spacing: 0.5px; font-size: 16px;";
+        }
+        else
+        {
+            args.Attributes["style"] = "background: #A8E6CF; color: #2A5D5E; border-radius: 6px; padding: 2px 6px; font-weight: 500; font-family: 'Segoe UI', sans-serif; letter-spacing: 0.5px; font-size: 16px;";
+
+
+
+        }
     }
 
 }
