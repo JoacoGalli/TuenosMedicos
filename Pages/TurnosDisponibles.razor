@@ -103,7 +103,7 @@
                 {
                     if (med.NombreMedico == medicoSeleccionado && med.diaTrabajo == nombreDiaEnEspañol)
                     {
-                        var horarios = turno.ObtenerHorariosDisponibles(false);
+                        var horarios = turno.ObtenerHorariosDisponibles(true);
                         foreach (var h in horarios)
                         {
                             if (DateTime.TryParseExact(h, "HH:mm", null, System.Globalization.DateTimeStyles.None, out var hora))
