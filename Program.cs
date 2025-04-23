@@ -9,6 +9,8 @@ using TurnosMedicos.Data;
 using Radzen;
 using Serilog;
 using System.Globalization;
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
 
 var defaultCulture = new CultureInfo("es-AR"); // o "es-ES"
 CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
@@ -35,6 +37,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()     
       .AddErrorDescriber<ErroresRegistroEnEspañol>();
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "App_Data", "keys")))
+    .SetApplicationName("TurnosMedicos");
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

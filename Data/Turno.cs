@@ -28,12 +28,14 @@ class Turno
     public string? MotivoCancelacion { get; set; } = "";
     public bool TienePdf { get; set; }
     public bool PacienteAsistio { get; set; }
+    public string? MontoAbonado { get; set; }
+
 
     #endregion
 
 
     #region metodos
-       
+
     public void DesactivarFechas(DateRenderEventArgs args, bool esAdmin)
     {
         //Obtengo los datos del medico

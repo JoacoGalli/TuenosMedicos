@@ -116,6 +116,22 @@
                     </Template>
                 </RadzenDataGridColumn>
 
+                <RadzenDataGridColumn Title="Abonó ($)" Width="100px" TextAlign="TextAlign.Center">
+                    <Template Context="shift">
+                        @if (shift.PacienteAsistio)
+                        {
+                            <RadzenTextBox @bind-Value="shift.MontoAbonado"
+                                           Name="montoAbonadoBox"
+                                           Change="@(args => GuardarMontoAbonado(args.ToString(), shift.Id))"
+                                           Style="width: 100%;" />
+                        }
+                        else
+                        {
+                            <span style="color:gray">—</span>
+                        }
+                    </Template>
+                </RadzenDataGridColumn>
+
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" Width="60px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         @if (!string.IsNullOrEmpty(shift.Notas))
@@ -327,6 +343,24 @@
                 
     }
 
+    void GuardarMontoAbonado(string monto, int idTurno)
+    {
+        if (decimal.TryParse(monto, out decimal montoDecimal))
+        {
+            string query = $"UPDATE `turnos` SET montoAbonado = @monto WHERE idTurno = @idTurno;";
+            var parametros = new Dictionary<string, object>
+            {
+            { "@monto", montoDecimal },
+            { "@idTurno", idTurno }
+            };
+
+            int resultado = Base.InsertDeleteOrUpdateABase(query, parametros);
+        }
+        else
+        {
+            Console.WriteLine("El monto ingresado no es válido.");
+        }
+    }
 
     void CancelarTurno(int idABorrar)
     {

@@ -120,7 +120,8 @@ class Base
                                 Cancelado = reader.GetBoolean("cancelado"),
                                 MotivoCancelacion = reader.IsDBNull(reader.GetOrdinal("motivoCancelacion")) ? "" : reader.GetString("motivoCancelacion"),
                                 TienePdf = reader.GetBoolean("tienePdf"),
-                                PacienteAsistio = reader.GetBoolean("pacienteAsistio")
+                                PacienteAsistio = reader.GetBoolean("pacienteAsistio"),
+                                MontoAbonado = reader.IsDBNull(reader.GetOrdinal("montoAbonado")) ? "" : reader.GetDecimal(reader.GetOrdinal("montoAbonado")).ToString(),
                             };
 
                             resultados.Add(turno);
