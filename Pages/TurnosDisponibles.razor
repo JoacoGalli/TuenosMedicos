@@ -18,7 +18,7 @@
 @if (turnosVisuales?.Any() == true)
 {
     <RadzenScheduler @ref=@calendario TItem="TurnoVisual" Data="@turnosVisuales"
-                     StartProperty="FechaHora" EndProperty="FechaHora" SlotRender="@(args => OnSlotRender(args))"
+    StartProperty="FechaHora"  EndProperty="FechaHora" SlotRender="@(args => OnSlotRender(args))"
     TextProperty="Texto" style="height: 768px;">
         <RadzenMonthView />
     </RadzenScheduler>
@@ -55,7 +55,7 @@
         turnosVisuales.Clear();
 
         List<Medico> horariosMedicos = Base.SelectAMedicos("SELECT * FROM medicos");
-        DateTime hoy = DateTime.Today;
+
 
         // 1. Obtener fechas bloqueadas del médico seleccionado
         string query = "SELECT * FROM medicos_fechas_bloqueadas WHERE nombreMedico = @nombreMedico";
@@ -66,15 +66,26 @@
             .Select(f => f.FechaBloqueada.Date) // Nos quedamos solo con la parte de la fecha
             .ToList();
 
-        for (int i = 0; i < 12; i++)
+        DateTime hoy = DateTime.Today;
+        bool primerMesFor = true;       //Lo uso como bandera para completar el primer mes partiendo desde hoy y no desde el 1.
+        for (int i = 0; i < 12; i++)        //Recorremos los meses
         {
             var fechaBase = hoy.AddMonths(i);
             int año = fechaBase.Year;
             int mes = fechaBase.Month;
             int diasEnElMes = DateTime.DaysInMonth(año, mes);
 
-            for (int dia = 1; dia <= diasEnElMes; dia++)
+
+            int diaInicialFor = 1;          //Arranca desde el 1ro de cada mes a excepcion del mes actual.
+            if (primerMesFor)
             {
+                diaInicialFor = hoy.Day;
+            }
+
+
+            for (int dia = diaInicialFor; dia <= diasEnElMes; dia++)        //Recorremos los dias de cada mes
+            {
+
                 var fecha = new DateTime(año, mes, dia);
 
                 // 2. Si la fecha está bloqueada, la salteamos
@@ -120,6 +131,7 @@
                     }
                 }
             }
+            primerMesFor = false;
         }
     }
 
