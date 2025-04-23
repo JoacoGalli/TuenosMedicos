@@ -2,6 +2,7 @@
 @attribute [Authorize(Roles = "Admin")]
 @using Microsoft.EntityFrameworkCore
 @inject DialogService DialogService
+@inject NavigationManager Navigation
 @inject NotificationService NotificationService
 
 <PageTitle>Turnos Disponibles</PageTitle>
@@ -18,7 +19,7 @@
 @if (turnosVisuales?.Any() == true)
 {
     <RadzenScheduler @ref=@calendario TItem="TurnoVisual" Data="@turnosVisuales"
-    StartProperty="FechaHora"  EndProperty="FechaHora" SlotRender="@(args => OnSlotRender(args))"
+    StartProperty="FechaHora" EndProperty="FechaHora" AppointmentSelect=@OnAppointmentSelect SlotRender="@(args => OnSlotRender(args))"
     TextProperty="Texto" style="height: 768px;">
         <RadzenMonthView />
     </RadzenScheduler>
@@ -145,7 +146,18 @@
             args.Attributes["style"] = "background: var(--rz-scheduler-highlight-background-color, rgba(255,220,40,.2));";
         }
 
-        
+
 
     }
+
+    async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<TurnoVisual> args)
+    {
+        
+        string medico = args.Data.Medico;
+        string fecha = args.Data.FechaHora.ToString("dd-MM-yyyy");
+        string hora = args.Data.FechaHora.ToString("HH:mm");
+
+        Navigation.NavigateTo($"reservarturno/{medico}/{fecha}/{hora}");
+    }
+
 }

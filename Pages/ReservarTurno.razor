@@ -1,4 +1,5 @@
 ﻿@page "/reservarturno"
+@page "/reservarturno/{medicoParam?}/{fechaParam?}/{horaParam?}"
 @attribute [Authorize]
 @inject DialogService DialogService
 @inject NavigationManager Navigation
@@ -6,6 +7,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @using Serilog
+@using System.Globalization
 
 
 
@@ -217,9 +219,13 @@
 <br />
 
 @code {
+    [Parameter] public string? medicoParam { get; set; }
+    [Parameter] public string? fechaParam { get; set; }
+    [Parameter] public string? horaParam { get; set; }
 
 
     Turno nuevoTurno = new Turno(){};
+
     List<Cobertura> listaCoberturas = Cobertura.ObtenerCoberturas();
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
@@ -240,6 +246,14 @@
         }
 
         esAdmin = user.IsInRole("Admin");
+
+        if (esAdmin && !string.IsNullOrEmpty(medicoParam) && !string.IsNullOrEmpty(fechaParam) && !string.IsNullOrEmpty(horaParam))
+        {
+
+            nuevoTurno.Medico = medicoParam;
+            nuevoTurno.FechaTurno = DateTime.ParseExact(fechaParam, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            nuevoTurno.HoraTurno = horaParam;
+        }
 
     }
 
