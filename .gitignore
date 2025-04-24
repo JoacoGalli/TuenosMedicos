@@ -29,4 +29,7 @@ wwwroot/
 # Ignorar configuraciones locales de entorno
 appsettings.Development.json
 secrets.json
+TurnosMedicos.csproj
+TurnosMedicos.csproj.user
+appsettings.json
 
