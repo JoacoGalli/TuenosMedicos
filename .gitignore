@@ -33,3 +33,4 @@ TurnosMedicos.csproj
 TurnosMedicos.csproj.user
 appsettings.json
 appsettings.Development.json
+/App_Data/keys

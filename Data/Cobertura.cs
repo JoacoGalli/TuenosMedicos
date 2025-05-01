@@ -7,7 +7,7 @@ class Cobertura
     {
         List<Cobertura> listaADevolver = new List<Cobertura>();
 
-        string query = "SELECT * FROM coberturas;";
+        string query = "SELECT * FROM coberturas ORDER BY nombreCobertura;";
 
         listaADevolver = Base.SelectACoberturas(query);
              

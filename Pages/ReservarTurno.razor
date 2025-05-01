@@ -112,7 +112,7 @@
                             <RadzenLabel Text="Cobertura" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenDropDown @bind-Value="nuevoTurno.Cobertura"  Name="Cobertura" Placeholder="Selecciona una cobertura" Data="@listaCoberturas" Style="width: 100%;" TextProperty="NombreCobertura" ValueProperty="NombreCobertura">
+                            <RadzenDropDown @bind-Value="nuevoTurno.Cobertura" AllowFiltering="true" Name="Cobertura" Placeholder="Selecciona una cobertura" Data="@listaCoberturas" Style="width: 100%;" TextProperty="NombreCobertura" ValueProperty="NombreCobertura">
                                 <RadzenRequiredValidator Component="Cobertura" Text="Debes seleccionar una cobertura." />
                             </RadzenDropDown>
                         </RadzenColumn>

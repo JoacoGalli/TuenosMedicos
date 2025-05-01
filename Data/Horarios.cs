@@ -85,7 +85,7 @@ namespace TurnosMedicos.Data
                     if (esAdmin)
                     {
                         DateTime inicioExt = DateTime.ParseExact("06:00", "HH:mm", null);
-                        DateTime finExt = DateTime.ParseExact("23:59", "HH:mm", null);
+                        DateTime finExt = DateTime.ParseExact("18:00", "HH:mm", null);
 
                         if (duracionSobreTurno <= 0)
                         {
