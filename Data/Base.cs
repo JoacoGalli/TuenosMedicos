@@ -57,7 +57,13 @@ class Base
                                 horaInicioTrabajo = reader.GetString("horaInicioTrabajo"),
                                 horaFinTrabajo = reader.GetString("horaFinTrabajo"),
                                 duracionTurno = reader.GetInt16("duracionTurno"),
-                                duracionSobreTurno = reader.IsDBNull(reader.GetOrdinal("duracionSobreTurno"))? null: reader.GetInt16(reader.GetOrdinal("duracionSobreTurno"))
+                                duracionSobreTurno = reader.IsDBNull(reader.GetOrdinal("duracionSobreTurno"))? null: reader.GetInt16(reader.GetOrdinal("duracionSobreTurno")),
+                                horaInicioSobreTurno = reader.IsDBNull(reader.GetOrdinal("horaInicioSobreTurno"))
+                                ? reader.GetString("horaInicioTrabajo")
+                                : reader.GetString(reader.GetOrdinal("horaInicioSobreTurno")),
+                                horaFinSobreTurno = reader.IsDBNull(reader.GetOrdinal("horaFinSobreTurno"))
+                                ? reader.GetString("horaFinTrabajo")
+                                : reader.GetString(reader.GetOrdinal("horaFinSobreTurno")),
                             };
 
                             resultados.Add(medico);
@@ -334,8 +340,8 @@ class Base
 
                
                 string query = "INSERT INTO `medicos` " +
-                                    "(`nombreMedico`,`diaTrabajo`,`horaInicioTrabajo`,`horaFinTrabajo`,`duracionTurno`,`duracionSobreTurno`) " +
-                                "VALUES (@nombreMedico, @diaTrabajo, @horaInicioTrabajo, @horaFinTrabajo, @duracionTurno, @duracionSobreTurno)";
+                                    "(`nombreMedico`,`diaTrabajo`,`horaInicioTrabajo`,`horaFinTrabajo`,`duracionTurno`,`duracionSobreTurno`, `horaInicioSobreTurno`, `horaFinSobreTurno`) " +
+                                "VALUES (@nombreMedico, @diaTrabajo, @horaInicioTrabajo, @horaFinTrabajo, @duracionTurno, @duracionSobreTurno, @horaInicioSobreTurno, @horaFinSobreTurno)";
                 using (MySqlCommand cmd = new MySqlCommand(query, connection))
                 {
                     // Parámetros para evitar SQL Injection
@@ -345,7 +351,8 @@ class Base
                     cmd.Parameters.AddWithValue("@horaFinTrabajo", nuevoMedico.horaFinTrabajo);
                     cmd.Parameters.AddWithValue("@duracionTurno", nuevoMedico.duracionTurno);
                     cmd.Parameters.AddWithValue("@duracionSobreTurno", nuevoMedico.duracionSobreTurno);
-
+                    cmd.Parameters.AddWithValue("@horaInicioSobreTurno", nuevoMedico.horaInicioSobreTurno);
+                    cmd.Parameters.AddWithValue("@horaFinSobreTurno", nuevoMedico.horaFinSobreTurno);
 
                     int filasAfectadas = cmd.ExecuteNonQuery(); // Retorna cuántas filas fueron insertadas
                     return filasAfectadas > 0 ? 0 : 1; // 0 si insertó correctamente, 1 si falló

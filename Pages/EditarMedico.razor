@@ -59,7 +59,17 @@
                             <RadzenIcon Icon="timer" Style="margin-right: 5px;" /> Duración
                         </HeaderTemplate>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Property="duracionSobreTurno" Width="230px" TextAlign="TextAlign.Center">
+                    <RadzenDataGridColumn Property="horaInicioSobreTurno" Width="200px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Inicio Sobre Turno
+                        </HeaderTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="horaFinSobreTurno" Width="200px">
+                        <HeaderTemplate>
+                            <RadzenIcon Icon="schedule" Style="margin-right: 5px;" /> Fin Sobre Turno
+                        </HeaderTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="duracionSobreTurno" Width="220px" TextAlign="TextAlign.Center">
                         <HeaderTemplate>
                             <RadzenIcon Icon="timer" Style="margin-right: 5px;" /> Duración Sobre Turno
                         </HeaderTemplate>
@@ -97,6 +107,8 @@
     DateTime horaIni = DateTime.Today.AddHours(6);
     DateTime horaFin = DateTime.Today.AddHours(23);
 
+    DateTime horaIniST = DateTime.Today.AddHours(6);
+    DateTime horaFinST = DateTime.Today.AddHours(23);
 
     protected override async Task OnInitializedAsync()
     {
@@ -177,6 +189,16 @@
             </RadzenRow>
 
             <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora inicio sobre turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaIniST ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora fin sobre turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaFinST ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenLabel Text="Duración del sobre turno" Style="width: 40%; font-weight: bold;" />
                 <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value=@nuevoHorarioMedico.duracionSobreTurno Placeholder="Duración sobre turno" Style="width: 60%;" />
             </RadzenRow>
@@ -185,6 +207,7 @@
                 <RadzenButton Text="Confirmar" Icon="check" ButtonStyle="ButtonStyle.Primary" Click=InsertABase />
                 <RadzenButton Text="Cancelar" Icon="close" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
             </RadzenStack>
+
         </RadzenStack>
     </RadzenStack>
         );
@@ -228,6 +251,16 @@
             </RadzenRow>
 
             <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora inicio sobre turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaIniST ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenLabel Text="Hora fin sobre turno" Style="width: 40%; font-weight: bold;" />
+                <RadzenDatePicker @bind-Value=@horaFinST ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width: 60%;" />
+            </RadzenRow>
+
+            <RadzenRow AlignItems="AlignItems.Center">
                 <RadzenLabel Text="Duración del sobre turno" Style="width: 40%; font-weight: bold;" />
                 <RadzenNumeric ShowUpDown="false" TValue="int?" @bind-Value=@nuevoHorarioMedico.duracionSobreTurno Placeholder="Duración Sobre Turno" Style="width: 60%;" />
             </RadzenRow>
@@ -249,7 +282,7 @@
 
     async Task ReloadGrid()
     {
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno FROM medicos";
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno,horaInicioSobreTurno,horaFinSobreTurno FROM medicos";
 
         if(!string.IsNullOrEmpty(medicoSeleccionado))
         {         
@@ -268,10 +301,14 @@
         {
             string horaInicio = horaIni.ToString("HH:mm");
             string horaFinal = horaFin.ToString("HH:mm");
+            string horaInicioSobreTurno = horaIniST.ToString("HH:mm");
+            string horaFinalSobreTurno = horaFinST.ToString("HH:mm");
 
             nuevoHorarioMedico.NombreMedico = medicoSeleccionado;
             nuevoHorarioMedico.horaInicioTrabajo = horaInicio;
             nuevoHorarioMedico.horaFinTrabajo = horaFinal;
+            nuevoHorarioMedico.horaInicioSobreTurno = horaInicioSobreTurno;
+            nuevoHorarioMedico.horaFinSobreTurno = horaFinalSobreTurno;
 
 
             int insertarNuevohorario = Base.InsertarMedico(nuevoHorarioMedico);

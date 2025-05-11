@@ -176,7 +176,7 @@ class Turno
     public IEnumerable<string> ObtenerHorariosDisponibles(bool esAdmin)
     {
         // Traigo los horarios de trabajo del medico
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno FROM medicos " +
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno,horaInicioSobreTurno,horaFinSobreTurno FROM medicos " +
                        " WHERE nombreMedico = @nombreMedico and diaTrabajo = @diaTrabajo ;";
 
         var param = new Dictionary<string, object>
@@ -197,10 +197,14 @@ class Turno
         string horaFinal = consultaAMedicos[0].horaFinTrabajo;
         int duracionTurno = consultaAMedicos[0].duracionTurno;
         int duracionSobreTurno = consultaAMedicos[0].duracionSobreTurno ?? 0;
+        string horaInicioSobreTurno = consultaAMedicos[0].horaInicioSobreTurno; 
+        string horaFinalSobreTurno = consultaAMedicos[0].horaFinSobreTurno;
 
 
         DateTime inicioLaboral = DateTime.ParseExact(horaDeInicio, "HH:mm", null);
         DateTime finLaboral = DateTime.ParseExact(horaFinal, "HH:mm", null);
+        DateTime inicioSobreTurno = DateTime.ParseExact(horaInicioSobreTurno, "HH:mm", null);
+        DateTime finSobreTurno = DateTime.ParseExact(horaFinalSobreTurno, "HH:mm", null);
 
         List<string> horarios = new List<string>();
 
@@ -212,9 +216,6 @@ class Turno
 
         if (esAdmin)
         {
-            DateTime inicioExt = DateTime.ParseExact("06:00", "HH:mm", null);
-            DateTime finExt = DateTime.ParseExact("18:00", "HH:mm", null);
-
             if (duracionSobreTurno <= 0)
             {
                 Log.Error("DuracionSobreTurno invalida: " + duracionSobreTurno);
@@ -222,19 +223,19 @@ class Turno
             }
 
             // Turnos antes del horario laboral
-            if (inicioLaboral > inicioExt)
+            if (inicioLaboral > inicioSobreTurno)
             {
                 horarios.AddRange(
-                    Enumerable.Range(0, (int)((inicioLaboral - inicioExt).TotalMinutes / duracionSobreTurno))
-                        .Select(i => inicioExt.AddMinutes(i * duracionSobreTurno).ToString("HH:mm"))
+                    Enumerable.Range(0, (int)((inicioLaboral - inicioSobreTurno).TotalMinutes / duracionSobreTurno))
+                        .Select(i => inicioSobreTurno.AddMinutes(i * duracionSobreTurno).ToString("HH:mm"))
                 );
             }
 
             // Turnos después del horario laboral
-            if (finExt > finLaboral)
+            if (finSobreTurno > finLaboral)
             {
                 horarios.AddRange(
-                    Enumerable.Range(0, (int)((finExt - finLaboral).TotalMinutes / duracionSobreTurno))
+                    Enumerable.Range(0, (int)((finSobreTurno - finLaboral).TotalMinutes / duracionSobreTurno))
                         .Select(i => finLaboral.AddMinutes(i * duracionSobreTurno).ToString("HH:mm"))
                 );
             }

@@ -6,6 +6,8 @@ public class Medico
     public string horaInicioTrabajo { get; set; } = "";
     public string horaFinTrabajo { get; set; } = "";
     public int duracionTurno { get; set; }
+    public string horaInicioSobreTurno { get; set; } = "";
+    public string horaFinSobreTurno { get; set; } = "";
     public int? duracionSobreTurno { get; set; }
 
 
@@ -16,7 +18,7 @@ public class Medico
         List<Medico> medicos = new List<Medico>();
 
 
-        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno FROM medicos;";
+        string query = "SELECT idMedicos,nombreMedico,diaTrabajo,horaInicioTrabajo,horaFinTrabajo,duracionTurno,duracionSobreTurno,horaInicioSobreTurno,horaFinSobreTurno FROM medicos;";
         medicos = Base.SelectAMedicos(query);
 
         medicos = medicos   .Select(m => m.NombreMedico) // Extrae solo los nombres
