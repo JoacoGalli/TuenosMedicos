@@ -65,7 +65,7 @@
                             <RadzenLabel Text="Email" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
-                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Disabled="true" Name="Email" Style="width: 100%;" />                            
+                            <RadzenTextBox @bind-Value="nuevoTurno.Email" Name="Email" Style="width: 100%;" />                            
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -185,7 +185,7 @@
                         };
 
         List<Turno> listaTurnos = Base.SelectATurnos(query,parametros);
-      
+
 
 
         foreach(Turno tur in listaTurnos)
@@ -202,6 +202,8 @@
             nuevoTurno.Telefono = tur.Telefono;
             nuevoTurno.Domicilio = tur.Domicilio;
             nuevoTurno.Email = tur.Email;
+            nuevoTurno.FechaTurno = tur.FechaTurno;
+            nuevoTurno.HoraTurno = tur.HoraTurno;
         }
     }
 
