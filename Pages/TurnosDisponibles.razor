@@ -18,6 +18,12 @@
                     Change="@(async args => await OnMedicoSeleccionado(args))"
                     TextProperty="NombreMedico" ValueProperty="NombreMedico" />
 
+        <!-- Checkbox de Visualizar Sobre Turnos -->
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+        <RadzenCheckBox @bind-Value="mostrarSobreTurnos" TValue="bool" Change="@(async _ => await OnMedicoSeleccionado(medicoSeleccionado))" Name="ButtonMostrarSobreTurnos" />
+        <RadzenLabel Text="Mostrar sobre turnos" Component="ButtonMostrarSobreTurnos" class="rz-ms-2" />
+    </RadzenStack>
+
     <RadzenText Style="font-size: 1rem;">
         <a href=@rutaConProximoTurno style="text-decoration: none; font-weight: 500; color: #007bff;">Reservar próximo turno:</a>
         <span style="margin-left: 0.5rem;"><b>@proximoTurno</b></span>
@@ -51,9 +57,11 @@
     RadzenScheduler<TurnoVisual> calendario;
     string? medicoSeleccionado;
     List<TurnoVisual> turnosVisuales = new();
+    List<TurnoVisual> listaTurnos = new();
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
     string rutaConProximoTurno;
     string proximoTurno;
+    bool mostrarSobreTurnos = false; // false por defecto, solo muestra turnos comunes
 
     private async Task OnMedicoSeleccionado(object value)
     {
@@ -149,7 +157,7 @@
                                     textoAcolocar = textoAcolocar + " - Sobreturno";
                                 }
 
-                                turnosVisuales.Add(new TurnoVisual
+                                listaTurnos.Add(new TurnoVisual
                                     {
                                         FechaHora = fechaHora,
                                         Texto = textoAcolocar,
@@ -164,9 +172,22 @@
             primerMesFor = false;
         }
 
-        //Esto es para completar el link al proximo turno
-        TurnoVisual proxTurno = turnosVisuales.First(t => t.SobreTurno == false);
+        // Filtrar según el checkbox
+        turnosVisuales = mostrarSobreTurnos
+            ? listaTurnos
+            : listaTurnos.Where(t => !t.SobreTurno).ToList();
+
+        // Buscar el próximo turno no sobreturno
+        TurnoVisual proxTurno = turnosVisuales.FirstOrDefault(t => t.SobreTurno == false);
+
+        if (proxTurno == null)
+        {
+            Console.WriteLine("No se encontró un turno que no sea sobreturno.");
+            return;
+        }
+
         proximoTurno = proxTurno.FechaHora.ToString("dd/MM/yyyy HH:mm");
+
         string fechalink = proxTurno.FechaHora.ToString("dd-MM-yyyy");
         string horalink = proxTurno.FechaHora.ToString("HH:mm");
         rutaConProximoTurno = $"/reservarturno/{proxTurno.Medico}/{fechalink}/{horalink}";
