@@ -116,14 +116,24 @@
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Title="Abonó ($)" Width="100px" TextAlign="TextAlign.Center">
+                <RadzenDataGridColumn Title="Abonó ($)" Width="150px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         @if (shift.PacienteAsistio)
                         {
-                            <RadzenTextBox @bind-Value="shift.MontoAbonado"
-                                           Name="montoAbonadoBox"
-                                           Change="@(args => GuardarMontoAbonado(args.ToString(), shift.Id))"
-                                           Style="width: 100%;" />
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <RadzenTextBox @bind-Value="shift.MontoAbonado"
+                                               Name="montoAbonadoBox"
+                                               Style="width: 70px;" />
+                                <RadzenButton Icon="save"
+                                              ButtonStyle="ButtonStyle.Primary"
+                                              Size="ButtonSize.Small"
+                                              Style="padding: 4px 8px;"
+                                              Click="@(args => GuardarMontoDesdeUI(shift.MontoAbonado, shift.Id))" />
+                                @if (montoGuardado.ContainsKey(shift.Id) && montoGuardado[shift.Id])
+                                {
+                                    <span style="color: green;">✔️</span>
+                                }
+                            </div>
                         }
                         else
                         {
@@ -131,6 +141,7 @@
                         }
                     </Template>
                 </RadzenDataGridColumn>
+
 
                 <RadzenDataGridColumn Context="shift" Filterable="false" Sortable="false" Title="Notas" Width="60px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
@@ -228,6 +239,9 @@
     RadzenDataGrid<Turno> turnosGrid;
 
     IEnumerable<Turno> turnos;
+
+    Dictionary<int, bool> montoGuardado = new();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -343,7 +357,14 @@
                 
     }
 
-    void GuardarMontoAbonado(string monto, int idTurno)
+    void GuardarMontoDesdeUI(string monto, int idTurno)
+    {
+        bool guardado = GuardarMontoAbonado(monto, idTurno);
+        montoGuardado[idTurno] = guardado;
+    }
+
+
+    bool GuardarMontoAbonado(string monto, int idTurno)
     {
         if (decimal.TryParse(monto, out decimal montoDecimal))
         {
@@ -355,12 +376,17 @@
             };
 
             int resultado = Base.InsertDeleteOrUpdateABase(query, parametros);
+
+            // Si se afectó al menos una fila, fue exitoso
+            return resultado > 0;
         }
         else
         {
             Console.WriteLine("El monto ingresado no es válido.");
+            return false;
         }
     }
+
 
     void CancelarTurno(int idABorrar)
     {
