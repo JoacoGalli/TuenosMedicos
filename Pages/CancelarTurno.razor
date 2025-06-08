@@ -113,6 +113,30 @@
                     Log.Error(ex, "Ocurrio un error al cancelar el turno");
                 }
             }
+
+            // Envío el mensaje por WhatsApp
+            if (!string.IsNullOrEmpty(_turno.Telefono))
+            {
+                try
+                {
+                    WhatsAppService whatsappService = new WhatsAppService();
+                    string mensajeWhatsapp = $"*Cancelación de turno*\n\n" +
+                    $"*Paciente:* {_turno.NombrePaciente} {_turno.ApellidoPaciente}\n" +
+                    $"*Fecha:* {_turno.FechaTurno?.ToString("dd/MM/yyyy")}\n" +
+                    $"*Hora:* {_turno.HoraTurno} hs\n\n" +
+                    "Su turno ha sido *cancelado* correctamente.\n\n" +
+                    "Muchas gracias.\n" +
+                    "Consultorio médico.";
+
+                    // Asumimos que tenés una clase para enviar mensajes por WhatsApp
+                    whatsappService.EnviarMensajeWhatsApp(_turno.Telefono, mensajeWhatsapp);
+                    Log.Information("Mensaje de cancelación enviado por WhatsApp");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Ocurrió un error al enviar el mensaje por WhatsApp");
+                }
+            }
             
 
             var result = await DialogService.OpenAsync("Turno cancelado", ds =>

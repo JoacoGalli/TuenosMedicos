@@ -53,6 +53,20 @@ public class RecordatorioService
 
                 }
 
+                if (!string.IsNullOrEmpty(turno.Telefono))
+                {
+                    try
+                    {
+                        WhatsAppService whatsappService = new WhatsAppService();
+                        string mensajeWhatsapp = $"📅 Hola! Te recordamos tu turno con {turno.Medico} el {turno.FechaTurno?.ToString("dd-MM-yyyy")} a las {turno.HoraTurno} hs. Si no podés asistir, podés cancelarlo acá: {cancelarUrl}";
+
+                        whatsappService.EnviarMensajeWhatsApp(turno.Telefono, mensajeWhatsapp);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error al enviar el WhatsApp para: " + turno.Telefono);
+                    }
+                }
 
                 //Luego de enviarlo, updateo "recordatorioEnviado"=true en `turnos`
                 string query2 = "UPDATE turnos SET recordatorioEnviado=true WHERE idturno=@idturno;";

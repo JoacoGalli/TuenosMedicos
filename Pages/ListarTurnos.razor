@@ -549,6 +549,29 @@
             DialogService.Close(); // Cierra el diálogo
             NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Email enviado" });
         }
+        // Envío el mensaje por WhatsApp
+        if (!string.IsNullOrEmpty(datosContacto.Telefono))
+        {
+            try
+            {
+                WhatsAppService whatsappService = new WhatsAppService();
+                string mensajeWhatsapp = $"Su turno ha sido confirmado con éxito.\n\n" +
+                $"*Paciente:* {datosContacto.NombrePaciente} {datosContacto.ApellidoPaciente}\n" +
+                $"*Fecha:* {datosContacto.FechaTurno?.ToString("dd/MM/yyyy")}\n" +
+                $"*Hora:* {datosContacto.HoraTurno}\n" +
+                $"*Médico:* {datosContacto.Medico}\n\n" +
+                "Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicándose telefónicamente.\n" +
+                "Muchas gracias.\n\n" +
+                "Consultorio médico.";
+
+                whatsappService.EnviarMensajeWhatsApp(datosContacto.Telefono, mensajeWhatsapp);
+                Log.Information("Mensaje de cancelación enviado por WhatsApp");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Ocurrió un error al enviar el mensaje por WhatsApp");
+            }
+        }
     }
 
     async Task VerMotivo(string nombre, string apellido, string motivo)

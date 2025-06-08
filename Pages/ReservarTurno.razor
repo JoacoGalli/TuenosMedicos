@@ -411,7 +411,7 @@
 
     async Task MostrarResumen()
     {
-        if (nuevoTurno.NombrePaciente != "" && nuevoTurno.ApellidoPaciente != ""  && nuevoTurno.Medico != "" && nuevoTurno.Cobertura != null && nuevoTurno.FechaTurno != DateTime.MinValue && nuevoTurno.HoraTurno != "" && mostrarErrorArchivo == false)
+        if (nuevoTurno.NombrePaciente != "" && nuevoTurno.ApellidoPaciente != "" && nuevoTurno.Telefono != "" && nuevoTurno.Medico != "" && nuevoTurno.Cobertura != null && nuevoTurno.FechaTurno != DateTime.MinValue && nuevoTurno.HoraTurno != "" && mostrarErrorArchivo == false)
         {
             var result = await DialogService.OpenAsync("📋 Resumen de reserva", ds =>
             @<RadzenStack Gap="1rem" Padding="1.5rem" Style="font-size: 1.2rem; color: #222;">
@@ -482,7 +482,28 @@
 
             }
            
-        }            
+        }  
+        
+        if (!string.IsNullOrEmpty(nuevoTurno.Telefono))
+        {
+            try
+            {
+                WhatsAppService whatsappService = new WhatsAppService();
+                string mensajeWhatsapp = $"Su turno ha sido confirmado con éxito.\n\n" +
+                $"*Paciente:* {nuevoTurno.NombrePaciente} {nuevoTurno.ApellidoPaciente}\n" +
+                $"*Fecha:* {nuevoTurno.FechaTurno:dd/MM/yyyy}\n" +
+                $"*Hora:* {nuevoTurno.HoraTurno:HH:mm}\n" +
+                $"*Médico:* {nuevoTurno.Medico}\n\n" +
+                "Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicándose telefónicamente.\n" +
+                "Muchas gracias.\n\n" +
+                "Consultorio médico.";
+                whatsappService.EnviarMensajeWhatsApp(nuevoTurno.Telefono, mensajeWhatsapp);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error al enviar el WhatsApp para: " + nuevoTurno.Telefono);
+            }
+        }
 
         if (intentoRegistrarTurno == 0)
         {
@@ -492,7 +513,10 @@
                 <RadzenIcon Icon="check_circle" Size="50px" Style="color: green;" />
 
                 <p style="font-size: 1.2rem; font-weight: bold;">✅ ¡Tu turno ha sido confirmado!</p>
-                <p style="font-size: 1.2rem; font-weight: bold;">Un email ha sido enviado a tu correo.</p>
+                <p style="font-size: 1.2rem; font-weight: bold;">
+                    📧 Se ha enviado un email a tu correo.<br />
+                    📱 También recibirás un mensaje de WhatsApp con la confirmación.
+                </p>
 
                 <p style="margin-bottom: 0.5rem;">Aquí están los datos de la reserva:</p>
 
