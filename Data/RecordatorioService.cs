@@ -57,10 +57,20 @@ public class RecordatorioService
                 {
                     try
                     {
-                        WhatsAppService whatsappService = new WhatsAppService();
-                        string mensajeWhatsapp = $"📅 Hola! Te recordamos tu turno con {turno.Medico} el {turno.FechaTurno?.ToString("dd-MM-yyyy")} a las {turno.HoraTurno} hs. Si no podés asistir, podés cancelarlo acá: {cancelarUrl}";
+                        var whatsappService = new WhatsAppService();
 
-                        whatsappService.EnviarMensajeWhatsApp(turno.Telefono, mensajeWhatsapp);
+                        var contentSid = "HX2ad613f31c9c724a9db1e1bacf269ccb"; // <- SID real de recordatorio_turno
+
+                        var variables = new Dictionary<string, string>
+                        {
+                            { "1", $"{turno.NombrePaciente} {turno.ApellidoPaciente}" },
+                            { "2", turno.Medico },
+                            { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                            { "4", turno.HoraTurno },
+                            { "5", cancelarUrl }
+                        };
+
+                        whatsappService.EnviarMensajePlantilla(turno.Telefono, contentSid, variables);
                     }
                     catch (Exception ex)
                     {

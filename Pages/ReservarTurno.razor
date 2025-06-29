@@ -53,11 +53,20 @@
 
                     <RadzenRow AlignItems="AlignItems.Center">
                         <RadzenColumn Size="12" SizeMD="4">
-                            <RadzenLabel Text="Teléfono" />
+                            <RadzenLabel Text="Teléfono (formato: +549...)" />
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenTextBox @bind-Value="nuevoTurno.Telefono" Name="Telefono" Style="width: 100%;" />
-                            @if (!esAdmin) { <RadzenRequiredValidator Component="Telefono" Text="Por favor, completa el teléfono." /> }
+                            @if (!esAdmin)
+                            {
+                                <RadzenRequiredValidator Component="Telefono" Text="Por favor, completá el teléfono." />
+                                @if (!telefonoFormatoValido && !string.IsNullOrEmpty(nuevoTurno.Telefono))
+                                {
+                                    <div style="color: red; margin-top: 5px;">
+                                        El formato debe ser: <b>+549XXXXXXXXXX</b> (sin espacios ni guiones)
+                                    </div>
+                                }
+                            }
                         </RadzenColumn>
                     </RadzenRow>
 
@@ -229,7 +238,9 @@
     List<Cobertura> listaCoberturas = Cobertura.ObtenerCoberturas();
     List<Medico> listaMedicos = Medico.ObtenerMedicos();
 
-
+    bool telefonoFormatoValido =>
+        !string.IsNullOrWhiteSpace(nuevoTurno.Telefono) &&
+        System.Text.RegularExpressions.Regex.IsMatch(nuevoTurno.Telefono, @"^\+549\d{10}$");
 
 
 
@@ -411,7 +422,17 @@
 
     async Task MostrarResumen()
     {
-        if (nuevoTurno.NombrePaciente != "" && nuevoTurno.ApellidoPaciente != "" && nuevoTurno.Telefono != "" && nuevoTurno.Medico != "" && nuevoTurno.Cobertura != null && nuevoTurno.FechaTurno != DateTime.MinValue && nuevoTurno.HoraTurno != "" && mostrarErrorArchivo == false)
+        if (
+            nuevoTurno.NombrePaciente != "" &&
+            nuevoTurno.ApellidoPaciente != "" &&
+            nuevoTurno.Telefono != "" &&
+            nuevoTurno.Medico != "" &&
+            nuevoTurno.Cobertura != null &&
+            nuevoTurno.FechaTurno != DateTime.MinValue &&
+            nuevoTurno.HoraTurno != "" &&
+            mostrarErrorArchivo == false &&
+            telefonoFormatoValido
+        )
         {
             var result = await DialogService.OpenAsync("📋 Resumen de reserva", ds =>
             @<RadzenStack Gap="1rem" Padding="1.5rem" Style="font-size: 1.2rem; color: #222;">
@@ -488,16 +509,21 @@
         {
             try
             {
-                WhatsAppService whatsappService = new WhatsAppService();
-                string mensajeWhatsapp = $"Su turno ha sido confirmado con éxito.\n\n" +
-                $"*Paciente:* {nuevoTurno.NombrePaciente} {nuevoTurno.ApellidoPaciente}\n" +
-                $"*Fecha:* {nuevoTurno.FechaTurno:dd/MM/yyyy}\n" +
-                $"*Hora:* {nuevoTurno.HoraTurno:HH:mm}\n" +
-                $"*Médico:* {nuevoTurno.Medico}\n\n" +
-                "Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicándose telefónicamente.\n" +
-                "Muchas gracias.\n\n" +
-                "Consultorio médico.";
-                whatsappService.EnviarMensajeWhatsApp(nuevoTurno.Telefono, mensajeWhatsapp);
+                var whatsappService = new WhatsAppService();
+
+                var contentSid = "HXb651baccb481cd2886f1ce294b9e4743"; // <- SID real de confirmacion_turno
+
+                var variables = new Dictionary<string, string>
+                {
+                { "1", nuevoTurno.NombrePaciente },
+                { "2", nuevoTurno.ApellidoPaciente },
+                { "3", nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                { "4", nuevoTurno.HoraTurno },
+                { "5", nuevoTurno.Medico }
+                };
+
+                whatsappService.EnviarMensajePlantilla(nuevoTurno.Telefono, contentSid, variables);
+
             }
             catch (Exception ex)
             {

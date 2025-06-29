@@ -119,18 +119,19 @@
             {
                 try
                 {
-                    WhatsAppService whatsappService = new WhatsAppService();
-                    string mensajeWhatsapp = $"*Cancelación de turno*\n\n" +
-                    $"*Paciente:* {_turno.NombrePaciente} {_turno.ApellidoPaciente}\n" +
-                    $"*Fecha:* {_turno.FechaTurno?.ToString("dd/MM/yyyy")}\n" +
-                    $"*Hora:* {_turno.HoraTurno} hs\n\n" +
-                    "Su turno ha sido *cancelado* correctamente.\n\n" +
-                    "Muchas gracias.\n" +
-                    "Consultorio médico.";
+                    var whatsappService = new WhatsAppService();
 
-                    // Asumimos que tenés una clase para enviar mensajes por WhatsApp
-                    whatsappService.EnviarMensajeWhatsApp(_turno.Telefono, mensajeWhatsapp);
-                    Log.Information("Mensaje de cancelación enviado por WhatsApp");
+                    var contentSid = "HXbd416fc5538dc0b087d72b1c6704d0d8"; // <- SID real de cancelacion_turno
+
+                    var variables = new Dictionary<string, string>
+                    {
+                        { "1", $"{_turno.NombrePaciente}" },
+                        { "2", _turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                        { "3", _turno.HoraTurno }
+                    };
+
+                    whatsappService.EnviarMensajePlantilla(_turno.Telefono, contentSid, variables);
+
                 }
                 catch (Exception ex)
                 {

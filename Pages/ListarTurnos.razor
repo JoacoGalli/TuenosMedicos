@@ -4,7 +4,6 @@
 @using Serilog
 @attribute [Authorize(Roles = "Admin")]
 
-@inject DialogService DialogService
 @inject NavigationManager Navigation
 @inject DialogService DialogService
 @inject NotificationService NotificationService
@@ -554,18 +553,21 @@
         {
             try
             {
-                WhatsAppService whatsappService = new WhatsAppService();
-                string mensajeWhatsapp = $"Su turno ha sido confirmado con éxito.\n\n" +
-                $"*Paciente:* {datosContacto.NombrePaciente} {datosContacto.ApellidoPaciente}\n" +
-                $"*Fecha:* {datosContacto.FechaTurno?.ToString("dd/MM/yyyy")}\n" +
-                $"*Hora:* {datosContacto.HoraTurno}\n" +
-                $"*Médico:* {datosContacto.Medico}\n\n" +
-                "Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicándose telefónicamente.\n" +
-                "Muchas gracias.\n\n" +
-                "Consultorio médico.";
+                var whatsappService = new WhatsAppService();
 
-                whatsappService.EnviarMensajeWhatsApp(datosContacto.Telefono, mensajeWhatsapp);
-                Log.Information("Mensaje de cancelación enviado por WhatsApp");
+                var contentSid = "HXb651baccb481cd2886f1ce294b9e4743"; // <- SID real de confirmacion_turno
+
+                var variables = new Dictionary<string, string>
+                {
+                    { "1", datosContacto.NombrePaciente },
+                    { "2", datosContacto.ApellidoPaciente },
+                    { "3", datosContacto.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                    { "4", datosContacto.HoraTurno },
+                    { "5", datosContacto.Medico }
+                };
+
+                whatsappService.EnviarMensajePlantilla(datosContacto.Telefono, contentSid, variables);
+
             }
             catch (Exception ex)
             {

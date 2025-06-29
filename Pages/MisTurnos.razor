@@ -2,6 +2,7 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Serilog
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject DialogService DialogService
@@ -207,7 +208,7 @@
 
         <p><b>¿Desea continuar?</b></p>
         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
-            <RadzenButton Text="Confirmar" Icon="check" ButtonStyle="ButtonStyle.Danger" Click="@(args => CancelarTurno(shift.Id))" />
+            <RadzenButton Text="Confirmar" Icon="check" ButtonStyle="ButtonStyle.Danger" Click="@(args => CancelarTurno(shift.Id, shift))" />
             <RadzenButton Text="Cancelar" Icon="close" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" />
         </RadzenStack>
     </RadzenStack>
@@ -246,23 +247,70 @@
     );
     }
 
-    void CancelarTurno(int idABorrar)
-    {
-        string query = "UPDATE `turnos` SET cancelado=true,motivoCancelacion='Cancelado por el usuario' WHERE idTurno=@idTurno;"; 
-        var parametros = new Dictionary<string, object> { { "@idTurno", idABorrar } };
+    async Task CancelarTurno(int idABorrar, Turno turno)
+{
+    string query = "UPDATE `turnos` SET cancelado=true, motivoCancelacion='Cancelado por el usuario' WHERE idTurno=@idTurno;";
+    var parametros = new Dictionary<string, object> { { "@idTurno", idABorrar } };
 
-        int cambiarEstado = Base.InsertDeleteOrUpdateABase(query,parametros);
-        if (cambiarEstado > 0)
+    int cambiarEstado = Base.InsertDeleteOrUpdateABase(query, parametros);
+    if (cambiarEstado > 0)
+    {
+        // ✅ Enviar email
+        if (!string.IsNullOrEmpty(turno.Email))
         {
-            DialogService.Close(); // Cierra el diálogo
-            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Turno cancelado" });
-            ReloadGrid();
+            try
+            {
+                EmailService emailService = new EmailService();
+                string cuerpo = $"Estimado/a: <br><br> Su turno del día: <b>{turno.FechaTurno?.ToString("dd-MM-yyyy")}</b> a las: <b>{turno.HoraTurno}</b> hs ha sido <b>cancelado</b> correctamente.<br><br>Muchas gracias.<br>Consultorio Médico.";
+                await emailService.EnviarCorreoAsync(turno.Email, "Cancelación de turno", cuerpo);
+                Console.WriteLine("📧 Email enviado por cancelación");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "❌ Error al enviar el email");
+            }
         }
-        else
+
+        // ✅ Enviar WhatsApp
+        if (!string.IsNullOrEmpty(turno.Telefono))
         {
-            Console.WriteLine("error cancelando el turno");
+            try
+            {
+                var whatsappService = new WhatsAppService();
+                string sidPlantilla = "HXbd416fc5538dc0b087d72b1c6704d0d8"; // Reemplazalo por el real
+
+                var variables = new Dictionary<string, string>
+                {
+                    { "1", turno.NombrePaciente },
+                    { "2", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                    { "3", turno.HoraTurno }
+                };
+
+                whatsappService.EnviarMensajePlantilla(turno.Telefono, sidPlantilla, variables);
+                Console.WriteLine("📱 WhatsApp enviado por cancelación");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "❌ Error al enviar WhatsApp");
+            }
         }
+
+        DialogService.Close();
+        NotificationService.Notify(new NotificationMessage
+        {
+            Severity = NotificationSeverity.Info,
+            Summary = "Turno cancelado",
+            Detail = "Notificaciones enviadas correctamente"
+        });
+
+        await ReloadGrid();
     }
+    else
+    {
+        Console.WriteLine("❌ Error al actualizar la base de datos al cancelar el turno");
+    }
+}
+
 
     async Task OnMostrarCanceladosChange(bool value)
     {
