@@ -330,10 +330,19 @@
         @<RadzenStack Gap="1.5rem">
         <p>El turno tiene los siguientes archivos adjuntos: </p>
 
-        @foreach(Pdf archivo in listaArchivos) 
+        @foreach(Pdf archivo in listaArchivos)
         {
-             <a href="data:application/pdf;base64,@Convert.ToBase64String(archivo.Archivo)"
-               download="turno.pdf">
+            var extension = System.IO.Path.GetExtension(archivo.NombreArchivo).ToLower();
+            var mimeType = extension switch
+            {
+            ".pdf" => "application/pdf",
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            _ => "application/octet-stream"
+            };
+
+            <a href="data:@mimeType;base64,@Convert.ToBase64String(archivo.Archivo)"
+               download="@archivo.NombreArchivo">
                 @archivo.NombreArchivo
             </a>
         }

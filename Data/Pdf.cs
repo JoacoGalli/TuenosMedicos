@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Serilog;
+
 class Pdf
 {
     public int IdTurno {get; set;}
@@ -9,6 +12,7 @@ class Pdf
         //Con los datos de 'nuevoTurno' que use para hacer el insert, voy a preguntarle a turnos por el ID del nuevo turno creado
         string query = "SELECT * FROM `turnos` WHERE `nombrePaciente`= @nombrePaciente AND `apellidoPaciente` = @apellidoPaciente " +
                                 " AND `dni` = @dni AND `medico` = @medico AND `fechaTurno` = @fechaTurno AND `horaTurno` = @horaTurno AND `email` = @email ";
+
 
         var parametros = new Dictionary<string, object>
                     {
@@ -26,7 +30,7 @@ class Pdf
 
         //Una vez que tengo el ID del nuevo turno, voy a hacer un INSERT a pdfs por cada archivo encontrado
         int idNuevoTurnoCreado;
-        if (nuevoTurnoCreado != null)
+        if (nuevoTurnoCreado != null && nuevoTurnoCreado.Count > 0)
         {
             idNuevoTurnoCreado = nuevoTurnoCreado[0].Id;
 
@@ -47,6 +51,11 @@ class Pdf
             string query3 = "UPDATE `turnos` SET tienePDF = true WHERE idturno = @idTurno";
             var parametros3 = new Dictionary<string, object> { { "@idTurno", idNuevoTurnoCreado } };
             int turnoActualizado = Base.InsertDeleteOrUpdateABase(query3, parametros3);
+        }
+        else
+        {
+            Log.Error("No se encontró el turno recién insertado en la base.");
+            return;
         }
     }
 
