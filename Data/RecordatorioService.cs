@@ -38,10 +38,13 @@ public class RecordatorioService
                     try 
                     {
                         EmailService nuevoEmail = new EmailService();
-                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el dia: <b>" +
-                                                turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
-                                                + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
-                                                + " . <br><br> Muchas gracias.<br><br>Consultorio Médico.";
+                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el día: <b>" +
+                                             turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
+                                             + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
+                                             + " . <br><br> Muchas gracias.<br><br>Consultorio Médico."
+                                             + "<br><br><i>Este mail es enviado automáticamente, por favor no responder. "
+                                             + "Si desea comunicarse con el consultorio puede escribirnos por WhatsApp al siguiente número: <b>2227402738</b>.</i>";
+
 
                         await nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
                     }
