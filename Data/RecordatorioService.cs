@@ -59,11 +59,11 @@ public class RecordatorioService
                     {
                         var whatsappService = new WhatsAppService();
 
-                        var contentSid = "HX2ad613f31c9c724a9db1e1bacf269ccb"; // <- SID real de recordatorio_turno
+                        var contentSid = "HX6e9345d7c1b85585da4f348d65576e96"; // <- SID real de recordatorio_turno
 
                         var variables = new Dictionary<string, string>
                         {
-                            { "1", $"{turno.NombrePaciente} {turno.ApellidoPaciente}" },
+                            { "1", $"{turno.NombrePaciente}" },
                             { "2", turno.Medico },
                             { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
                             { "4", turno.HoraTurno },

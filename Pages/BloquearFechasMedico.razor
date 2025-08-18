@@ -259,11 +259,11 @@ TextProperty="Motivo" SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentS
                         {
                             var whatsappService = new WhatsAppService();
 
-                            var contentSid = "HX7549ac9862a49b48e05d8fb0b49dc596"; // <- SID real de la plantilla nueva
+                            var contentSid = "HXf51588a321e92eb7a7e437cc340a68a9"; // <- SID real de la plantilla nueva
 
                             var variables = new Dictionary<string, string>
                             {
-                                { "1", $"{turno.NombrePaciente} {turno.ApellidoPaciente}" },
+                                { "1", $"{turno.NombrePaciente}" },
                                 { "2", turno.Medico },
                                 { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
                                 { "4", turno.HoraTurno }

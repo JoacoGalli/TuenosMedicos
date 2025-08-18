@@ -121,13 +121,13 @@
                         {
                             <div style="display: flex; align-items: center; gap: 4px;">
                                 <RadzenTextBox @bind-Value="shift.MontoAbonado"
-                                               Name="montoAbonadoBox"
-                                               Style="width: 70px;" />
+                                Name="montoAbonadoBox"
+                                Style="width: 70px;" />
                                 <RadzenButton Icon="save"
-                                              ButtonStyle="ButtonStyle.Primary"
-                                              Size="ButtonSize.Small"
-                                              Style="padding: 4px 8px;"
-                                              Click="@(args => GuardarMontoDesdeUI(shift.MontoAbonado, shift.Id))" />
+                                ButtonStyle="ButtonStyle.Primary"
+                                Size="ButtonSize.Small"
+                                Style="padding: 4px 8px;"
+                                Click="@(args => GuardarMontoDesdeUI(shift.MontoAbonado, shift.Id))" />
                                 @if (montoGuardado.ContainsKey(shift.Id) && montoGuardado[shift.Id])
                                 {
                                     <span style="color: green;">✔️</span>
@@ -353,7 +353,7 @@
         var parametros = new Dictionary<string, object> { { "@idTurno", idAModificar } };
 
         int cambiarEstado = Base.InsertDeleteOrUpdateABase(query, parametros);
-                
+
     }
 
     void GuardarMontoDesdeUI(string monto, int idTurno)
@@ -491,6 +491,14 @@
                     <RadzenButton Text="Reenviar email de confirmacion" Icon="email" Click="() => ReenviarEmailConfirmacion(datosContacto)" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" />
                 </RadzenStack>
             }
+            <!-- Telefono y botón de reenvío -->
+            @if(!string.IsNullOrEmpty(datosContacto.Telefono))
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" AlignItems="AlignItems.Center">
+                <p style="font-size: 1rem; color: #555;"><b>Telefono:</b> @datosContacto.Telefono</p>
+                <RadzenButton Text="Reenviar mensaje de confirmacion" Icon="phone_android" Click="() => ReenviarMensajeConfirmacion(datosContacto)" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Medium" />
+            </RadzenStack>
+        }
 
 
             <!-- Número de afiliado -->
@@ -519,9 +527,6 @@
     );
     }
 
-
-
-
     async Task ReenviarEmailConfirmacion(Turno datosContacto)
     {
         //Envio el email de confirmacion
@@ -543,11 +548,13 @@
                 Log.Error(ex,"Ocurrio un error al reenviar el email de confirmacion");
 
             }
-           
-
             DialogService.Close(); // Cierra el diálogo
             NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Email enviado" });
         }
+    }
+
+    async Task ReenviarMensajeConfirmacion(Turno datosContacto)
+    {
         // Envío el mensaje por WhatsApp
         if (!string.IsNullOrEmpty(datosContacto.Telefono))
         {
@@ -555,16 +562,15 @@
             {
                 var whatsappService = new WhatsAppService();
 
-                var contentSid = "HXb651baccb481cd2886f1ce294b9e4743"; // <- SID real de confirmacion_turno
+                var contentSid = "HX78b3786a6e4e000b8b80e50a41075ef0"; // <- SID real de confirmacion_turno
 
                 var variables = new Dictionary<string, string>
-                {
+                    {
                     { "1", datosContacto.NombrePaciente },
-                    { "2", datosContacto.ApellidoPaciente },
+                    { "2", datosContacto.Medico },
                     { "3", datosContacto.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
-                    { "4", datosContacto.HoraTurno },
-                    { "5", datosContacto.Medico }
-                };
+                    { "4", datosContacto.HoraTurno }
+                    };
 
                 whatsappService.EnviarMensajePlantilla(datosContacto.Telefono, contentSid, variables);
 
@@ -573,6 +579,8 @@
             {
                 Log.Error(ex, "Ocurrió un error al enviar el mensaje por WhatsApp");
             }
+            DialogService.Close(); // Cierra el diálogo
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "OK", Detail = "Mensaje enviado" });
         }
     }
 

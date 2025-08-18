@@ -511,15 +511,14 @@
             {
                 var whatsappService = new WhatsAppService();
 
-                var contentSid = "HXb651baccb481cd2886f1ce294b9e4743"; // <- SID real de confirmacion_turno
+                var contentSid = "HX78b3786a6e4e000b8b80e50a41075ef0"; // <- SID real de confirmacion_turno
 
                 var variables = new Dictionary<string, string>
                 {
                 { "1", nuevoTurno.NombrePaciente },
-                { "2", nuevoTurno.ApellidoPaciente },
+                { "2", nuevoTurno.Medico },
                 { "3", nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
-                { "4", nuevoTurno.HoraTurno },
-                { "5", nuevoTurno.Medico }
+                { "4", nuevoTurno.HoraTurno }
                 };
 
                 whatsappService.EnviarMensajePlantilla(nuevoTurno.Telefono, contentSid, variables);
