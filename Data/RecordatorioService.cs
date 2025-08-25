@@ -62,7 +62,7 @@ public class RecordatorioService
                     {
                         var whatsappService = new WhatsAppService();
 
-                        var contentSid = "HX6e9345d7c1b85585da4f348d65576e96"; // <- SID real de recordatorio_turno
+                        var contentSid = "HXe3cc647667b63ef50ce05c4989e9e108"; // <- SID real de recordatorio_turno
 
                         var variables = new Dictionary<string, string>
                         {
