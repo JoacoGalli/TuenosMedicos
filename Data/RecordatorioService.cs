@@ -32,6 +32,8 @@ public class RecordatorioService
                 Log.Information("Se encontraron "+ turnosDeMañana.Count +" turnos. Enviando emails de notificaciòn.");
                 //Por cada 'turno' envio un email avisando que el turno es mañana:
                 string cancelarUrl = $"https://consultoriocairo.com.ar/cancelar-turno/{turno.Id}";
+                string confirmarUrl = $"https://consultoriocairo.com.ar/confirmar-turno/{turno.Id}";
+                //string confirmarUrl = $"https://localhost:44393/confirmar-turno/{turno.Id}";
 
                 if (!string.IsNullOrEmpty(turno.Email))
                 {
@@ -40,6 +42,7 @@ public class RecordatorioService
                         EmailService nuevoEmail = new EmailService();
                         string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el día: <b>" +
                                              turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
+                                             + "<br><br>✅ Si puede asistir, confirme su turno haciendo click aquí: <a href='" + confirmarUrl + "'>Confirmar turno</a>"
                                              + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
                                              + " . <br><br> Muchas gracias.<br><br>Consultorio Médico."
                                              + "<br><br><i>Este mail es enviado automáticamente, por favor no responder. "
@@ -70,7 +73,8 @@ public class RecordatorioService
                             { "2", turno.Medico },
                             { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
                             { "4", turno.HoraTurno },
-                            { "5", cancelarUrl }
+                            { "5", cancelarUrl },
+                            { "6", confirmarUrl }
                         };
 
                         whatsappService.EnviarMensajePlantilla(turno.Telefono, contentSid, variables);

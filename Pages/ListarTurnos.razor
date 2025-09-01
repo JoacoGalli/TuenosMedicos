@@ -103,13 +103,19 @@
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="70px" TextAlign="TextAlign.Center" SortOrder="SortOrder.Ascending">
+                <RadzenDataGridColumn Property="HoraTurno" Title="Hora" Width="100px" TextAlign="TextAlign.Center" SortOrder="SortOrder.Ascending">
                     <Template Context="shift">
                         🕒 @shift.HoraTurno
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="PacienteAsistio" Title="Asistió" Width="70px" TextAlign="TextAlign.Center">
+                <RadzenDataGridColumn Property="Confirmado" Title="Confirmado" Width="120px" TextAlign="TextAlign.Center">
+                    <Template Context="shift">
+                        @(shift.Confirmado ? "✅" : "❌")
+                    </Template>
+                </RadzenDataGridColumn>
+
+                <RadzenDataGridColumn Property="PacienteAsistio" Title="Asistió" Width="100px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         <RadzenCheckBox @bind-Value=shift.PacienteAsistio TValue="bool" Change="@(args => CambiarEstadoAsistencia(args, shift.Id))" Name="PacienteAsistioCheckBox" />
                     </Template>
@@ -354,6 +360,13 @@
             </RadzenStack>
         </RadzenStack>
     );
+    }
+
+    void ConfirmarTurno(int idTurno)
+    {
+        string query = "UPDATE turnos SET confirmado=true WHERE idTurno=@idTurno;";
+        var parametros = new Dictionary<string, object> { { "@idTurno", idTurno } };
+        Base.InsertDeleteOrUpdateABase(query, parametros);
     }
 
     void CambiarEstadoAsistencia(bool value, int idAModificar)

@@ -128,6 +128,7 @@ class Base
                                 TienePdf = reader.GetBoolean("tienePdf"),
                                 PacienteAsistio = reader.GetBoolean("pacienteAsistio"),
                                 MontoAbonado = reader.IsDBNull(reader.GetOrdinal("montoAbonado")) ? "" : reader.GetDecimal(reader.GetOrdinal("montoAbonado")).ToString(),
+                                Confirmado = reader.GetBoolean("confirmado"),
                             };
 
                             resultados.Add(turno);

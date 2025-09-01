@@ -29,6 +29,7 @@ class Turno
     public bool TienePdf { get; set; }
     public bool PacienteAsistio { get; set; }
     public string? MontoAbonado { get; set; }
+    public bool Confirmado { get; set; }
 
 
     #endregion
