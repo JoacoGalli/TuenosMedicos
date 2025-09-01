@@ -65,7 +65,7 @@ public class RecordatorioService
                     {
                         var whatsappService = new WhatsAppService();
 
-                        var contentSid = "HXe3cc647667b63ef50ce05c4989e9e108"; // <- SID real de recordatorio_turno
+                        var contentSid = "HX8d88cac70fb5faf621311d26e89d5277"; // <- SID real de recordatorio_turno
 
                         var variables = new Dictionary<string, string>
                         {
@@ -73,8 +73,8 @@ public class RecordatorioService
                             { "2", turno.Medico },
                             { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
                             { "4", turno.HoraTurno },
-                            { "5", cancelarUrl },
-                            { "6", confirmarUrl }
+                            { "6", confirmarUrl },
+                            { "5", cancelarUrl }
                         };
 
                         whatsappService.EnviarMensajePlantilla(turno.Telefono, contentSid, variables);
