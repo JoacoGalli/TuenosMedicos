@@ -74,6 +74,7 @@
         }
     }
 
+
     private async Task GenerarTurnosParaTodoElAño()
     {
         turnosVisuales.Clear();
@@ -81,41 +82,55 @@
 
         List<Medico> horariosMedicos = Base.SelectAMedicos("SELECT * FROM medicos");
 
-
         // 1. Obtener fechas bloqueadas del médico seleccionado
         string query = "SELECT * FROM medicos_fechas_bloqueadas WHERE nombreMedico = @nombreMedico";
         var parametros = new Dictionary<string, object> { { "@nombreMedico", medicoSeleccionado } };
 
         List<MedicoFechaBloqueada> fechasBloqueadasFull = Base.SelectAMedicosFechasBloqueadas(query, parametros);
-        List<DateTime> fechasBloqueadas = fechasBloqueadasFull
-            .Select(f => f.FechaBloqueada.Date) // Nos quedamos solo con la parte de la fecha
-            .ToList();
 
         DateTime hoy = DateTime.Today;
-        bool primerMesFor = true;       //Lo uso como bandera para completar el primer mes partiendo desde hoy y no desde el 1.
-        for (int i = 0; i < 12; i++)        //Recorremos los meses
+        bool primerMesFor = true; // bandera para que el primer mes arranque desde hoy
+        for (int i = 0; i < 12; i++) // recorremos los próximos 12 meses
         {
             var fechaBase = hoy.AddMonths(i);
             int año = fechaBase.Year;
             int mes = fechaBase.Month;
             int diasEnElMes = DateTime.DaysInMonth(año, mes);
 
-
-            int diaInicialFor = 1;          //Arranca desde el 1ro de cada mes a excepcion del mes actual.
+            int diaInicialFor = 1;
             if (primerMesFor)
             {
                 diaInicialFor = hoy.Day;
             }
 
-
-            for (int dia = diaInicialFor; dia <= diasEnElMes; dia++)        //Recorremos los dias de cada mes
+            for (int dia = diaInicialFor; dia <= diasEnElMes; dia++)
             {
-
                 var fecha = new DateTime(año, mes, dia);
 
-                // 2. Si la fecha está bloqueada, la salteamos
-                if (fechasBloqueadas.Contains(fecha.Date))
+                // 🔹 Verificar bloqueos de ese día (obtenemos todos los registros de bloqueo para esa fecha)
+                var bloqueosDelDia = fechasBloqueadasFull
+                    .Where(f => f.FechaBloqueada.Date == fecha.Date)
+                    .ToList();
+
+                // Si existe un bloqueo "todo el día" (TodoElDia es bool) saltamos el día completo
+                bool diaBloqueadoTotal = bloqueosDelDia.Any(f => f.TodoElDia);
+                if (diaBloqueadoTotal)
+                {
                     continue;
+                }
+
+                // Si no está bloqueado todo el día, recopilamos las franjas horarias válidas (parseadas)
+                var franjasBloqueadas = new List<(TimeSpan Inicio, TimeSpan Fin)>();
+                foreach (var fb in bloqueosDelDia.Where(f => !f.TodoElDia))
+                {
+                    if (!string.IsNullOrWhiteSpace(fb.HoraInicioBloqueo) &&
+                        !string.IsNullOrWhiteSpace(fb.HoraFinBloqueo) &&
+                        TimeSpan.TryParse(fb.HoraInicioBloqueo, out var inicio) &&
+                        TimeSpan.TryParse(fb.HoraFinBloqueo, out var fin))
+                    {
+                        franjasBloqueadas.Add((inicio, fin));
+                    }
+                }
 
                 var turno = new Turno
                     {
@@ -139,7 +154,6 @@
                 {
                     if (med.NombreMedico == medicoSeleccionado && med.diaTrabajo == nombreDiaEnEspañol)
                     {
-
                         TimeSpan horaInicio = TimeSpan.Parse(med.horaInicioTrabajo);
                         TimeSpan horaFin = TimeSpan.Parse(med.horaFinTrabajo);
 
@@ -150,12 +164,20 @@
                             {
                                 var fechaHora = new DateTime(fecha.Year, fecha.Month, fecha.Day, hora.Hour, hora.Minute, 0);
 
+                                // ⛔ Saltar si este horario cae dentro de alguna franja bloqueada del día
+                                bool dentroDeFranjaBloqueada = franjasBloqueadas
+                                    .Any(f => fechaHora.TimeOfDay >= f.Inicio && fechaHora.TimeOfDay <= f.Fin);
+
+                                if (dentroDeFranjaBloqueada)
+                                    continue;
+
                                 bool esSobreTurno = false;
                                 string textoAcolocar = fechaHora.ToString("HH:mm");
-                                if (hora.TimeOfDay < horaInicio || hora.TimeOfDay > horaFin )
+
+                                if (hora.TimeOfDay < horaInicio || hora.TimeOfDay > horaFin)
                                 {
                                     esSobreTurno = true;
-                                    textoAcolocar = textoAcolocar + " - Sobreturno";
+                                    textoAcolocar += " - Sobreturno";
                                 }
 
                                 listaTurnos.Add(new TurnoVisual
@@ -179,7 +201,7 @@
             : listaTurnos.Where(t => !t.SobreTurno).ToList();
 
         // Buscar el próximo turno no sobreturno
-        TurnoVisual proxTurno = turnosVisuales.FirstOrDefault(t => t.SobreTurno == false);
+        TurnoVisual proxTurno = turnosVisuales.FirstOrDefault(t => !t.SobreTurno);
 
         if (proxTurno == null)
         {
@@ -193,7 +215,6 @@
         string horalink = proxTurno.FechaHora.ToString("HH:mm");
         rutaConProximoTurno = $"/reservarturno/{proxTurno.Medico}/{fechalink}/{horalink}";
     }
-
 
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
     {
