@@ -1,0 +1,104 @@
+﻿@page "/confirmar-turno/{id:int}"
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject DialogService DialogService
+@using System.Security.Claims
+@using Serilog
+
+<RadzenCard Style="max-width: 500px; margin: auto; padding: 20px; text-align: center;">
+
+    <h3>Confirmar turno</h3>
+
+    <br />
+
+    @if (_autenticado)
+    {
+        @if (turnoEncontrado && _turno.Email == userEmail)
+        {
+            <RadzenText Style="font-size:1.5rem;">
+                <p>
+                    ¿Desea confirmar su turno programado para el día
+                    <b>@_turno.FechaTurno?.ToString("dd-MM-yyyy")</b> a las
+                    <b>@_turno.HoraTurno</b> con <b>@_turno.Medico</b>?
+                </p>
+            </RadzenText>
+            <br />
+            <RadzenButton Click="ConfirmarShift" Text="Sí, Confirmar" Style="width: 100%;" ButtonStyle=ButtonStyle.Success Icon="check" />
+        }
+        else
+        {
+            <p style="font-size:1.5rem;" class="text-danger">El turno no fue encontrado.</p>
+        }
+    }
+    else
+    {
+        <p>Redirigiendo al login...</p>
+    }
+</RadzenCard>
+
+
+@code {
+    [Parameter] public int id { get; set; }
+    private bool _autenticado = false;
+    private string userEmail = "";
+    private Turno? _turno = new Turno();
+    private bool turnoEncontrado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity is not null && user.Identity.IsAuthenticated)
+        {
+            userEmail = user.FindFirst(c => c.Type == ClaimTypes.Email)?.Value ?? "Email no encontrado";
+        }
+
+        if (authState.User.Identity is not { IsAuthenticated: true })
+        {
+            string returnUrl = $"/confirmar-turno/{id}";
+            Navigation.NavigateTo($"/Identity/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}", true);
+        }
+        else
+        {
+            _autenticado = true;
+            string query = "SELECT * FROM `turnos` WHERE idturno=@idturno LIMIT 1";
+            var parametros = new Dictionary<string, object> { { "@idturno", id } };
+
+            List<Turno>? turnosEncontrados = Base.SelectATurnos(query, parametros);
+
+            foreach (Turno turno in turnosEncontrados)
+            {
+                _turno = turno;
+                turnoEncontrado = true;
+            }
+        }
+    }
+
+    private async Task ConfirmarShift()
+    {
+        string query2 = "UPDATE `turnos` SET confirmado=true WHERE idturno=@idturno";
+        var parametros2 = new Dictionary<string, object> { { "@idturno", id } };
+        int confirmar = Base.InsertDeleteOrUpdateABase(query2, parametros2);
+
+        if (confirmar > 0)
+        {
+            Log.Information("Turno confirmado");
+
+            var result = await DialogService.OpenAsync("Turno confirmado", ds =>
+    @<RadzenCard Style="background: #fff; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
+        <RadzenIcon Icon="check_circle" Size="50px" Style="color: #28a745; margin-bottom: 10px;" />
+        <RadzenHeading Size="H4" Style="color: #333;">¡Turno confirmado!</RadzenHeading>
+        <RadzenText>
+            <p>Tu turno ha sido confirmado correctamente.</p>
+        </RadzenText>
+        <RadzenButton Text="Cerrar" Icon="close" Click=@RedirectToHome ButtonStyle="ButtonStyle.Primary" Style="width: 100px;" />
+    </RadzenCard>);
+        }
+    }
+
+    void RedirectToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
