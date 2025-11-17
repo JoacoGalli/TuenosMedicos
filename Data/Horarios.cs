@@ -129,7 +129,8 @@ namespace TurnosMedicos.Data
         public static List<MedicoFechaBloqueada> FechasBloqueadasPorAdmin(string med)
         {
             //Verifico que fechas fueron bloqueadas por el admin
-            string query2 = "SELECT * FROM `medicos_fechas_bloqueadas` WHERE `nombreMedico`= @nombreMedico AND fechaBloqueada >= @hoy AND todoElDia=true ;";
+            string query2 = "SELECT * FROM medicos_fechas_bloqueadas WHERE nombreMedico = @nombreMedico AND fechaBloqueada >= @hoy; ";
+
             var parametros2 = new Dictionary<string, object> { { "@nombreMedico", med }, {"@hoy", DateTime.Today.ToString("yyyy-MM-dd") } };
 
             List<MedicoFechaBloqueada> fechasBloq = Base.SelectAMedicosFechasBloqueadas(query2, parametros2);
