@@ -40,13 +40,24 @@ public class RecordatorioService
                     try 
                     {
                         EmailService nuevoEmail = new EmailService();
-                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>Le enviamos este email para recordarle su turno con <b>" + turno.Medico + "</b> el día: <b>" +
-                                             turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + turno.HoraTurno
-                                             + "<br><br>✅ Si puede asistir, confirme su turno haciendo click aquí: <a href='" + confirmarUrl + "'>Confirmar turno</a>"
-                                             + "</b> hs.<br><br>Si no es posible asistir, puedes cancelarlo haciendo click aquí: " + cancelarUrl
-                                             + " . <br><br> Muchas gracias.<br><br>Consultorio Médico."
-                                             + "<br><br><i>Este mail es enviado automáticamente, por favor no responder. "
-                                             + "Si desea comunicarse con el consultorio puede escribirnos por WhatsApp al siguiente número: <b>2227402738</b>.</i>";
+                        string cuerpoEmail = "<b>Estimado/a:</b><br><br>" +
+                                            "Le enviamos este correo para recordarle su turno con <b>" + turno.Medico + "</b> el día <b>" +
+                                            turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las <b>" + turno.HoraTurno + " hs</b>." +
+
+                                            "<br><br><b>Confirmación:</b> Puede confirmar su asistencia haciendo clic aquí: " +
+                                            "<a href='" + confirmarUrl + "'>Confirmar turno</a>." +
+
+                                            "<br><br><b>Cancelación:</b> Si no puede asistir, puede cancelar su turno haciendo clic aquí: " +
+                                            "<a href='" + cancelarUrl + "'>Cancelar turno</a>." +
+
+                                            "<br><br><b>Importante:</b> En caso de no cancelar con anticipación o no asistir a su cita sin previo aviso, " +
+                                            "se cobrará la consulta como si hubiera asistido, ya que el médico reserva ese horario exclusivamente para usted." +
+
+                                            "<br><br>Muchas gracias.<br><br><b>Consultorio Cairo</b>." +
+
+                                            "<br><br><i>Este correo es enviado automáticamente. Por favor, no responder. " +
+                                            "Si desea comunicarse con el consultorio, puede escribirnos por WhatsApp al número <b>2227402738</b>.</i>";
+
 
 
                         await nuevoEmail.EnviarCorreoAsync(turno.Email, "Consultorio Médico - Recordatorio de turno", cuerpoEmail);
@@ -65,7 +76,7 @@ public class RecordatorioService
                     {
                         var whatsappService = new WhatsAppService();
 
-                        var contentSid = "HX44103f0077ca9f42616b25721ac4c77b"; // <- SID real de recordatorio_turno
+                        var contentSid = "HX103ee2c6b7d47fdea64f2e284d1a7b20"; // <- SID real de recordatorio_turno
 
                         var variables = new Dictionary<string, string>
                         {
