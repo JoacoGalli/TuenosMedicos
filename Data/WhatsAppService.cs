@@ -6,15 +6,28 @@ using System.Text.Json;
 
 public class WhatsAppService
 {
-    private string _accountSid => GetConfiguration()["Twilio:AccountSID"];
-    private string _authToken => GetConfiguration()["Twilio:AuthToken"];
-    private string _fromNumber => "whatsapp:+12702951192"; // Numero alquilado en Twilio
+    private readonly string _accountSid;
+    private readonly string _authToken;
+    private readonly string _fromNumber = "whatsapp:+12702951192";
+
+    public WhatsAppService()
+    {
+        var config = GetConfiguration();
+        _accountSid = config["Twilio:AccountSID"];
+        _authToken = config["Twilio:AuthToken"];
+    }
+
+    public WhatsAppService(IConfiguration configuration)
+    {
+        _accountSid = configuration["Twilio:AccountSID"];
+        _authToken = configuration["Twilio:AuthToken"];
+    }
 
     private static IConfiguration GetConfiguration()
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .AddJsonFile("appsettings.json", optional: false)
             .Build();
 
         return builder;
@@ -27,7 +40,7 @@ public class WhatsAppService
     {
         TwilioClient.Init(_accountSid, _authToken);
 
-        var message = MessageResource.Create(
+        MessageResource.Create(
             from: new PhoneNumber(_fromNumber),
             to: new PhoneNumber($"whatsapp:{destinatario}"),
             contentSid: contentSid,
@@ -37,11 +50,12 @@ public class WhatsAppService
 
     public void EnviarMensajeTexto(string telefono, string mensaje)
     {
+        TwilioClient.Init(_accountSid, _authToken);
+
         MessageResource.Create(
-            from: new Twilio.Types.PhoneNumber("whatsapp:+12702951192"),
-            to: new Twilio.Types.PhoneNumber($"whatsapp:{telefono}"),
+            from: new PhoneNumber(_fromNumber),
+            to: new PhoneNumber($"whatsapp:{telefono}"),
             body: mensaje
         );
     }
-
 }

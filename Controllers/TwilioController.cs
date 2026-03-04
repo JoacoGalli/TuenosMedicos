@@ -8,17 +8,27 @@ public class TwilioController : ControllerBase
     [HttpPost("incoming-whatsapp")]
     public IActionResult IncomingWhatsApp()
     {
-        var from = Request.Form["From"].ToString();
-        var body = Request.Form["Body"].ToString();
-        var profileName = Request.Form["ProfileName"].ToString();
+        try
+        {
+            Log.Information("Webhook de Twilio llamado");
 
-        var telefonoPaciente = from.Replace("whatsapp:", "");
+            var from = Request.Form["From"].ToString();
+            var body = Request.Form["Body"].ToString();
+            var profileName = Request.Form["ProfileName"].FirstOrDefault() ?? "Paciente";
 
-        Log.Information($"WhatsApp recibido de {telefonoPaciente}: {body}");
+            var telefonoPaciente = from.Replace("whatsapp:", "");
 
-        ForwardearMensajeAlMedico(telefonoPaciente, profileName, body);
+            Log.Information($"WhatsApp recibido de {telefonoPaciente}: {body}");
 
-        return Ok();
+            ForwardearMensajeAlMedico(telefonoPaciente, profileName, body);
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error en webhook Twilio");
+            return StatusCode(500);
+        }
     }
 
     private void ForwardearMensajeAlMedico(string telefonoPaciente, string nombre, string mensaje)
@@ -27,7 +37,7 @@ public class TwilioController : ControllerBase
         {
             var whatsappService = new WhatsAppService();
 
-            string telefonoMedico = "+5492227522637"; // número del médico
+            string telefonoMedico = "+5492227402738";
 
             string mensajeForward =
                 $"📩 Mensaje de paciente\n\n" +
