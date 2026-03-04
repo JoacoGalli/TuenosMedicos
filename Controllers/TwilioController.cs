@@ -39,13 +39,16 @@ public class TwilioController : ControllerBase
 
             string telefonoMedico = "+5492227402738";
 
-            string mensajeForward =
-                $"📩 Mensaje de paciente\n\n" +
-                $"Nombre: {nombre}\n" +
-                $"Tel: {telefonoPaciente}\n\n" +
-                $"Mensaje:\n{mensaje}";
+            var contentSid = "HX418bbdb5d3fbc1d4f14c0f8a296560c1";
 
-            whatsappService.EnviarMensajeTexto(telefonoMedico, mensajeForward);
+            var variables = new Dictionary<string, string>
+        {
+            { "1", nombre },
+            { "2", telefonoPaciente },
+            { "3", mensaje }
+        };
+
+            whatsappService.EnviarMensajePlantilla(telefonoMedico, contentSid, variables);
         }
         catch (Exception ex)
         {
