@@ -34,4 +34,14 @@ public class WhatsAppService
             contentVariables: JsonSerializer.Serialize(variables)
         );
     }
+
+    public void EnviarMensajeTexto(string telefono, string mensaje)
+    {
+        MessageResource.Create(
+            from: new Twilio.Types.PhoneNumber("whatsapp:+12702951192"),
+            to: new Twilio.Types.PhoneNumber($"whatsapp:{telefono}"),
+            body: mensaje
+        );
+    }
+
 }
