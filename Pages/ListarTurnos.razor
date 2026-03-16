@@ -109,9 +109,34 @@
                     </Template>
                 </RadzenDataGridColumn>
 
-                <RadzenDataGridColumn Property="Confirmado" Title="Confirmado" Width="120px" TextAlign="TextAlign.Center">
+                <!-- Confirmación por link -->
+                <RadzenDataGridColumn Property="Confirmado" Title="Confirmó por link" Width="140px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
-                        @(shift.Confirmado ? "✅" : "❌")
+                        @(shift.Confirmado ? "🔗 ✔" : "—")
+                    </Template>
+                </RadzenDataGridColumn>
+
+                <!-- Confirmación manual -->
+                <RadzenDataGridColumn Title="Confirmación manual" Width="160px" TextAlign="TextAlign.Center">
+                    <Template Context="shift">
+                        <RadzenCheckBox TValue="bool"
+                                        Value="shift.Confirmado"
+                                        Disabled="shift.Confirmado"
+                                        Change="@(args => ConfirmarManual(shift.Id))" />
+                    </Template>
+                </RadzenDataGridColumn>
+
+                <!-- Estado final -->
+                <RadzenDataGridColumn Title="Estado confirmación" Width="170px" TextAlign="TextAlign.Center">
+                    <Template Context="shift">
+                        @if (shift.Confirmado)
+                        {
+                            <span style="color:green;">✔ Confirmado</span>
+                        }
+                        else
+                        {
+                            <span style="color:red;">✖ Pendiente</span>
+                        }
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -322,6 +347,29 @@
         );
     }
 
+    void ConfirmarManual(int idTurno)
+    {
+        string query = "UPDATE turnos SET confirmado=true WHERE idTurno=@idTurno;";
+
+        var parametros = new Dictionary<string, object>
+    {
+        { "@idTurno", idTurno }
+    };
+
+        int resultado = Base.InsertDeleteOrUpdateABase(query, parametros);
+
+        if (resultado > 0)
+        {
+            ReloadGrid();
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "OK",
+                Detail = "Turno confirmado manualmente"
+            });
+        }
+    }
+
     async Task VerPDF(int idTurno)
     {
         string query = "SELECT * FROM `pdfs` WHERE idTurno = @idTurno";
@@ -448,37 +496,34 @@
     async Task ReloadGrid()
     {
         string query = "SELECT * FROM turnos WHERE cancelado=@cancelado";
+
         var parametros = new Dictionary<string, object>
-                    {
-                        { "@cancelado", mostrarCancelados }
-                    };
+    {
+        { "@cancelado", mostrarCancelados }
+    };
 
-
-        if (!string.IsNullOrEmpty(medicoSeleccionado) &&  medicoSeleccionado!="Todos" )
+        if (!string.IsNullOrEmpty(medicoSeleccionado) && medicoSeleccionado != "Todos")
         {
-
-            query = query + " AND medico=@medico";
-            parametros = new Dictionary<string, object>
-                        {
-                        { "@cancelado", mostrarCancelados },
-                         { "@medico", medicoSeleccionado }
-                        };
-
+            query += " AND medico=@medico";
+            parametros.Add("@medico", medicoSeleccionado);
         }
+
+        DateTime hoy = DateTime.Today;
 
         if (mostrarExpirados)
         {
-            query = query + $" AND fechaTurno < '{DateTime.Today.ToString("yyyy-MM-dd")}'";
+            query += " AND fechaTurno < @fecha";
         }
         else
         {
-            query = query + $" AND fechaTurno >= '{DateTime.Today.ToString("yyyy-MM-dd")}'";        
+            query += " AND fechaTurno >= @fecha";
         }
 
-        turnos = Base.SelectATurnos(query,parametros);
+        parametros.Add("@fecha", hoy);
+
+        turnos = Base.SelectATurnos(query, parametros);
 
         await turnosGrid.Reload();
-
     }
 
     async Task VerNotas(string nota)
