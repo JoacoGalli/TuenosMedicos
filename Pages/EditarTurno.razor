@@ -282,23 +282,74 @@
     }
 
     async Task MostrarConfirmacion()
+async Task MostrarConfirmacion()
+{
+    if (nuevoTurno.NombrePaciente != "" &&
+        nuevoTurno.ApellidoPaciente != "" &&
+        nuevoTurno.Medico != "" &&
+        nuevoTurno.Cobertura != null &&
+        nuevoTurno.FechaTurno != DateTime.MinValue &&
+        nuevoTurno.HoraTurno != "")
     {
 
-        if (nuevoTurno.NombrePaciente!="" && nuevoTurno.ApellidoPaciente !="" && nuevoTurno.Medico!="" && nuevoTurno.Cobertura!=null && nuevoTurno.FechaTurno!=DateTime.MinValue && nuevoTurno.HoraTurno!="")
-        {
-            string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";          
-            
-            string query = "UPDATE `turnos` SET `cobertura` = @cobertura, `medico` = @medico, `fechaTurno` = @fechaTurno, " +
-           "`horaTurno` = @horaTurno, `telefono` = @telefono, `email` = @email, `domicilio` = @domicilio, " +
-           "`notas` = @notas, `notasInternas` = @notasInternas,`numeroAfiliado` = @numeroAfiliado, `categoriaAfiliado` = @categoriaAfiliado  WHERE `idturno` = @idturno;";
+        string fechaMostrar = nuevoTurno.FechaTurno?.ToString("yyyy-MM-dd") ?? "";
 
-            var parametros = new Dictionary<string, object>
-            {
+        // 1️⃣ Verificar conflicto de horario
+        string queryCheck = @"SELECT * FROM turnos 
+                              WHERE medico=@medico 
+                              AND fechaTurno=@fechaTurno 
+                              AND horaTurno=@horaTurno 
+                              AND cancelado=false 
+                              AND idturno<>@idturno";
+
+        var parametrosCheck = new Dictionary<string, object>
+        {
+            { "@medico", nuevoTurno.Medico },
+            { "@fechaTurno", fechaMostrar },
+            { "@horaTurno", nuevoTurno.HoraTurno },
+            { "@idturno", nuevoTurno.Id }
+        };
+
+        List<Turno> conflictos = Base.SelectATurnos(queryCheck, parametrosCheck);
+
+        if (conflictos.Count > 0)
+        {
+            await DialogService.OpenAsync("Horario ocupado", ds =>
+            @<RadzenStack Gap="1.5rem">
+                <p><b>El horario seleccionado ya está reservado.</b></p>
+                <p>Selecciona otro horario.</p>
+
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                    <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
+                </RadzenStack>
+            </RadzenStack>
+            );
+
+            return;
+        }
+
+        // 2️⃣ Si no hay conflicto, actualizar turno
+        string queryUpdate = @"UPDATE turnos SET
+                cobertura = @cobertura,
+                medico = @medico,
+                fechaTurno = @fechaTurno,
+                horaTurno = @horaTurno,
+                telefono = @telefono,
+                email = @email,
+                domicilio = @domicilio,
+                notas = @notas,
+                notasInternas = @notasInternas,
+                numeroAfiliado = @numeroAfiliado,
+                categoriaAfiliado = @categoriaAfiliado
+                WHERE idturno = @idturno";
+
+        var parametros = new Dictionary<string, object>
+        {
             { "@cobertura", nuevoTurno.Cobertura },
             { "@numeroAfiliado", nuevoTurno.NumeroAfiliado },
             { "@categoriaAfiliado", nuevoTurno.CategoriaAfiliado },
             { "@medico", nuevoTurno.Medico },
-            { "@fechaTurno", fechaMostrar }, 
+            { "@fechaTurno", fechaMostrar },
             { "@horaTurno", nuevoTurno.HoraTurno },
             { "@telefono", nuevoTurno.Telefono },
             { "@email", nuevoTurno.Email },
@@ -306,70 +357,57 @@
             { "@notas", nuevoTurno.Notas },
             { "@notasInternas", nuevoTurno.NotasInternas },
             { "@idturno", nuevoTurno.Id }
-            };
+        };
 
+        int intentoRegistrarTurno = Base.InsertDeleteOrUpdateABase(queryUpdate, parametros);
 
-            int intentoRegistrarTurno = Base.InsertDeleteOrUpdateABase(query, parametros);
-
-            if (intentoRegistrarTurno > 0)
-            {
-                var result = await DialogService.OpenAsync("Confirmacion", ds =>
+        if (intentoRegistrarTurno > 0)
+        {
+            await DialogService.OpenAsync("Confirmación", ds =>
             @<RadzenStack Gap="1.5rem">
-                <p><b>¡El turno ha sido modificado!</b></p>
-                <p>Aquí están los datos del nuevo turno:</p>
+
+                <p><b>¡El turno fue reprogramado correctamente!</b></p>
+
                 <p><b>Paciente:</b> @nuevoTurno.NombrePaciente @nuevoTurno.ApellidoPaciente</p>
-                <p><b>Medico:</b> @nuevoTurno.Medico</p>
-                <p><b>Fecha:</b> @fechaMostrar</p>
+                <p><b>Médico:</b> @nuevoTurno.Medico</p>
+                <p><b>Fecha:</b> @nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy")</p>
                 <p><b>Hora:</b> @nuevoTurno.HoraTurno</p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
-                    <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenButton Text="Cerrar" Click=@RedirectToHome />
-                    </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal"
+                             JustifyContent="JustifyContent.Center">
+
+                    <RadzenButton Text="Volver al listado"
+                                  Click="@(()=> Navigation.NavigateTo("/listarturnos"))" />
+
                 </RadzenStack>
-            </RadzenStack>);
-            
-            }
-            else
-            {
-            var resultadoNegativo = await DialogService.OpenAsync("Ha habido un error", ds =>
-            @<RadzenStack Gap="1.5rem">
-                <p><b>El turno no se ha modificado.</b></p>
-                <p>Intentalo nuevamente.</p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
-                    <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
-                    </RadzenStack>
-                </RadzenStack>
+
             </RadzenStack>
-        );
-        }
+            );
         }
         else
         {
-            var err = await DialogService.OpenAsync("Ha habido un error", ds =>
+            await DialogService.OpenAsync("Error", ds =>
             @<RadzenStack Gap="1.5rem">
-                <p><b>Verifica que todos los campos esten completos.</b></p>
-                <p>Intentalo nuevamente.</p>
-                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.End" JustifyContent="JustifyContent.Center">
-                    <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
-                    </RadzenStack>
-                </RadzenStack>
+                <p><b>No se pudo actualizar el turno.</b></p>
+
+                <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
             </RadzenStack>
-                );
+            );
         }
-
-        
-        
-
-
-
-
-
-
-
-        
     }
+    else
+    {
+        await DialogService.OpenAsync("Error", ds =>
+        @<RadzenStack Gap="1.5rem">
+
+            <p><b>Debes completar todos los campos.</b></p>
+
+            <RadzenButton Text="Cerrar" Click="() => ds.Close(true)" />
+
+        </RadzenStack>
+        );
+    }
+}
     
     void RedirectToHome()
     {
@@ -379,9 +417,6 @@
 
     void Submit(Turno arg)
     {
-       
-
-
     }
 
     void Cancelar()
