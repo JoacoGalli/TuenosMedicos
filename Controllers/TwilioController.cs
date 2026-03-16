@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Text.RegularExpressions;
 
 [ApiController]
 [Route("twilio")]
@@ -13,13 +14,20 @@ public class TwilioController : ControllerBase
             Log.Information("Webhook de Twilio llamado");
 
             var from = Request.Form["From"].ToString();
-            var body = Request.Form["Body"].ToString();
+            var body = Request.Form["Body"].ToString().ToLowerInvariant();
             var profileName = Request.Form["ProfileName"].FirstOrDefault() ?? "Paciente";
 
             var telefonoPaciente = from.Replace("whatsapp:", "");
 
             Log.Information($"WhatsApp recibido de {telefonoPaciente}: {body}");
 
+            // -------- Detectar confirmación --------
+            if (ContainsConfirmKeyword(body))
+            {
+                ConfirmarTurnoAutomaticamente(telefonoPaciente);
+            }
+
+            // -------- Forward al médico (sigue funcionando igual) --------
             ForwardearMensajeAlMedico(telefonoPaciente, profileName, body);
 
             return Ok();
@@ -29,6 +37,87 @@ public class TwilioController : ControllerBase
             Log.Error(ex, "Error en webhook Twilio");
             return StatusCode(500);
         }
+    }
+
+    private void ConfirmarTurnoAutomaticamente(string telefono)
+    {
+        try
+        {
+            string query = @"
+            SELECT * FROM turnos
+            WHERE telefono=@telefono
+            AND cancelado=false
+            AND confirmado=false
+            AND fechaTurno >= CURDATE()
+            ORDER BY fechaTurno ASC
+            LIMIT 1";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@telefono", telefono }
+            };
+
+            var turnos = Base.SelectATurnos(query, parametros);
+
+            if (turnos == null || turnos.Count == 0)
+            {
+                Log.Information("No hay turnos pendientes para confirmar para {Telefono}", telefono);
+
+                var w = new WhatsAppService();
+                w.EnviarMensajeTexto(telefono,
+                    "No encontramos un turno pendiente asociado a este número.");
+
+                return;
+            }
+
+            var turno = turnos.First();
+
+            string update = "UPDATE turnos SET confirmado=true WHERE idTurno=@idTurno";
+
+            var p2 = new Dictionary<string, object>
+            {
+                { "@idTurno", turno.Id }
+            };
+
+            int updated = Base.InsertDeleteOrUpdateABase(update, p2);
+
+            if (updated > 0)
+            {
+                Log.Information("Turno {Id} confirmado automáticamente por WhatsApp.", turno.Id);
+
+                var w = new WhatsAppService();
+                w.EnviarMensajeTexto(telefono,
+                    $"Perfecto 👍 Tu turno del {turno.FechaTurno:dd/MM/yyyy} a las {turno.HoraTurno} quedó confirmado.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error confirmando turno automáticamente");
+        }
+    }
+
+    private bool ContainsConfirmKeyword(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return false;
+
+        var palabras = new[]
+        {
+            "confirmo",
+            "confirmar",
+            "confirmado",
+            "confirmación",
+            "confirmar turno"
+        };
+
+        foreach (var p in palabras)
+        {
+            if (Regex.IsMatch(text,
+                $@"\b{Regex.Escape(p)}\b",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+                return true;
+        }
+
+        return false;
     }
 
     private void ForwardearMensajeAlMedico(string telefonoPaciente, string nombre, string mensaje)
@@ -42,11 +131,11 @@ public class TwilioController : ControllerBase
             var contentSid = "HX418bbdb5d3fbc1d4f14c0f8a296560c1";
 
             var variables = new Dictionary<string, string>
-        {
-            { "1", nombre },
-            { "2", telefonoPaciente },
-            { "3", mensaje }
-        };
+            {
+                { "1", nombre },
+                { "2", telefonoPaciente },
+                { "3", mensaje }
+            };
 
             whatsappService.EnviarMensajePlantilla(telefonoMedico, contentSid, variables);
         }
