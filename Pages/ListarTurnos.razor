@@ -120,9 +120,8 @@
                 <RadzenDataGridColumn Title="Confirmación manual" Width="160px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         <RadzenCheckBox TValue="bool"
-                                        Value="shift.Confirmado"
-                                        Disabled="shift.Confirmado"
-                                        Change="@(args => ConfirmarManual(shift.Id))" />
+                                        @bind-Value="shift.Confirmado"
+                                        Change="@(args => CambiarConfirmacionManual(args, shift.Id))" />
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -347,27 +346,17 @@
         );
     }
 
-    void ConfirmarManual(int idTurno)
+    void CambiarConfirmacionManual(bool value, int idTurno)
     {
-        string query = "UPDATE turnos SET confirmado=true WHERE idTurno=@idTurno;";
+        string query = "UPDATE turnos SET confirmado=@confirmado WHERE idTurno=@idTurno";
 
         var parametros = new Dictionary<string, object>
-    {
-        { "@idTurno", idTurno }
-    };
-
-        int resultado = Base.InsertDeleteOrUpdateABase(query, parametros);
-
-        if (resultado > 0)
         {
-            ReloadGrid();
-            NotificationService.Notify(new NotificationMessage
-            {
-                Severity = NotificationSeverity.Success,
-                Summary = "OK",
-                Detail = "Turno confirmado manualmente"
-            });
-        }
+        { "@confirmado", value },
+        { "@idTurno", idTurno }
+        };
+
+        Base.InsertDeleteOrUpdateABase(query, parametros);
     }
 
     async Task VerPDF(int idTurno)
