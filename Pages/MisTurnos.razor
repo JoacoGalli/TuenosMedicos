@@ -107,7 +107,23 @@
                     <Template Context="shift">
                         @if (!shift.Cancelado)
                         {
-                            <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => DeleteRow(shift)" />
+                            <div style="display: flex; gap: 5px;">
+        
+                                <!-- ✅ Confirmar -->
+                                @if (!shift.Confirmado)
+                                {
+                                    <RadzenButton Icon="check"
+                                                    ButtonStyle="ButtonStyle.Success"
+                                                    Size="ButtonSize.Small"
+                                                    Click="() => ConfirmarTurnoUI(shift)" />
+                                }
+
+                                <!-- ❌ Cancelar -->
+                                <RadzenButton Icon="delete"
+                                                ButtonStyle="ButtonStyle.Danger"
+                                                Size="ButtonSize.Small"
+                                                Click="() => DeleteRow(shift)" />
+                            </div>
                         }
                         else
                         {
@@ -213,6 +229,80 @@
         </RadzenStack>
     </RadzenStack>
     );
+    }
+
+    async Task ConfirmarTurnoUI(Turno turno)
+    {
+        string query = "UPDATE turnos SET confirmado=true WHERE idTurno=@idTurno";
+
+        var parametros = new Dictionary<string, object>
+        {
+            { "@idTurno", turno.Id }
+        };
+
+        int result = Base.InsertDeleteOrUpdateABase(query, parametros);
+
+        if (result > 0)
+        {
+            // 🔁 actualizar estado en memoria (clave)
+            turno.ConfirmadoManual = true;
+
+            // 📧 email
+            if (!string.IsNullOrEmpty(turno.Email))
+            {
+                try
+                {
+                    EmailService emailService = new EmailService();
+
+                    string cuerpo = $"Su turno del {turno.FechaTurno:dd/MM/yyyy} a las {turno.HoraTurno} ha sido confirmado.";
+
+                    await emailService.EnviarCorreoAsync(
+                        turno.Email,
+                        "Confirmación de turno",
+                        cuerpo
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error enviando email confirmación");
+                }
+            }
+
+            // 📱 WhatsApp (opcional pero recomendable)
+            if (!string.IsNullOrEmpty(turno.Telefono))
+            {
+                try
+                {
+                    var whatsappService = new WhatsAppService();
+
+                    var contentSid = "HXd4aab42177e1533334d10f9ca240170c"; // <- SID real de confirmacion_turno
+
+                    var variables = new Dictionary<string, string>
+                        {
+                        { "1", turno.NombrePaciente },
+                        { "2", turno.Medico },
+                        { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                        { "4", turno.HoraTurno }
+                        };
+
+                    whatsappService.EnviarMensajePlantilla(turno.Telefono, contentSid, variables);
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error enviando WhatsApp confirmación");
+                }
+            }
+
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Turno confirmado",
+                Detail = "Confirmación realizada correctamente"
+            });
+
+            StateHasChanged(); // 👈 NO hace falta reload completo
+        }
     }
 
 
