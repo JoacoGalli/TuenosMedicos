@@ -21,10 +21,18 @@ public class TwilioController : ControllerBase
 
             Log.Information($"WhatsApp recibido de {telefonoPaciente}: {body}");
 
-            // -------- Detectar confirmación --------
+            // -------- Detectar confirmación/cancelacion --------
             if (ContainsConfirmKeyword(body))
             {
                 ConfirmarTurnoAutomaticamente(telefonoPaciente);
+            }
+            else if (ContainsCancelKeyword(body))
+            {
+                CancelarTurnoAutomaticamente(telefonoPaciente);
+            }
+            else
+            {
+                EnviarMensajeSoloBot(telefonoPaciente);
             }
 
             // -------- Forward al médico (sigue funcionando igual) --------
@@ -47,7 +55,8 @@ public class TwilioController : ControllerBase
             SELECT * FROM turnos
             WHERE telefono=@telefono
             AND cancelado=false
-            AND confirmado=false
+            AND confirmado=false 
+            AND confirmadoPorLink=false
             AND fechaTurno >= CURDATE()
             ORDER BY fechaTurno ASC
             LIMIT 1";
@@ -72,7 +81,7 @@ public class TwilioController : ControllerBase
 
             var turno = turnos.First();
 
-            string update = "UPDATE turnos SET confirmado=true WHERE idTurno=@idTurno";
+            string update = "UPDATE turnos SET confirmadoPorLink=true WHERE idTurno=@idTurno";
 
             var p2 = new Dictionary<string, object>
             {
@@ -120,6 +129,86 @@ public class TwilioController : ControllerBase
         return false;
     }
 
+    private void CancelarTurnoAutomaticamente(string telefono)
+    {
+        try
+        {
+            string query = @"
+        SELECT * FROM turnos
+        WHERE telefono=@telefono
+        AND cancelado=false
+        AND fechaTurno >= CURDATE()
+        ORDER BY fechaTurno ASC
+        LIMIT 1";
+
+            var parametros = new Dictionary<string, object>
+        {
+            { "@telefono", telefono }
+        };
+
+            var turnos = Base.SelectATurnos(query, parametros);
+
+            if (turnos == null || turnos.Count == 0)
+            {
+                var w = new WhatsAppService();
+                w.EnviarMensajeTexto(telefono,
+                    "No encontramos un turno activo para cancelar.");
+
+                return;
+            }
+
+            var turno = turnos.First();
+
+            string update = @"
+        UPDATE turnos 
+        SET cancelado=true,
+            motivoCancelacion='Cancelado por WhatsApp'
+        WHERE idTurno=@idTurno";
+
+            var p2 = new Dictionary<string, object>
+        {
+            { "@idTurno", turno.Id }
+        };
+
+            int updated = Base.InsertDeleteOrUpdateABase(update, p2);
+
+            if (updated > 0)
+            {
+                var w = new WhatsAppService();
+                w.EnviarMensajeTexto(telefono,
+                    $"Tu turno del {turno.FechaTurno:dd/MM/yyyy} a las {turno.HoraTurno} fue cancelado correctamente.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error cancelando turno automáticamente");
+        }
+    }
+
+    private bool ContainsCancelKeyword(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return false;
+
+        var palabras = new[]
+        {
+        "cancelo",
+        "cancelar",
+        "cancelado",
+        "cancelación",
+        "cancelar turno"
+    };
+
+        foreach (var p in palabras)
+        {
+            if (Regex.IsMatch(text,
+                $@"\b{Regex.Escape(p)}\b",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
+                return true;
+        }
+
+        return false;
+    }
+
     private void ForwardearMensajeAlMedico(string telefonoPaciente, string nombre, string mensaje)
     {
         try
@@ -144,4 +233,25 @@ public class TwilioController : ControllerBase
             Log.Error(ex, "Error forwardeando mensaje al médico");
         }
     }
+    private void EnviarMensajeSoloBot(string telefono)
+    {
+        try
+        {
+            var whatsappService = new WhatsAppService();
+
+            var contentSid = "HXe751cfe5e99aab17b7f7df1e40b58672";
+
+            var variables = new Dictionary<string, string>
+        {
+            { "1", "+5492227402738" }
+        };
+
+            whatsappService.EnviarMensajePlantilla(telefono, contentSid, variables);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error enviando mensaje de bot");
+        }
+    }
 }
+
