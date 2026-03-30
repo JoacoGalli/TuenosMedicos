@@ -29,7 +29,11 @@ class Turno
     public bool TienePdf { get; set; }
     public bool PacienteAsistio { get; set; }
     public string? MontoAbonado { get; set; }
-    public bool Confirmado { get; set; }
+    public bool ConfirmadoManual { get; set; }
+    public bool ConfirmadoPorLink { get; set; }
+
+    // 🔥 estado final derivado
+    public bool Confirmado => ConfirmadoManual || ConfirmadoPorLink;
 
 
     #endregion

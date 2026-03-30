@@ -112,7 +112,7 @@
                 <!-- Confirmación por link -->
                 <RadzenDataGridColumn Property="Confirmado" Title="Confirmó por link" Width="140px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
-                        @(shift.Confirmado ? "🔗 ✔" : "—")
+                        @(shift.ConfirmadoPorLink ? "🔗 ✔" : "—")
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -120,8 +120,12 @@
                 <RadzenDataGridColumn Title="Confirmación manual" Width="160px" TextAlign="TextAlign.Center">
                     <Template Context="shift">
                         <RadzenCheckBox TValue="bool"
-                                        @bind-Value="shift.Confirmado"
-                                        Change="@(args => CambiarConfirmacionManual(args, shift.Id))" />
+                                        Value="shift.ConfirmadoManual"
+                                        Disabled="shift.ConfirmadoPorLink"
+                                        Change="@(args => {
+                    CambiarConfirmacionManual(args, shift.Id);
+                    shift.ConfirmadoManual = args;
+                })" />
                     </Template>
                 </RadzenDataGridColumn>
 
@@ -346,18 +350,18 @@
         );
     }
 
-    void CambiarConfirmacionManual(bool value, int idTurno)
+void CambiarConfirmacionManual(bool value, int idTurno)
+{
+    string query = "UPDATE turnos SET confirmado=@manual WHERE idTurno=@idTurno";
+
+    var parametros = new Dictionary<string, object>
     {
-        string query = "UPDATE turnos SET confirmado=@confirmado WHERE idTurno=@idTurno";
-
-        var parametros = new Dictionary<string, object>
-        {
-        { "@confirmado", value },
+        { "@manual", value },
         { "@idTurno", idTurno }
-        };
+    };
 
-        Base.InsertDeleteOrUpdateABase(query, parametros);
-    }
+    Base.InsertDeleteOrUpdateABase(query, parametros);
+}
 
     async Task VerPDF(int idTurno)
     {
@@ -618,7 +622,7 @@
             {
                 var whatsappService = new WhatsAppService();
 
-                var contentSid = "HX78b3786a6e4e000b8b80e50a41075ef0"; // <- SID real de confirmacion_turno
+                var contentSid = "HXd4aab42177e1533334d10f9ca240170c"; // <- SID real de confirmacion_turno
 
                 var variables = new Dictionary<string, string>
                     {
