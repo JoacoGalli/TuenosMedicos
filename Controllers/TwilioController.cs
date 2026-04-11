@@ -194,18 +194,17 @@ public class TwilioController : ControllerBase
                 {
                     var whatsappService = new WhatsAppService();
 
-                    var contentSid = "HX49f55b2d0b0224e9d9fe3e7b48c0546f"; // <- SID real de confirmacion_turno
+                    var contentSid = "HX49f55b2d0b0224e9d9fe3e7b48c0546f"; // <- SID real de cancelar_turno
 
                     var variables = new Dictionary<string, string>
                         {
                             { "1", $"{turno.NombrePaciente}" },
-                            { "2", turno.Medico },
-                            { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
-                            { "4", turno.HoraTurno },
+                            { "2", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                            { "3", turno.HoraTurno },
                         };
 
                     whatsappService.EnviarMensajePlantilla(telefono, contentSid, variables);
-                    Log.Information("Turno {Id} confirmado automáticamente por WhatsApp.", turno.Id);
+                    Log.Information("Turno {Id} cancelado automáticamente por WhatsApp.", turno.Id);
                 }
                 catch (Exception ex)
                 {
@@ -273,7 +272,7 @@ public class TwilioController : ControllerBase
         {
             var whatsappService = new WhatsAppService();
 
-            var contentSid = "HXe751cfe5e99aab17b7f7df1e40b58672";
+            var contentSid = "HX114c9b4b3f578492316f9aab0fb55a9e";
 
             var variables = new Dictionary<string, string>
         {
