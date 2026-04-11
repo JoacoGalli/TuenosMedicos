@@ -254,11 +254,11 @@
                 {
                     EmailService emailService = new EmailService();
 
-                    string cuerpo = $"Su turno del {turno.FechaTurno:dd/MM/yyyy} a las {turno.HoraTurno} ha sido confirmado.";
+                    string cuerpo = $"Su turno del {turno.FechaTurno:dd/MM/yyyy} a las {turno.HoraTurno} ha sido registrado correctamente.";
 
                     await emailService.EnviarCorreoAsync(
                         turno.Email,
-                        "Confirmación de turno",
+                        "Registracion de turno",
                         cuerpo
                     );
                 }
@@ -275,7 +275,7 @@
                 {
                     var whatsappService = new WhatsAppService();
 
-                    var contentSid = "HXd4aab42177e1533334d10f9ca240170c"; // <- SID real de confirmacion_turno
+                    var contentSid = "HX9ebcae55ebbba49387839d51c218d468"; // <- SID real de turno_agendado
 
                     var variables = new Dictionary<string, string>
                         {

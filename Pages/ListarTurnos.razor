@@ -595,17 +595,17 @@ void CambiarConfirmacionManual(bool value, int idTurno)
             try
             {
                 EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "Su turno ha sido confirmado con éxito.<br><br><b>Paciente:</b> " + datosContacto.NombrePaciente + " " + datosContacto.ApellidoPaciente + "<br> <b>Fecha:</b> " +
+                string cuerpoEmail = "Su turno ha sido registrado con éxito.<br><br><b>Paciente:</b> " + datosContacto.NombrePaciente + " " + datosContacto.ApellidoPaciente + "<br> <b>Fecha:</b> " +
                                     datosContacto.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + datosContacto.HoraTurno +
                                     "<br><b>Médico:</b> " + datosContacto.Medico +
                                     "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";
-                await nuevoEmail.EnviarCorreoAsync(datosContacto.Email, "Confirmación de turno", cuerpoEmail);
+                await nuevoEmail.EnviarCorreoAsync(datosContacto.Email, "Registracion de turno", cuerpoEmail);
                 Log.Information("Email enviado manualmente.");
 
             }
             catch(Exception ex)
             {
-                Log.Error(ex,"Ocurrio un error al reenviar el email de confirmacion");
+                Log.Error(ex,"Ocurrio un error al reenviar el email de registracion");
 
             }
             DialogService.Close(); // Cierra el diálogo
@@ -622,7 +622,7 @@ void CambiarConfirmacionManual(bool value, int idTurno)
             {
                 var whatsappService = new WhatsAppService();
 
-                var contentSid = "HXd4aab42177e1533334d10f9ca240170c"; // <- SID real de confirmacion_turno
+                var contentSid = "HX9ebcae55ebbba49387839d51c218d468"; // <- SID real de turno_agendado
 
                 var variables = new Dictionary<string, string>
                     {
