@@ -103,7 +103,10 @@
                 try
                 {
                     EmailService nuevoEmail = new EmailService();
-                    string cuerpoEmail = "Estimado/a: <br><br> Su turno del dia: <b>" + _turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + _turno.HoraTurno + " hs</b> ha sido <b>cancelado</b> correctamente.<br><br>Muchas gracias. <br> Consultorio Médico. ";
+                    string cuerpoEmail = "Estimado/a: <br><br> Su turno del dia: <b>" + _turno.FechaTurno?.ToString("dd-MM-yyyy") + "</b> a las: <b>" + _turno.HoraTurno + " hs</b> ha sido <b>cancelado</b> correctamente." +
+                    "<br><br><i>Este correo es enviado automáticamente. Por favor, no responder. " +
+                    "Si desea comunicarse con el consultorio, puede escribirnos por WhatsApp al número <b>2227402738</b>.</i>" +
+                    " <br><br>Muchas gracias. <br> Consultorio Médico. ";
 
                     await nuevoEmail.EnviarCorreoAsync(_turno.Email, "Cancelación de turno", cuerpoEmail);
                     Log.Information("Turno cancelado");

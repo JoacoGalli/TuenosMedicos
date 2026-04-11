@@ -493,7 +493,10 @@
             try
             {
                 EmailService nuevoEmail = new EmailService();
-                string cuerpoEmail = "Su turno ha sido agendado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente. <br> Muchas gracias. <br><br> Consultorio médico.";            
+                string cuerpoEmail = "Su turno ha sido agendado con éxito.<br><br><b>Paciente:</b> " + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno + "<br><b>Médico:</b> " + nuevoTurno.Medico + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente." +
+                "<br><br><i>Este correo es enviado automáticamente. Por favor, no responder. " +
+                "Si desea comunicarse con el consultorio, puede escribirnos por WhatsApp al número <b>2227402738</b>.</i>" +
+                "<br> Muchas gracias. <br><br> Consultorio médico.";            
                 await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Registracion del turno", cuerpoEmail);
                 Log.Information("Email de registracion del turno enviado correctamente a: "+nuevoTurno.Email);
             }
