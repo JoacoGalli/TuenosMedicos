@@ -92,11 +92,27 @@ public class TwilioController : ControllerBase
 
             if (updated > 0)
             {
-                Log.Information("Turno {Id} confirmado automáticamente por WhatsApp.", turno.Id);
+                try
+                {
+                    var whatsappService = new WhatsAppService();
 
-                var w = new WhatsAppService();
-                w.EnviarMensajeTexto(telefono,
-                    $"Perfecto 👍 Tu turno del {turno.FechaTurno:dd/MM/yyyy} a las {turno.HoraTurno} quedó confirmado.");
+                    var contentSid = "HX76b8aba9378dda6c750985f18e1bf8f3"; // <- SID real de confirmacion_turno
+
+                    var variables = new Dictionary<string, string>
+                        {
+                            { "1", $"{turno.NombrePaciente}" },
+                            { "2", turno.Medico },
+                            { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                            { "4", turno.HoraTurno },
+                        };
+
+                    whatsappService.EnviarMensajePlantilla(turno.Telefono, contentSid, variables);
+                    Log.Information("Turno {Id} confirmado automáticamente por WhatsApp.", turno.Id);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error al enviar el WhatsApp para: " + turno.Telefono);
+                }
             }
         }
         catch (Exception ex)
