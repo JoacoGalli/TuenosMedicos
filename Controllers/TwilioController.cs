@@ -106,12 +106,12 @@ public class TwilioController : ControllerBase
                             { "4", turno.HoraTurno },
                         };
 
-                    whatsappService.EnviarMensajePlantilla(turno.Telefono, contentSid, variables);
+                    whatsappService.EnviarMensajePlantilla(telefono, contentSid, variables);
                     Log.Information("Turno {Id} confirmado automáticamente por WhatsApp.", turno.Id);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Error al enviar el WhatsApp para: " + turno.Telefono);
+                    Log.Error(ex, "Error al enviar el WhatsApp para: " + telefono);
                 }
             }
         }
@@ -190,9 +190,27 @@ public class TwilioController : ControllerBase
 
             if (updated > 0)
             {
-                var w = new WhatsAppService();
-                w.EnviarMensajeTexto(telefono,
-                    $"Tu turno del {turno.FechaTurno:dd/MM/yyyy} a las {turno.HoraTurno} fue cancelado correctamente.");
+                try
+                {
+                    var whatsappService = new WhatsAppService();
+
+                    var contentSid = "HX49f55b2d0b0224e9d9fe3e7b48c0546f"; // <- SID real de confirmacion_turno
+
+                    var variables = new Dictionary<string, string>
+                        {
+                            { "1", $"{turno.NombrePaciente}" },
+                            { "2", turno.Medico },
+                            { "3", turno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                            { "4", turno.HoraTurno },
+                        };
+
+                    whatsappService.EnviarMensajePlantilla(telefono, contentSid, variables);
+                    Log.Information("Turno {Id} confirmado automáticamente por WhatsApp.", turno.Id);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error al enviar el WhatsApp para: " + telefono);
+                }
             }
         }
         catch (Exception ex)
