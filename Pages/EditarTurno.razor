@@ -2,6 +2,8 @@
 @attribute [Authorize(Roles = "Admin")]
 @inject DialogService DialogService
 @inject NavigationManager Navigation
+@using Serilog
+
 
 
 <PageTitle>Editar turno</PageTitle>
@@ -362,6 +364,61 @@ async Task MostrarConfirmacion()
 
         if (intentoRegistrarTurno > 0)
         {
+            // =========================
+            // ENVÍO DE NOTIFICACIONES
+            // =========================
+
+            // Email
+            if (!string.IsNullOrEmpty(nuevoTurno.Email))
+            {
+                try
+                {
+                    EmailService nuevoEmail = new EmailService();
+
+                    string cuerpoEmail = "Su turno ha sido REPROGRAMADO con éxito.<br><br><b>Paciente:</b> "
+                    + nuevoTurno.NombrePaciente + " " + nuevoTurno.ApellidoPaciente
+                    + "<br> <b>Fecha:</b> " + nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy")
+                    + "<br> <b>Hora:</b> " + nuevoTurno.HoraTurno
+                    + "<br><b>Médico:</b> " + nuevoTurno.Medico
+                    + "<br><br><br> Si desea cancelarlo, puede hacerlo a través de nuestro portal o comunicandose telefonicamente." +
+                    "<br><br><i>Este correo es enviado automáticamente. Por favor, no responder. " +
+                    "Si desea comunicarse con el consultorio, puede escribirnos por WhatsApp al número <b>2227402738</b>.</i>" +
+                    "<br> Muchas gracias. <br><br> Consultorio médico.";
+
+                    await nuevoEmail.EnviarCorreoAsync(nuevoTurno.Email, "Reprogramación de turno", cuerpoEmail);
+
+                    Log.Information("Email de reprogramación enviado a: " + nuevoTurno.Email);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error al enviar email de reprogramación.");
+                }
+            }
+
+            // WhatsApp
+            if (!string.IsNullOrEmpty(nuevoTurno.Telefono))
+            {
+                try
+                {
+                    var whatsappService = new WhatsAppService();
+
+                    var contentSid = "HX9ebcae55ebbba49387839d51c218d468"; // mismo template
+
+                    var variables = new Dictionary<string, string>
+                    {
+                        { "1", nuevoTurno.NombrePaciente },
+                        { "2", nuevoTurno.Medico },
+                        { "3", nuevoTurno.FechaTurno?.ToString("dd/MM/yyyy") ?? "" },
+                        { "4", nuevoTurno.HoraTurno }
+                    };
+
+                    whatsappService.EnviarMensajePlantilla(nuevoTurno.Telefono, contentSid, variables);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error al enviar WhatsApp de reprogramación: " + nuevoTurno.Telefono);
+                }
+            }
             await DialogService.OpenAsync("Confirmación", ds =>
             @<RadzenStack Gap="1.5rem">
 
