@@ -1,36 +1,81 @@
-# Ignorar archivos de Visual Studio
-.vs/
+# =========================
+# 🔐 Secrets / Config (IMPORTANTE)
+# =========================
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Local.json
+secrets.json
+.env
+.env.*
 
-# Ignorar archivos de compilación
+# =========================
+# 🧱 Build outputs (.NET)
+# =========================
 bin/
 obj/
+out/
 
-# Ignorar archivos de usuario y configuración de Visual Studio
-*.user
+# =========================
+# 🧰 IDE / Editor
+# =========================
+.vs/
+.vscode/
+.idea/
+
 *.suo
-*.cache
+*.user
+*.userosscache
+*.sln.docstates
 *.csproj.user
-*.vscode/
 
-# Ignorar archivos de depuración y configuración generados
+# =========================
+# 📦 Logs / temp files
+# =========================
 *.log
 *.tmp
 *.bak
 
-# Ignorar archivos de NuGet
+# =========================
+# 📦 NuGet
+# =========================
 *.nupkg
 packages/
 project.lock.json
 
-# Ignorar archivos de publicación
-publish/
-wwwroot/
+# =========================
+# 🧪 Test results
+# =========================
+TestResults/
 
-# Ignorar configuraciones locales de entorno
-appsettings.Development.json
-secrets.json
-TurnosMedicos.csproj
-TurnosMedicos.csproj.user
-appsettings.json
-appsettings.Development.json
+# =========================
+# 🗄️ Local DB / storage
+# =========================
+*.db
+*.sqlite
+*.sqlite3
 /App_Data/keys
+
+# =========================
+# 🌐 Frontend (si aplica)
+# =========================
+node_modules/
+dist/
+build/
+
+# =========================
+# 🐳 Docker (opcional)
+# =========================
+docker-compose.override.yml
+
+# =========================
+# 🧼 OS junk
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# 🔑 Certificates
+# =========================
+*.pfx
+*.key
+*.pem
