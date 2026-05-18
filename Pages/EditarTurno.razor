@@ -266,7 +266,7 @@
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem">
                         <RadzenLabel Text="Seleccionar horario:" Style="font-size: 16px;" />
                         <RadzenDropDown @bind-Value=@nuevoTurno.HoraTurno
-                                        Data=@nuevoTurno.ObtenerHorariosDisponibles(false)
+                                        Data=@nuevoTurno.ObtenerHorariosDisponibles(true)
                                         Style="width: 100%; max-width: 200px;"
                                         Name="DropDownBindValue"
                                         Placeholder="Seleccione un horario" />

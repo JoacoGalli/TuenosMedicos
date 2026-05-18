@@ -48,10 +48,8 @@ class Turno
         var parametros = new Dictionary<string, object> { { "@nombreMedico", Medico } };
         List<Medico> listaMedicos = Base.SelectAMedicos(query, parametros);
 
-        
         //Determino los dias que trabaja
         var diasPermitidos = Horarios.DiasTrabajo(Medico, listaMedicos);
-
 
         //Obtengo las fechas bloqueadas y las agrego a fechaDes
         List<DateTime> fechaDes = new List<DateTime>();
@@ -61,8 +59,9 @@ class Turno
             fechaDes.Add(fecha.FechaBloqueada);
         }
 
-        //Obtengo los horarios configurados del medico.
-        List<Horarios> listaHorarios = Horarios.HorariosConfigurados(esAdmin, listaMedicos);
+        // Horarios regulares (sin sobreturnos) y completos (con sobreturnos), para distinguir los 3 estados de color.
+        List<Horarios> listaHorariosRegulares = Horarios.HorariosConfigurados(false, listaMedicos);
+        List<Horarios> listaHorariosCompletos = Horarios.HorariosConfigurados(true, listaMedicos);
 
         //Obtengo los turnos reservados de hoy a seis meses.
         DateTime hoy = DateTime.Today;
@@ -70,63 +69,77 @@ class Turno
         List<Turno> turnosReservados = ConsultarTurnosReservados(Medico, hoy, seisMeses);
 
         List<DateTime> fechasSinDisponibilidad = new List<DateTime>();
+        List<DateTime> fechasSoloSobreturnos = new List<DateTime>();
 
-        for (DateTime fecha = hoy;  fecha <= seisMeses; fecha = fecha.AddDays(1))
+        var diasEnEspañol = new Dictionary<DayOfWeek, string>
+        {
+            { DayOfWeek.Monday, "Lunes" },
+            { DayOfWeek.Tuesday, "Martes" },
+            { DayOfWeek.Wednesday, "Miercoles" },
+            { DayOfWeek.Thursday, "Jueves" },
+            { DayOfWeek.Friday, "Viernes" },
+            { DayOfWeek.Saturday, "Sabado" },
+            { DayOfWeek.Sunday, "Domingo" }
+        };
+
+        for (DateTime fecha = hoy; fecha <= seisMeses; fecha = fecha.AddDays(1))
         {
             foreach (var dia in diasPermitidos)
             {
-                if (fecha.DayOfWeek == dia) 
+                if (fecha.DayOfWeek == dia)
                 {
-                    bool existeBloqueo = fechasBloq.Any(f => f.FechaBloqueada.Date == fecha.Date); //Si existeBloqueo no necesito consultar disponibilidad.
+                    bool existeBloqueo = fechasBloq.Any(f => f.FechaBloqueada.Date == fecha.Date);
                     if (!existeBloqueo)
                     {
-                        //Filto los turnos de esa fecha
                         var turnosDelDia = turnosReservados.Where(t => t.FechaTurno?.Date == fecha.Date).ToList();
 
-                        if (turnosDelDia.Count()>0)        //En este punto (un dia que trabaja y no esta bloqueado) si no hay turnos reservados no necesito consultar disponibilidad.
+                        if (turnosDelDia.Count() > 0)
                         {
-                            //Filtro los horarios dependiendo "fecha" del for.
-                            var diasEnEspañol = new Dictionary<DayOfWeek, string>
-                            {
-                                { DayOfWeek.Monday, "Lunes" },
-                                { DayOfWeek.Tuesday, "Martes" },
-                                { DayOfWeek.Wednesday, "Miercoles" },
-                                { DayOfWeek.Thursday, "Jueves" },
-                                { DayOfWeek.Friday, "Viernes" },
-                                { DayOfWeek.Saturday, "Sabado" },
-                                { DayOfWeek.Sunday, "Domingo" }
-                            };
+                            string diaEsp = diasEnEspañol[fecha.DayOfWeek];
 
-                            var horariosDelDia = listaHorarios
-                                .Where(h => h.DiaTrabajo == diasEnEspañol[fecha.DayOfWeek])  // Comparar en español
+                            var horariosRegulares = listaHorariosRegulares
+                                .Where(h => h.DiaTrabajo == diaEsp)
+                                .ToList();
+                            var horariosConSobreturnos = listaHorariosCompletos
+                                .Where(h => h.DiaTrabajo == diaEsp)
                                 .ToList();
 
-                            bool fechaConTurnosDisponibles = VerificarDisponibilidadDeTurnos(esAdmin, turnosDelDia, horariosDelDia);
+                            bool hayRegulares = VerificarDisponibilidadDeTurnos(false, turnosDelDia, horariosRegulares);
+                            bool haySobreturnos = VerificarDisponibilidadDeTurnos(true, turnosDelDia, horariosConSobreturnos);
 
-                            if (!fechaConTurnosDisponibles)
+                            if (!hayRegulares)
                             {
-                                fechasSinDisponibilidad.Add(fecha);
+                                if (haySobreturnos)
+                                    fechasSoloSobreturnos.Add(fecha);
+                                else
+                                    fechasSinDisponibilidad.Add(fecha);
                             }
-                        } 
-                        
+                        }
                     }
-
                 }
             }
         }
 
-        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) || args.Date.Date < DateTime.Today || fechaDes.Contains(args.Date.Date) || fechasSinDisponibilidad.Contains(args.Date.Date);
+        bool sinDisponibilidad = fechasSinDisponibilidad.Contains(args.Date.Date);
+        bool soloSobreturnos = fechasSoloSobreturnos.Contains(args.Date.Date);
 
-        if (!args.Disabled)
+        args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) ||
+                        args.Date.Date < DateTime.Today ||
+                        fechaDes.Contains(args.Date.Date) ||
+                        sinDisponibilidad;
+
+        if (soloSobreturnos)
         {
-            args.Attributes.Add("style", "background-color: #41ff6d; border-color: white;"); // Verde si está habilitado
+            args.Attributes.Add("style", "background-color: #FFA500; border-color: white;"); // Naranja: solo sobreturnos disponibles
         }
-        else if (fechasSinDisponibilidad.Contains(args.Date.Date))
+        else if (!args.Disabled)
         {
-            args.Attributes.Add("style", "background-color: #ff6961; border-color: white;"); // Rojo si está deshabilitado por falta de disponibilidad
+            args.Attributes.Add("style", "background-color: #41ff6d; border-color: white;"); // Verde: turnos regulares disponibles
         }
-
-
+        else if (sinDisponibilidad)
+        {
+            args.Attributes.Add("style", "background-color: #ff6961; border-color: white;"); // Rojo: sin disponibilidad
+        }
     }
 
     //Verifica la disponibilidad horaria de un dia particular. Devuelve True si tiene horarios disponibles y false si no los tiene.
