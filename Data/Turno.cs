@@ -123,6 +123,14 @@ class Turno
         bool sinDisponibilidad = fechasSinDisponibilidad.Contains(args.Date.Date);
         bool soloSobreturnos = fechasSoloSobreturnos.Contains(args.Date.Date);
 
+        if (!esAdmin)
+        {
+            // Los pacientes no pueden reservar sobreturnos: un dia con solo sobreturnos
+            // se trata como un dia sin disponibilidad (rojo y deshabilitado).
+            sinDisponibilidad = sinDisponibilidad || soloSobreturnos;
+            soloSobreturnos = false;
+        }
+
         args.Disabled = !diasPermitidos.Contains(args.Date.DayOfWeek) ||
                         args.Date.Date < DateTime.Today ||
                         fechaDes.Contains(args.Date.Date) ||
